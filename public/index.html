@@ -12,10 +12,10 @@
     --bg2: #0f1217;
     --bg3: #141820;
     --border: #1e2530;
-    --border2: #252d3a;
-    --text: #c8d4e0;
-    --text-dim: #4a5568;
-    --text-muted: #2d3748;
+    --border2: #2a3444;
+    --text: #e8eef4;
+    --text-dim: #8fa3b8;
+    --text-muted: #526070;
     --accent: #00d4ff;
     --accent2: #0099cc;
     --high: #ff3b5c;
@@ -27,184 +27,222 @@
     --low: #10b981;
     --low-bg: rgba(16,185,129,0.06);
     --low-border: rgba(16,185,129,0.15);
+    --pro: #a78bfa;
     --font-mono: 'IBM Plex Mono', monospace;
     --font-sans: 'IBM Plex Sans', sans-serif;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; overflow-x: hidden; }
-  body::before { content: ''; position: fixed; top:0;left:0;right:0;bottom:0; background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:1000; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font-mono); min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px); pointer-events:none; z-index:1000; }
 
   /* ── Header ── */
-  .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
-  .logo { display: flex; align-items: center; gap: 12px; }
-  .logo-icon { width: 28px; height: 28px; border: 1.5px solid var(--accent); display: flex; align-items: center; justify-content: center; }
-  .logo-icon::before { content: ''; width: 8px; height: 8px; background: var(--accent); display: block; animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-  .logo-text { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; color: var(--text); text-transform: uppercase; }
-  .logo-text span { color: var(--accent); }
-  .header-right { display: flex; align-items: center; gap: 20px; }
-  .live-indicator { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.1em; color: var(--low); text-transform: uppercase; }
-  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--low); animation: blink 1.5s ease-in-out infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .lang-toggle { display: flex; background: var(--bg3); border: 1px solid var(--border); overflow: hidden; }
-  .lang-btn { padding: 5px 12px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.1em; border: none; background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
-  .lang-btn.active { background: var(--accent); color: #000; }
-  .sound-btn { padding: 5px 10px; font-family: var(--font-mono); font-size: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em; }
-  .sound-btn.active { border-color: var(--low); color: var(--low); }
-  .clock { font-size: 12px; font-weight: 300; color: var(--text-dim); letter-spacing: 0.05em; }
+  .header { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 20px; display:flex; align-items:center; justify-content:space-between; height:52px; position:sticky; top:0; z-index:100; gap:16px; }
+  .logo { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .logo-icon { width:26px; height:26px; border:1.5px solid var(--accent); display:flex; align-items:center; justify-content:center; }
+  .logo-icon::before { content:''; width:8px; height:8px; background:var(--accent); display:block; animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
+  .logo-text { font-size:11px; font-weight:600; letter-spacing:0.15em; color:var(--text); text-transform:uppercase; }
+  .logo-text span { color:var(--accent); }
+  .header-center { display:flex; align-items:center; gap:16px; flex:1; justify-content:center; }
+  .live-indicator { display:flex; align-items:center; gap:6px; font-size:10px; letter-spacing:0.1em; color:var(--low); text-transform:uppercase; }
+  .live-dot { width:6px; height:6px; border-radius:50%; background:var(--low); animation:blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .clock { font-size:12px; font-weight:400; color:var(--text-dim); letter-spacing:0.06em; }
+  .tz-label { font-size:9px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; }
+  .header-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .lang-toggle { display:flex; background:var(--bg3); border:1px solid var(--border); overflow:hidden; }
+  .lang-btn { padding:5px 10px; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.1em; border:none; background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
+  .lang-btn.active { background:var(--accent); color:#000; }
+  .sound-btn { padding:5px 10px; font-family:var(--font-mono); font-size:10px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+  .sound-btn.active { border-color:var(--low); color:var(--low); }
+  .auth-btn { padding:5px 14px; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.1em; border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
+  .auth-btn:hover { border-color:var(--accent2); color:var(--accent); }
+  .auth-btn.signup { background:var(--accent); border-color:var(--accent); color:#000; font-weight:600; }
+  .auth-btn.signup:hover { background:var(--accent2); border-color:var(--accent2); }
 
   /* ── Layout ── */
-  .main { display: grid; grid-template-columns: 220px 1fr; height: calc(100vh - 56px); }
-  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 20px 0; overflow-y: auto; display: flex; flex-direction: column; }
-  .sidebar-section { padding: 0 16px 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-  .sidebar-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; padding: 0 4px; }
-  .filter-btn { width: 100%; padding: 8px 12px; background: transparent; border: 1px solid transparent; color: var(--text-dim); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; cursor: pointer; text-align: left; transition: all 0.15s; display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-  .filter-btn:hover { color: var(--text); background: var(--bg3); border-color: var(--border); }
-  .filter-btn.active { color: var(--accent); border-color: var(--accent2); background: rgba(0,212,255,0.05); }
-  .filter-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .main { display:grid; grid-template-columns:210px 1fr; height:calc(100vh - 52px); }
+  .sidebar { background:var(--bg2); border-right:1px solid var(--border); padding:16px 0; overflow-y:auto; display:flex; flex-direction:column; gap:0; }
+  .sidebar-section { padding:0 14px 16px; border-bottom:1px solid var(--border); margin-bottom:16px; }
+  .sidebar-label { font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; padding:0 4px; }
+  .filter-btn { width:100%; padding:7px 10px; background:transparent; border:1px solid transparent; color:var(--text-dim); font-family:var(--font-mono); font-size:11px; letter-spacing:0.04em; cursor:pointer; text-align:left; transition:all 0.15s; display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+  .filter-btn:hover { color:var(--text); background:var(--bg3); border-color:var(--border); }
+  .filter-btn.active { color:var(--accent); border-color:var(--accent2); background:rgba(0,212,255,0.06); }
+  .filter-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
   .dot-all{background:var(--text-dim)} .dot-high{background:var(--high)} .dot-medium{background:var(--medium)} .dot-low{background:var(--low)}
-  .filter-count { margin-left: auto; font-size: 9px; color: var(--text-muted); }
-  .asset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 0 4px; }
-  .asset-btn { padding: 6px 8px; background: var(--bg3); border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; cursor: pointer; text-align: center; transition: all 0.15s; }
-  .asset-btn:hover, .asset-btn.active { color: var(--accent); border-color: var(--accent2); background: rgba(0,212,255,0.05); }
-  .refresh-btn { margin: 0 20px; padding: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; width: calc(100% - 40px); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.05); }
+  .filter-count { margin-left:auto; font-size:9px; color:var(--text-muted); }
+  .asset-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:0 4px; }
+  .asset-btn { padding:6px 4px; background:var(--bg3); border:1px solid var(--border); color:var(--text-dim); font-family:var(--font-mono); font-size:10px; letter-spacing:0.04em; cursor:pointer; text-align:center; transition:all 0.15s; }
+  .asset-btn:hover,.asset-btn.active { color:var(--accent); border-color:var(--accent2); background:rgba(0,212,255,0.06); }
+
+  /* Pack info in sidebar */
+  .pack-info { margin:0 14px 16px; padding:10px 12px; background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.12); }
+  .pack-badge { font-size:8px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+  .pack-desc { font-size:9px; color:var(--text-muted); letter-spacing:0.03em; line-height:1.5; }
+  .pack-upgrade { display:block; margin-top:8px; padding:5px; text-align:center; background:var(--accent); color:#000; font-size:9px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; border:none; font-family:var(--font-mono); width:100%; transition:background 0.15s; }
+  .pack-upgrade:hover { background:var(--accent2); }
 
   /* ── Feed ── */
-  .feed { overflow: hidden; background: var(--bg); display: flex; flex-direction: column; }
-  .ticker-bar { background: var(--bg3); border-bottom: 1px solid var(--border); height: 32px; overflow: hidden; flex-shrink: 0; }
-  .ticker-inner { display: flex; align-items: center; height: 100%; white-space: nowrap; animation: ticker 30s linear infinite; }
+  .feed { overflow:hidden; background:var(--bg); display:flex; flex-direction:column; }
+  .ticker-bar { background:var(--bg3); border-bottom:1px solid var(--border); height:30px; overflow:hidden; flex-shrink:0; }
+  .ticker-inner { display:flex; align-items:center; height:100%; white-space:nowrap; animation:ticker 30s linear infinite; }
   @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-  .ticker-item { font-size: 10px; letter-spacing: 0.08em; padding: 0 24px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+  .ticker-item { font-size:10px; letter-spacing:0.06em; padding:0 20px; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
   .ticker-item .up{color:var(--low)} .ticker-item .down{color:var(--high)}
-  .ticker-separator { color: var(--border2); padding: 0 4px; }
+  .ticker-separator { color:var(--border2); padding:0 4px; }
 
   /* ── Tabs ── */
-  .tab-bar { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .tab-btn { padding: 10px 20px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
-  .tab-btn:hover { color: var(--text-dim); }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
-  .tab-content.hidden { display: none; }
+  .tab-bar { display:flex; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; }
+  .tab-btn { padding:10px 20px; font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; border:none; border-bottom:2px solid transparent; background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+  .tab-btn:hover { color:var(--text-dim); }
+  .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-content { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+  .tab-content.hidden { display:none; }
 
-  /* ── News feed ── */
-  .feed-header { padding: 12px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg2); flex-shrink: 0; }
-  .feed-title { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
-  .feed-count { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; }
-  .feed-inner { overflow-y: auto; flex: 1; padding-bottom: 40px; }
+  /* ── Feed header ── */
+  .feed-header { padding:10px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg2); flex-shrink:0; }
+  .feed-title { font-size:14px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text); display:flex; align-items:center; gap:10px; }
+  .feed-title-badge { font-size:9px; font-weight:400; letter-spacing:0.1em; color:var(--text-muted); border:1px solid var(--border); padding:2px 7px; }
+  .feed-count { font-size:10px; color:var(--text-muted); letter-spacing:0.05em; }
+  .feed-inner { overflow-y:auto; flex:1; padding-bottom:40px; }
 
-  .news-item { border-bottom: 1px solid var(--border); padding: 14px 24px; transition: background 0.15s; cursor: pointer; display: grid; grid-template-columns: 80px 1fr auto; gap: 16px; align-items: start; animation: slideIn 0.3s ease-out; }
+  /* ── News items ── */
+  .news-item { border-bottom:1px solid var(--border); padding:13px 24px; transition:background 0.15s; cursor:pointer; display:grid; grid-template-columns:76px 1fr auto; gap:14px; align-items:start; animation:slideIn 0.3s ease-out; }
   @keyframes slideIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
-  .news-item:hover { background: var(--bg2); }
-  .news-item.high { background: var(--high-bg); border-left: 2px solid var(--high); border-bottom-color: var(--high-border); }
-  .news-item.high:hover { background: rgba(255,59,92,0.12); }
-  .news-item.medium { border-left: 2px solid var(--medium); }
-  .news-item.low { border-left: 2px solid transparent; }
+  .news-item:hover { background:var(--bg2); }
+  .news-item.high { background:var(--high-bg); border-left:2px solid var(--high); border-bottom-color:var(--high-border); }
+  .news-item.high:hover { background:rgba(255,59,92,0.12); }
+  .news-item.medium { border-left:2px solid var(--medium); }
+  .news-item.low { border-left:2px solid transparent; }
+  .news-item.cal-release { border-left:2px solid var(--accent); background:rgba(0,212,255,0.05); }
+  .news-item.cal-release:hover { background:rgba(0,212,255,0.09); }
 
-  .news-time { font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em; padding-top: 2px; font-weight: 300; }
-  .news-headline { font-size: 12px; font-weight: 500; line-height: 1.5; color: var(--text); letter-spacing: 0.02em; margin-bottom: 6px; }
-  .news-item.high .news-headline { color: #fff; }
-  .news-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .news-source { font-size: 9px; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; }
-  .asset-tag { font-size: 9px; letter-spacing: 0.08em; padding: 2px 6px; background: var(--bg3); border: 1px solid var(--border); color: var(--text-dim); }
-  .news-actions { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
-  .share-btn { font-size: 9px; letter-spacing: 0.08em; padding: 2px 8px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; font-family: var(--font-mono); transition: all 0.15s; }
-  .share-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .news-time { font-size:10px; color:var(--text-dim); letter-spacing:0.04em; padding-top:2px; font-weight:300; line-height:1.6; }
+  .news-headline { font-size:12px; font-weight:500; line-height:1.55; color:var(--text); letter-spacing:0.02em; margin-bottom:5px; }
+  .news-item.high .news-headline { color:#fff; }
+  .news-item.cal-release .news-headline { color:var(--accent); }
+  .news-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .news-source { font-size:9px; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; }
+  .asset-tag { font-size:9px; letter-spacing:0.06em; padding:2px 6px; background:var(--bg3); border:1px solid var(--border); color:var(--text-dim); }
+  .cal-tag { font-size:9px; letter-spacing:0.08em; padding:2px 6px; background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.2); color:var(--accent); }
+  .news-actions { display:flex; align-items:center; gap:6px; margin-top:5px; }
+  .share-btn { font-size:9px; letter-spacing:0.06em; padding:2px 8px; background:transparent; border:1px solid var(--border); color:var(--text-muted); cursor:pointer; font-family:var(--font-mono); transition:all 0.15s; }
+  .share-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .news-impact { text-align:right; padding-top:2px; }
+  .impact-badge { font-size:9px; font-weight:600; letter-spacing:0.12em; padding:3px 8px; text-transform:uppercase; display:inline-block; }
+  .badge-high { background:var(--high-bg); border:1px solid var(--high-border); color:var(--high); }
+  .badge-medium { background:var(--medium-bg); border:1px solid var(--medium-border); color:var(--medium); }
+  .badge-low { background:var(--low-bg); border:1px solid var(--low-border); color:var(--low); }
+  .badge-cal { background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.25); color:var(--accent); }
 
-  .news-impact { text-align: right; padding-top: 2px; }
-  .impact-badge { font-size: 9px; font-weight: 600; letter-spacing: 0.15em; padding: 3px 8px; text-transform: uppercase; display: inline-block; }
-  .badge-high { background: var(--high-bg); border: 1px solid var(--high-border); color: var(--high); }
-  .badge-medium { background: var(--medium-bg); border: 1px solid var(--medium-border); color: var(--medium); }
-  .badge-low { background: var(--low-bg); border: 1px solid var(--low-border); color: var(--low); }
-
-  .market-moves { margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
-  .move { font-size: 10px; letter-spacing: 0.05em; }
+  .market-moves { margin-top:5px; display:flex; gap:8px; flex-wrap:wrap; }
+  .move { font-size:10px; letter-spacing:0.04em; }
   .move.up{color:var(--low)} .move.down{color:var(--high)} .move.neutral{color:var(--text-dim)}
 
-  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: var(--text-muted); gap: 12px; }
-  .empty-icon { font-size: 32px; opacity: 0.3; }
-  .empty-text { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
-  .empty-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; font-weight: 300; }
+  /* ── Delay banner ── */
+  .delay-banner { margin:20px 24px; border:1px solid rgba(255,59,92,0.3); background:rgba(255,59,92,0.05); padding:24px; text-align:center; }
+  .delay-banner-title { font-size:16px; font-weight:600; letter-spacing:0.1em; color:#fff; text-transform:uppercase; margin-bottom:8px; }
+  .delay-banner-sub { font-size:11px; color:var(--text-dim); letter-spacing:0.05em; margin-bottom:16px; line-height:1.6; }
+  .delay-banner-sub span { color:var(--accent); }
+  .delay-banner-btn { display:inline-block; padding:10px 28px; background:var(--accent); color:#000; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; border:none; transition:background 0.15s; }
+  .delay-banner-btn:hover { background:var(--accent2); }
+
+  /* ── Empty / Error ── */
+  .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:var(--text-muted); gap:12px; }
+  .empty-icon { font-size:28px; opacity:0.3; }
+  .empty-text { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim); }
+  .empty-sub { font-size:10px; color:var(--text-muted); letter-spacing:0.04em; }
 
   /* ── Calendar tab ── */
-  .cal-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-  .cal-filter-btn { padding: 4px 10px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
-  .cal-filter-btn:hover { color: var(--text-dim); border-color: var(--border2); }
-  .cal-filter-btn.active { color: var(--accent); border-color: var(--accent2); background: rgba(0,212,255,0.05); }
-  .cal-filter-btn.f-high.active  { color: var(--high);   border-color: var(--high);   background: var(--high-bg); }
-  .cal-filter-btn.f-med.active   { color: var(--medium); border-color: var(--medium); background: var(--medium-bg); }
-  .cal-filter-btn.f-low.active   { color: var(--low);    border-color: var(--low);    background: var(--low-bg); }
-  .cal-sep { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
-  .cal-body { flex: 1; overflow-y: auto; padding-bottom: 40px; }
-  .cal-day-header { padding: 10px 20px 6px; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 5; }
-  .cal-event { display: grid; grid-template-columns: 90px 50px 60px 1fr auto; gap: 12px; align-items: center; padding: 10px 20px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
-  .cal-event:hover { background: var(--bg2); }
-  .cal-event.imp-high  { border-left: 2px solid var(--high);   background: var(--high-bg); }
-  .cal-event.imp-high:hover  { background: rgba(255,59,92,0.12); }
-  .cal-event.imp-med   { border-left: 2px solid var(--medium); }
-  .cal-event.imp-low   { border-left: 2px solid var(--border2); }
-  .cal-event.released  { opacity: 0.75; }
-  .cal-event.just-out  { animation: flashEvent 2s ease-out forwards; }
+  .cal-toolbar { display:flex; align-items:center; gap:8px; padding:10px 20px; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap; }
+  .cal-filter-btn { padding:4px 10px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+  .cal-filter-btn:hover { color:var(--text-dim); border-color:var(--border2); }
+  .cal-filter-btn.active { color:var(--accent); border-color:var(--accent2); background:rgba(0,212,255,0.05); }
+  .cal-filter-btn.f-high.active { color:var(--high); border-color:var(--high); background:var(--high-bg); }
+  .cal-filter-btn.f-med.active  { color:var(--medium); border-color:var(--medium); background:var(--medium-bg); }
+  .cal-filter-btn.f-low.active  { color:var(--low); border-color:var(--low); background:var(--low-bg); }
+  .cal-sep { width:1px; height:16px; background:var(--border); margin:0 4px; }
+  .cal-body { flex:1; overflow-y:auto; padding-bottom:40px; }
+  .cal-day-header { padding:8px 20px; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:5; }
+  .cal-event { display:grid; grid-template-columns:90px 52px 58px 1fr auto; gap:12px; align-items:center; padding:10px 20px; border-bottom:1px solid var(--border); transition:background 0.15s; }
+  .cal-event:hover { background:var(--bg2); }
+  .cal-event.imp-high { border-left:2px solid var(--high); background:var(--high-bg); }
+  .cal-event.imp-high:hover { background:rgba(255,59,92,0.12); }
+  .cal-event.imp-med  { border-left:2px solid var(--medium); }
+  .cal-event.imp-low  { border-left:2px solid var(--border2); }
+  .cal-event.released { opacity:0.7; }
+  .cal-event.just-out { animation:flashEvent 2s ease-out forwards; }
   @keyframes flashEvent { 0%{background:rgba(0,212,255,0.2)} 100%{background:transparent} }
-  .cal-time { font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em; }
-  .cal-countdown { font-size: 9px; color: var(--accent); letter-spacing: 0.04em; margin-top: 2px; }
-  .cal-country { font-size: 11px; letter-spacing: 0.05em; color: var(--text-dim); display: flex; align-items: center; gap: 4px; }
-  .cal-imp { }
-  .cal-title { font-size: 11px; font-weight: 500; color: var(--text); letter-spacing: 0.02em; line-height: 1.4; }
-  .cal-period { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
-  .cal-values { display: flex; gap: 16px; align-items: center; }
-  .cal-val { text-align: right; }
-  .cal-val-label { font-size: 8px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
-  .cal-val-data  { font-size: 11px; color: var(--text-dim); letter-spacing: 0.03em; }
-  .cal-val-data.actual-positive { color: var(--low); font-weight: 600; }
-  .cal-val-data.actual-negative { color: var(--high); font-weight: 600; }
-  .cal-val-data.actual-neutral  { color: var(--medium); font-weight: 600; }
-  .cal-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; gap: 12px; color: var(--text-muted); }
-  @media (max-width: 900px) { .cal-event { grid-template-columns: 80px 40px 50px 1fr; } .cal-values { display: none; } }
+  .cal-time { font-size:11px; color:var(--text-dim); letter-spacing:0.04em; }
+  .cal-countdown { font-size:9px; color:var(--accent); letter-spacing:0.03em; margin-top:2px; }
+  .cal-country { font-size:11px; color:var(--text-dim); display:flex; align-items:center; gap:4px; }
+  .cal-title { font-size:11px; font-weight:500; color:var(--text); letter-spacing:0.02em; line-height:1.4; }
+  .cal-period { font-size:9px; color:var(--text-muted); margin-top:1px; }
+  .cal-values { display:flex; gap:16px; align-items:center; }
+  .cal-val { text-align:right; }
+  .cal-val-label { font-size:8px; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; }
+  .cal-val-data { font-size:11px; color:var(--text-dim); letter-spacing:0.03em; }
+  .cal-val-data.actual-positive { color:var(--low); font-weight:600; }
+  .cal-val-data.actual-negative { color:var(--high); font-weight:600; }
+  .cal-val-data.actual-neutral  { color:var(--medium); font-weight:600; }
+  .cal-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; gap:12px; color:var(--text-muted); }
+  @media (max-width:900px) { .cal-event { grid-template-columns:80px 40px 50px 1fr; } .cal-values { display:none; } }
 
   /* ── Status bar ── */
-  .status-bar { background: var(--bg2); border-top: 1px solid var(--border); padding: 6px 24px; display: flex; align-items: center; gap: 24px; position: fixed; bottom: 0; left: 220px; right: 0; z-index: 50; }
-  .status-item { font-size: 9px; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-  .status-item span { color: var(--text-dim); }
-  .ws-badge { font-size: 8px; padding: 1px 5px; border-radius: 2px; font-weight: 600; letter-spacing: 0.05em; }
-  .ws-badge.connected { background: rgba(16,185,129,0.15); border: 1px solid var(--low-border); color: var(--low); }
-  .ws-badge.disconnected { background: rgba(255,59,92,0.1); border: 1px solid var(--high-border); color: var(--high); }
+  .status-bar { background:var(--bg2); border-top:1px solid var(--border); padding:5px 24px; display:flex; align-items:center; gap:20px; position:fixed; bottom:0; left:210px; right:0; z-index:50; }
+  .status-item { font-size:9px; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; display:flex; align-items:center; gap:5px; }
+  .status-item span { color:var(--text-dim); }
+  .ws-badge { font-size:8px; padding:1px 5px; font-weight:600; letter-spacing:0.05em; }
+  .ws-badge.connected    { background:rgba(16,185,129,0.15); border:1px solid var(--low-border); color:var(--low); }
+  .ws-badge.disconnected { background:rgba(255,59,92,0.1);  border:1px solid var(--high-border); color:var(--high); }
 
   /* ── Misc ── */
   @keyframes flashHigh { 0%{background:rgba(255,59,92,0.25)} 100%{background:var(--high-bg)} }
-  .news-item.high.new { animation: flashHigh 1.5s ease-out forwards, slideIn 0.3s ease-out; }
-  .toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; padding: 8px 20px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
-  .toast.show { opacity: 1; }
-  .backend-notice { display: none; }
+  .news-item.high.new-item { animation:flashHigh 1.5s ease-out forwards, slideIn 0.3s ease-out; }
+  .toast { position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:var(--bg3); border:1px solid var(--accent); color:var(--accent); font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; padding:8px 20px; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; }
+  .toast.show { opacity:1; }
   ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border2)} ::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
 </style>
 </head>
 <body>
 
+<!-- ── HEADER ── -->
 <header class="header">
   <div class="logo">
     <div class="logo-icon"></div>
     <div class="logo-text">Trading <span>News Terminal</span></div>
   </div>
-  <div class="header-right">
+
+  <div class="header-center">
     <div class="live-indicator"><div class="live-dot"></div>Live</div>
+    <div>
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="tz-label" id="tzLabel">Local</div>
+    </div>
     <button class="sound-btn active" id="soundBtn" onclick="toggleSound()">🔔 Alerts ON</button>
     <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('en', this)">EN</button>
-      <button class="lang-btn" onclick="setLang('pt', this)">PT</button>
+      <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+      <button class="lang-btn" onclick="setLang('pt',this)">PT</button>
     </div>
-    <div class="clock" id="clock">--:--:--</div>
+  </div>
+
+  <div class="header-right">
+    <button class="auth-btn" onclick="showToast('Login coming soon — Pro features')">Login</button>
+    <button class="auth-btn signup" onclick="showToast('Sign up coming soon — Get Pro access')">Sign Up</button>
   </div>
 </header>
 
+<!-- ── MAIN ── -->
 <div class="main">
+
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Impact</div>
-      <button class="filter-btn active" onclick="setImpact('ALL', this)"><div class="filter-dot dot-all"></div>All<span class="filter-count" id="count-all">0</span></button>
-      <button class="filter-btn" onclick="setImpact('HIGH', this)"><div class="filter-dot dot-high"></div>High<span class="filter-count" id="count-high">0</span></button>
-      <button class="filter-btn" onclick="setImpact('MEDIUM', this)"><div class="filter-dot dot-medium"></div>Medium<span class="filter-count" id="count-medium">0</span></button>
-      <button class="filter-btn" onclick="setImpact('LOW', this)"><div class="filter-dot dot-low"></div>Low<span class="filter-count" id="count-low">0</span></button>
+      <button class="filter-btn active" onclick="setImpact('ALL',this)"><div class="filter-dot dot-all"></div>All News<span class="filter-count" id="count-all">0</span></button>
+      <button class="filter-btn" onclick="setImpact('HIGH',this)"><div class="filter-dot dot-high"></div>High Impact<span class="filter-count" id="count-high">0</span></button>
+      <button class="filter-btn" onclick="setImpact('MEDIUM',this)"><div class="filter-dot dot-medium"></div>Medium<span class="filter-count" id="count-medium">0</span></button>
+      <button class="filter-btn" onclick="setImpact('LOW',this)"><div class="filter-dot dot-low"></div>Low<span class="filter-count" id="count-low">0</span></button>
     </div>
 
     <div class="sidebar-section">
@@ -218,14 +256,18 @@
         <button class="asset-btn" onclick="toggleAsset('SP500',this)">SPX</button>
         <button class="asset-btn" onclick="toggleAsset('BTC',this)">BTC</button>
         <button class="asset-btn" onclick="toggleAsset('GBP',this)">GBP</button>
+        <button class="asset-btn" onclick="toggleAsset('JPY',this)">JPY</button>
       </div>
     </div>
 
-    <button class="refresh-btn" onclick="fetchAndRefresh()" id="refreshBtn">
-      <span id="refreshIcon">↻</span> Fetch News
-    </button>
+    <div class="pack-info" id="packInfo">
+      <div class="pack-badge">⚡ Basic Pack</div>
+      <div class="pack-desc">News delayed ~1 min.<br>Upgrade for <strong>real-time</strong> feed.</div>
+      <button class="pack-upgrade" onclick="showToast('Pro Pack coming soon!')">Go Pro →</button>
+    </div>
   </aside>
 
+  <!-- FEED -->
   <main class="feed">
     <!-- Ticker -->
     <div class="ticker-bar">
@@ -247,28 +289,31 @@
       </div>
     </div>
 
-    <!-- Tab bar -->
+    <!-- Tabs -->
     <div class="tab-bar">
       <button class="tab-btn active" id="tab-news-btn" onclick="switchTab('news')">📰 News Feed</button>
       <button class="tab-btn" id="tab-calendar-btn" onclick="switchTab('calendar')">📅 Economic Calendar</button>
     </div>
 
-    <!-- News tab -->
+    <!-- NEWS TAB -->
     <div class="tab-content" id="tab-news">
       <div class="feed-header">
-        <div class="feed-title" id="feedTitle">All News</div>
+        <div class="feed-title" id="feedTitle">
+          All News
+          <span class="feed-title-badge" id="feedTitleBadge">LIVE</span>
+        </div>
         <div class="feed-count" id="feedCount">Connecting...</div>
       </div>
       <div class="feed-inner" id="newsFeed">
         <div class="empty-state">
           <div class="empty-icon">◈</div>
-          <div class="empty-text">Connecting via WebSocket</div>
+          <div class="empty-text">Connecting</div>
           <div class="empty-sub">Establishing real-time connection...</div>
         </div>
       </div>
     </div>
 
-    <!-- Calendar tab -->
+    <!-- CALENDAR TAB -->
     <div class="tab-content hidden" id="tab-calendar">
       <div class="cal-toolbar">
         <button class="cal-filter-btn f-high active" onclick="calSetImpact(1,this)">● High</button>
@@ -291,456 +336,448 @@
   </main>
 </div>
 
+<!-- Status bar -->
 <div class="status-bar">
   <div class="status-item">Status <span id="statusText">Connecting...</span></div>
   <div class="status-item">Connection <span id="wsStatus" class="ws-badge disconnected">WS</span></div>
-  <div class="status-item">Last update <span id="lastUpdate">—</span></div>
-  <div class="status-item">Total <span id="totalCount">0</span> items</div>
+  <div class="status-item">Updated <span id="lastUpdate">—</span></div>
+  <div class="status-item">Items <span id="totalCount">0</span></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  // ─── State ────────────────────────────────────────────────────
-  let lang = 'en';
-  let impactFilter = 'ALL';
-  let assetFilter  = 'ALL';
-  let allNews      = [];
-  let soundEnabled = true;
-  let knownUrls    = new Set();
-  let audioCtx     = null;
-  let ws           = null;
-  let wsReconnectTimer = null;
-  const BACKEND_URL = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+// ─── Config ───────────────────────────────────────────────────────
+const BACKEND_URL = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+const USER_PACK   = 'basic'; // 'basic' | 'pro'  — future: set from auth
+const DELAY_AFTER = 8;       // show delay banner after this many news items
 
-  // ─── Translations ─────────────────────────────────────────────
-  const PT_TRANSLATIONS = {
-    'federal reserve':'Reserva Federal','interest rate':'taxa de juro',
-    'rate hike':'subida de taxas','rate cut':'corte de taxas',
-    'inflation':'inflação','stocks':'ações','stock market':'mercado de ações',
-    'oil prices':'preços do petróleo','gold':'ouro','dollar':'dólar',
-    'economy':'economia','recession':'recessão','gdp':'PIB',
-    'unemployment':'desemprego','earnings':'resultados','market':'mercado',
-    'bank':'banco','trade':'comércio','war':'guerra','attack':'ataque','crisis':'crise',
-  };
-  function translatePT(text) {
-    let t = text;
-    for (const [en, pt] of Object.entries(PT_TRANSLATIONS)) {
-      t = t.replace(new RegExp(en, 'gi'), pt);
-    }
-    return t;
-  }
+// ─── State ────────────────────────────────────────────────────────
+let lang         = 'en';
+let impactFilter = 'ALL';
+let assetFilter  = 'ALL';
+let allNews      = [];
+let calReleases  = []; // calendar events injected into news feed
+let soundEnabled = true;
+let knownUrls    = new Set();
+let knownCalIds  = new Set();
+let audioCtx     = null;
+let ws           = null;
+let wsReconnectTimer = null;
 
-  // ─── Audio ────────────────────────────────────────────────────
-  function playAlert() {
-    if (!soundEnabled) return;
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      [[0,880,0.15],[0.18,1100,0.15],[0.36,880,0.2]].forEach(([when,freq,dur]) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.frequency.value = freq; osc.type = 'sine';
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime + when);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + when + dur);
-        osc.start(audioCtx.currentTime + when);
-        osc.stop(audioCtx.currentTime + when + dur);
-      });
-    } catch(e) {}
-  }
+// ─── Clock (local timezone) ───────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB', { hour12: false });
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  document.getElementById('tzLabel').textContent = tz.replace('_', ' ');
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-  function toggleSound() {
-    soundEnabled = !soundEnabled;
-    const btn = document.getElementById('soundBtn');
-    btn.textContent = soundEnabled ? '🔔 Alerts ON' : '🔕 Alerts OFF';
-    btn.classList.toggle('active', soundEnabled);
-  }
+// ─── Translations ─────────────────────────────────────────────────
+const PT_TRANS = {
+  'federal reserve':'Reserva Federal','interest rate':'taxa de juro',
+  'rate hike':'subida de taxas','rate cut':'corte de taxas',
+  'inflation':'inflação','stocks':'ações','oil prices':'preços do petróleo',
+  'gold':'ouro','dollar':'dólar','economy':'economia','recession':'recessão',
+  'gdp':'PIB','unemployment':'desemprego','earnings':'resultados',
+  'market':'mercado','bank':'banco','trade':'comércio','war':'guerra',
+  'attack':'ataque','crisis':'crise',
+};
+function translatePT(text) {
+  let t = text;
+  for (const [en, pt] of Object.entries(PT_TRANS)) t = t.replace(new RegExp(en,'gi'), pt);
+  return t;
+}
 
-  // ─── Clock ────────────────────────────────────────────────────
-  function updateClock() {
-    document.getElementById('clock').textContent = new Date().toUTCString().split(' ')[4] + ' UTC';
-  }
-  setInterval(updateClock, 1000);
-  updateClock();
-
-  // ─── WebSocket ────────────────────────────────────────────────
-  function connectWebSocket() {
-    const wsUrl = BACKEND_URL.replace('https://', 'wss://').replace('http://', 'ws://') + '/ws';
-    ws = new WebSocket(wsUrl);
-
-    ws.onopen = () => {
-      clearTimeout(wsReconnectTimer);
-      const badge = document.getElementById('wsStatus');
-      badge.textContent = 'WS LIVE';
-      badge.className = 'ws-badge connected';
-      document.getElementById('statusText').textContent = 'Connected';
-      console.log('[WS] Connected');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(event.data);
-        if (msg.type === 'init' || msg.type === 'update') {
-          handleNewsData(msg.data, msg.type === 'update');
-        }
-      } catch(e) { console.error('[WS] Parse error', e); }
-    };
-
-    ws.onclose = () => {
-      const badge = document.getElementById('wsStatus');
-      badge.textContent = 'WS OFF';
-      badge.className = 'ws-badge disconnected';
-      document.getElementById('statusText').textContent = 'Reconnecting...';
-      console.log('[WS] Disconnected — retrying in 5s');
-      wsReconnectTimer = setTimeout(connectWebSocket, 5000);
-    };
-
-    ws.onerror = () => ws.close();
-  }
-
-  function handleNewsData(data, isUpdate) {
-    let hasNewHigh = false;
-    data.forEach(n => {
-      if (!knownUrls.has(n.url) && n.impact === 'HIGH') hasNewHigh = true;
-      knownUrls.add(n.url);
+// ─── Audio ────────────────────────────────────────────────────────
+function playAlert() {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    [[0,880,0.15],[0.18,1100,0.15],[0.36,880,0.2]].forEach(([w,f,d]) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.frequency.value = f; o.type = 'sine';
+      g.gain.setValueAtTime(0.3, audioCtx.currentTime+w);
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+w+d);
+      o.start(audioCtx.currentTime+w); o.stop(audioCtx.currentTime+w+d);
     });
-    if (hasNewHigh && allNews.length > 0) playAlert();
-    allNews = data;
-    updateCounts(data);
-    renderNews(data);
-    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
-    document.getElementById('totalCount').textContent = data.length;
-    if (isUpdate) showToast('⚡ ' + data.length + ' items updated');
-  }
+  } catch(e) {}
+}
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const b = document.getElementById('soundBtn');
+  b.textContent = soundEnabled ? '🔔 Alerts ON' : '🔕 Alerts OFF';
+  b.classList.toggle('active', soundEnabled);
+}
 
-  // ─── HTTP fallback (manual fetch) ────────────────────────────
-  async function fetchAndRefresh() {
-    const btn  = document.getElementById('refreshBtn');
-    const icon = document.getElementById('refreshIcon');
-    btn.disabled = true;
-    if (!document.getElementById('spinStyle')) {
-      const s = document.createElement('style');
-      s.id = 'spinStyle';
-      s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
-      document.head.appendChild(s);
-    }
-    icon.style.animation = 'spin 1s linear infinite';
-    document.getElementById('statusText').textContent = 'Fetching...';
+// ─── WebSocket ────────────────────────────────────────────────────
+function connectWebSocket() {
+  const url = BACKEND_URL.replace('https://','wss://').replace('http://','ws://') + '/ws';
+  ws = new WebSocket(url);
+  ws.onopen = () => {
+    clearTimeout(wsReconnectTimer);
+    const b = document.getElementById('wsStatus');
+    b.textContent = 'WS LIVE'; b.className = 'ws-badge connected';
+    document.getElementById('statusText').textContent = 'Connected';
+  };
+  ws.onmessage = e => {
+    try {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'init' || msg.type === 'update') handleNewsData(msg.data, msg.type === 'update');
+    } catch(err) {}
+  };
+  ws.onclose = () => {
+    const b = document.getElementById('wsStatus');
+    b.textContent = 'WS OFF'; b.className = 'ws-badge disconnected';
+    document.getElementById('statusText').textContent = 'Reconnecting...';
+    wsReconnectTimer = setTimeout(connectWebSocket, 5000);
+  };
+  ws.onerror = () => ws.close();
+}
+
+// ─── News data handler ────────────────────────────────────────────
+function handleNewsData(data, isUpdate) {
+  let hasNewHigh = false;
+  data.forEach(n => {
+    if (!knownUrls.has(n.url) && n.impact === 'HIGH') hasNewHigh = true;
+    knownUrls.add(n.url);
+  });
+  if (hasNewHigh && allNews.length > 0) playAlert();
+  allNews = data;
+  updateCounts(data);
+  renderNews();
+  document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('en-GB',{hour12:false});
+  document.getElementById('totalCount').textContent = data.length;
+}
+
+// Basic pack: poll every 60s as fallback / sole update mechanism
+if (USER_PACK === 'basic') {
+  setInterval(async () => {
     try {
       await fetch(BACKEND_URL + '/fetch');
-      // Backend will broadcast via WS — but also pull directly as fallback
-      if (!ws || ws.readyState !== WebSocket.OPEN) {
-        const res = await fetch(BACKEND_URL + '/news?limit=50');
-        const data = await res.json();
-        handleNewsData(data, false);
-      }
-    } catch(e) {
-      document.getElementById('statusText').textContent = 'Error: ' + e.message;
+    } catch(e) {}
+  }, 60000);
+}
+
+// ─── Manual refresh (hidden but callable) ─────────────────────────
+async function fetchAndRefresh() {
+  try {
+    await fetch(BACKEND_URL + '/fetch');
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      const res = await fetch(BACKEND_URL + '/news?limit=50');
+      handleNewsData(await res.json(), false);
     }
-    icon.style.animation = '';
-    btn.disabled = false;
-  }
+  } catch(e) {}
+}
 
-  // ─── Tabs ─────────────────────────────────────────────────────
-  function switchTab(tab) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-' + tab).classList.remove('hidden');
-    document.getElementById('tab-' + tab + '-btn').classList.add('active');
-  }
+// ─── Tabs ─────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  document.getElementById('tab-' + tab + '-btn').classList.add('active');
+  if (tab === 'calendar' && calEvents.length === 0) loadCalendar();
+}
 
-  // ─── Filters ──────────────────────────────────────────────────
-  function setLang(l, btn) {
-    lang = l;
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderNews(allNews);
-  }
+// ─── Filters ──────────────────────────────────────────────────────
+const FILTER_TITLES = {
+  ALL: 'All News', HIGH: 'High Impact', MEDIUM: 'Medium Impact', LOW: 'Low Impact',
+};
+const ASSET_TITLES = {
+  ALL: null, USD: 'USD News', EUR: 'EUR News', GOLD: 'Gold News',
+  OIL: 'Oil News', SP500: 'S&P 500 News', BTC: 'Bitcoin News', GBP: 'GBP News', JPY: 'JPY News',
+};
+function updateFeedTitle() {
+  const asset = assetFilter !== 'ALL' ? ASSET_TITLES[assetFilter] : null;
+  const impact = impactFilter !== 'ALL' ? FILTER_TITLES[impactFilter] : null;
+  const title = asset || impact || 'All News';
+  document.getElementById('feedTitle').childNodes[0].textContent = title + ' ';
+}
+function setLang(l, btn) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); renderNews();
+}
+function setImpact(impact, btn) {
+  impactFilter = impact;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); updateFeedTitle(); renderNews();
+}
+function toggleAsset(asset, btn) {
+  assetFilter = asset;
+  document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); updateFeedTitle(); renderNews();
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function shareNews(url, headline) {
+  if (navigator.share) navigator.share({ title: headline, url });
+  else navigator.clipboard.writeText(url).then(() => showToast('LINK COPIED'));
+}
 
-  function setImpact(impact, btn) {
-    impactFilter = impact;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderNews(allNews);
-    const titles = {ALL:'All News', HIGH:'High Impact', MEDIUM:'Medium Impact', LOW:'Low Impact'};
-    document.getElementById('feedTitle').textContent = titles[impact];
-  }
+// ─── Counts ───────────────────────────────────────────────────────
+function updateCounts(news) {
+  const c = { HIGH:0, MEDIUM:0, LOW:0 };
+  news.forEach(n => { if(c[n.impact]!==undefined) c[n.impact]++; });
+  document.getElementById('count-all').textContent    = news.length;
+  document.getElementById('count-high').textContent   = c.HIGH;
+  document.getElementById('count-medium').textContent = c.MEDIUM;
+  document.getElementById('count-low').textContent    = c.LOW;
+}
 
-  function toggleAsset(asset, btn) {
-    assetFilter = asset;
-    document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderNews(allNews);
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
-
-  function shareNews(url, headline) {
-    if (navigator.share) {
-      navigator.share({ title: headline, url });
-    } else {
-      navigator.clipboard.writeText(url).then(() => showToast('LINK COPIED TO CLIPBOARD'));
-    }
-  }
-
-  // ─── Rendering ────────────────────────────────────────────────
-  function updateCounts(news) {
-    const counts = {HIGH:0, MEDIUM:0, LOW:0};
-    news.forEach(n => { if (counts[n.impact] !== undefined) counts[n.impact]++; });
-    document.getElementById('count-all').textContent    = news.length;
-    document.getElementById('count-high').textContent   = counts.HIGH;
-    document.getElementById('count-medium').textContent = counts.MEDIUM;
-    document.getElementById('count-low').textContent    = counts.LOW;
-  }
-
-  function getSource(url, sourceName) {
-    const smap = {
-      'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch',
-      'yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet',
-      'tradingview':'TradingView','wsj':'WSJ','dow jones':'Dow Jones',
-      'zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider',
-      'reuters':'Reuters','bloomberg':'Bloomberg','cointelegraph':'Cointelegraph',
-      'ft':'FT','financial times':'FT',
+// ─── Helpers ──────────────────────────────────────────────────────
+function getSource(url, src) {
+  const sm = {
+    'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch',
+    'yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet',
+    'tradingview':'TradingView','wsj':'WSJ','dow jones':'Dow Jones',
+    'zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider',
+    'reuters':'Reuters','bloomberg':'Bloomberg','cointelegraph':'Cointelegraph','ft':'FT',
+  };
+  if (src && src !== 'undefined') return sm[src.toLowerCase()] || src.toUpperCase();
+  try {
+    const h = new URL(url).hostname.replace('www.','');
+    const dm = {
+      'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg',
+      'investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive',
+      'fxstreet.com':'FXStreet','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView',
+      'wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice',
+      'businessinsider.com':'Business Insider',
     };
-    if (sourceName && sourceName !== 'undefined') {
-      return smap[sourceName.toLowerCase()] || sourceName.toUpperCase();
-    }
-    try {
-      const h = new URL(url).hostname.replace('www.','');
-      const map = {'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg','investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive','fxstreet.com':'FXStreet','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView','wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice','businessinsider.com':'Business Insider'};
-      for (const [k,v] of Object.entries(map)) { if (h.includes(k)) return v; }
-      return h.split('.')[0].toUpperCase();
-    } catch { return 'Unknown'; }
+    for (const [k,v] of Object.entries(dm)) if (h.includes(k)) return v;
+    return h.split('.')[0].toUpperCase();
+  } catch { return 'Unknown'; }
+}
+
+function formatTime(ts) {
+  try {
+    return new Date(ts).toLocaleTimeString('en-GB', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  } catch { return '--:--'; }
+}
+
+function getAssetTags(a) {
+  if (!a) return [];
+  return a.split(',').map(x => x.trim()).filter(Boolean);
+}
+
+function getMarketMoves(h) {
+  const l = h.toLowerCase(), m = [];
+  if (l.includes('cpi')||l.includes('inflation')) {
+    m.push({asset:'USD',dir:l.includes('above')||l.includes('rise')||l.includes('high')?'up':'down'});
+    m.push({asset:'GOLD',dir:l.includes('above')||l.includes('rise')?'down':'up'});
+  }
+  if (l.includes('fed')||l.includes('rate hike')) { m.push({asset:'USD',dir:'up'}); m.push({asset:'INDICES',dir:'down'}); }
+  if (l.includes('rate cut')) { m.push({asset:'USD',dir:'down'}); m.push({asset:'GOLD',dir:'up'}); }
+  if (l.includes('oil')||l.includes('opec')) m.push({asset:'OIL',dir:l.includes('cut')||l.includes('rise')?'up':'down'});
+  if (l.includes('war')||l.includes('attack')||l.includes('strike')) { m.push({asset:'GOLD',dir:'up'}); m.push({asset:'OIL',dir:'up'}); }
+  return m;
+}
+
+// ─── Render News ──────────────────────────────────────────────────
+function renderNews() {
+  // Merge regular news + calendar releases, sort by time desc
+  const combined = [...allNews, ...calReleases].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  let filtered = combined;
+  if (impactFilter !== 'ALL') filtered = filtered.filter(n => n.impact === impactFilter);
+  if (assetFilter  !== 'ALL') filtered = filtered.filter(n => n.assets && n.assets.includes(assetFilter));
+  document.getElementById('feedCount').textContent = filtered.length + ' items';
+
+  if (filtered.length === 0) {
+    document.getElementById('newsFeed').innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-text">No news found</div><div class="empty-sub">Change filters or wait for next update</div></div>`;
+    return;
   }
 
-  function formatTime(ts) {
-    try { return new Date(ts).toUTCString().split(' ')[4]; } catch { return '--:--'; }
-  }
+  const items = filtered.map((n, idx) => {
+    const isCalRelease = !!n._calRelease;
+    const headline   = lang === 'pt' ? translatePT(n.headline_en) : n.headline_en;
+    const impactCls  = (n.impact || 'LOW').toLowerCase();
+    const tags       = getAssetTags(n.assets);
+    const moves      = isCalRelease ? [] : getMarketMoves(n.headline_en);
+    const src        = isCalRelease ? 'Economic Calendar' : getSource(n.url || '', n.source);
+    const itemCls    = isCalRelease ? 'cal-release' : impactCls;
+    const badgeCls   = isCalRelease ? 'badge-cal' : `badge-${impactCls}`;
+    const badgeLbl   = isCalRelease ? 'DATA' : (n.impact || 'LOW');
 
-  function getAssetTags(assets) {
-    if (!assets) return [];
-    return assets.split(',').map(a => a.trim()).filter(Boolean);
-  }
-
-  function getMarketMoves(headline) {
-    const h = headline.toLowerCase();
-    const moves = [];
-    if (h.includes('cpi')||h.includes('inflation')) {
-      moves.push({asset:'USD', dir:h.includes('above')||h.includes('rise')||h.includes('high')?'up':'down'});
-      moves.push({asset:'GOLD',dir:h.includes('above')||h.includes('rise')||h.includes('high')?'down':'up'});
-    }
-    if (h.includes('fed')||h.includes('rate hike'))  { moves.push({asset:'USD',dir:'up'}); moves.push({asset:'INDICES',dir:'down'}); }
-    if (h.includes('rate cut'))                       { moves.push({asset:'USD',dir:'down'}); moves.push({asset:'GOLD',dir:'up'}); }
-    if (h.includes('oil')||h.includes('opec'))        { moves.push({asset:'OIL',dir:h.includes('cut')||h.includes('rise')||h.includes('top')?'up':'down'}); }
-    if (h.includes('war')||h.includes('attack')||h.includes('strike')) { moves.push({asset:'GOLD',dir:'up'}); moves.push({asset:'OIL',dir:'up'}); }
-    return moves;
-  }
-
-  function renderNews(news) {
-    let filtered = news;
-    if (impactFilter !== 'ALL') filtered = filtered.filter(n => n.impact === impactFilter);
-    if (assetFilter  !== 'ALL') filtered = filtered.filter(n => n.assets && n.assets.includes(assetFilter));
-    document.getElementById('feedCount').textContent = filtered.length + ' items';
-
-    if (filtered.length === 0) {
-      document.getElementById('newsFeed').innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-text">No news found</div><div class="empty-sub">Try changing filters or fetch new data</div></div>`;
-      return;
-    }
-
-    document.getElementById('newsFeed').innerHTML = filtered.map(n => {
-      const headline   = lang === 'pt' ? translatePT(n.headline_en) : n.headline_en;
-      const impactClass = (n.impact || 'LOW').toLowerCase();
-      const tags       = getAssetTags(n.assets);
-      const moves      = getMarketMoves(n.headline_en);
-      const source     = getSource(n.url || '', n.source);
-
-      return `<div class="news-item ${impactClass}" onclick="window.open('${n.url}','_blank')">
-        <div class="news-time">${formatTime(n.timestamp)}</div>
-        <div class="news-content">
-          <div class="news-headline">${headline}</div>
-          <div class="news-meta">
-            <span class="news-source">${source}</span>
-            ${tags.map(t => `<span class="asset-tag">${t}</span>`).join('')}
-          </div>
-          ${moves.length ? `<div class="market-moves">${moves.map(m=>`<span class="move ${m.dir}">${m.asset} ${m.dir==='up'?'▲':'▼'}</span>`).join('')}</div>` : ''}
-          <div class="news-actions">
-            <button class="share-btn" onclick="event.stopPropagation();shareNews('${n.url}','${headline.replace(/'/g,"\\'")}')">⇪ Share</button>
-          </div>
+    const cardHtml = `<div class="news-item ${itemCls}" onclick="window.open('${n.url}','_blank')">
+      <div class="news-time">${formatTime(n.timestamp)}</div>
+      <div class="news-content">
+        <div class="news-headline">${headline}</div>
+        <div class="news-meta">
+          <span class="news-source">${src}</span>
+          ${isCalRelease ? `<span class="cal-tag">📅 RELEASE</span>` : ''}
+          ${tags.map(t=>`<span class="asset-tag">${t}</span>`).join('')}
         </div>
-        <div class="news-impact"><span class="impact-badge badge-${impactClass}">${n.impact||'LOW'}</span></div>
+        ${moves.length?`<div class="market-moves">${moves.map(m=>`<span class="move ${m.dir}">${m.asset} ${m.dir==='up'?'▲':'▼'}</span>`).join('')}</div>`:''}
+        <div class="news-actions">
+          <button class="share-btn" onclick="event.stopPropagation();shareNews('${n.url}','${headline.replace(/'/g,"\\'")}')">⇪ Share</button>
+        </div>
+      </div>
+      <div class="news-impact"><span class="impact-badge ${badgeCls}">${badgeLbl}</span></div>
+    </div>`;
+
+    // Insert delay banner after DELAY_AFTER items (basic pack only)
+    if (USER_PACK === 'basic' && idx === DELAY_AFTER) {
+      return cardHtml + `<div class="delay-banner">
+        <div class="delay-banner-title">⚠ This Feed is Delayed</div>
+        <div class="delay-banner-sub">Basic Pack news has a ~<span>1 minute delay</span>.<br>Upgrade to <span>Pro</span> for instant real-time updates.</div>
+        <button class="delay-banner-btn" onclick="showToast('Pro Pack coming soon!')">Go Real-Time →</button>
+      </div>`;
+    }
+    return cardHtml;
+  }).join('');
+
+  document.getElementById('newsFeed').innerHTML = items;
+}
+
+function showError(msg) {
+  document.getElementById('newsFeed').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-text">Connection failed</div><div class="empty-sub">${msg}</div></div>`;
+}
+
+// ─── Calendar ─────────────────────────────────────────────────────
+let calEvents        = [];
+let calImpactFilter  = new Set([1, 0]);
+let calCountryFilter = 'ALL';
+
+const FLAGS = { US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CH:'🇨🇭',AU:'🇦🇺',CA:'🇨🇦',NZ:'🇳🇿',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷' };
+
+function calSetImpact(imp, btn) {
+  if (calImpactFilter.has(imp)) { if (calImpactFilter.size > 1) calImpactFilter.delete(imp); }
+  else calImpactFilter.add(imp);
+  btn.classList.toggle('active', calImpactFilter.has(imp));
+  renderCalendar();
+}
+function calSetCountry(c, btn) {
+  calCountryFilter = c;
+  document.querySelectorAll('[id^="cal-country-"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); renderCalendar();
+}
+function fmtVal(v, u) {
+  if (v === null || v === undefined) return '—';
+  return parseFloat(v).toFixed(Math.abs(v) < 10 ? 2 : 1) + (u || '');
+}
+function actualClass(actual, forecast, prev) {
+  if (actual === null || actual === undefined) return '';
+  const ref = forecast ?? prev;
+  if (ref === null || ref === undefined) return 'actual-neutral';
+  return actual > ref ? 'actual-positive' : actual < ref ? 'actual-negative' : 'actual-neutral';
+}
+function countdown(dateStr) {
+  const diff = new Date(dateStr) - Date.now();
+  if (diff <= 0) return null;
+  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+  return h > 0 ? `in ${h}h ${m}m` : m > 0 ? `in ${m}m ${s}s` : `in ${s}s`;
+}
+
+function renderCalendar() {
+  const body = document.getElementById('calBody');
+  let f = calEvents.filter(e => calImpactFilter.has(e.importance) && (calCountryFilter === 'ALL' || e.country === calCountryFilter));
+  if (!f.length) { body.innerHTML = `<div class="cal-empty"><div class="empty-icon">📅</div><div class="empty-text">No events</div></div>`; return; }
+
+  const days = {};
+  f.forEach(e => { const d = e.date.split('T')[0]; if(!days[d]) days[d]=[]; days[d].push(e); });
+  const now = new Date(), todayStr = now.toISOString().split('T')[0];
+  const tmrStr = new Date(now.getTime()+86400000).toISOString().split('T')[0];
+
+  body.innerHTML = Object.entries(days).sort().map(([day, evs]) => {
+    const lbl = day===todayStr?'Today':day===tmrStr?'Tomorrow':new Date(day+'T00:00:00Z').toLocaleDateString('en-GB',{weekday:'long',month:'short',day:'numeric'});
+    return `<div class="cal-day-header">${lbl}</div>` + evs.map(e => {
+      const ic = e.importance===1?'imp-high':e.importance===0?'imp-med':'imp-low';
+      const il = e.importance===1?'HIGH':e.importance===0?'MED':'LOW';
+      const bc = e.importance===1?'badge-high':e.importance===0?'badge-medium':'badge-low';
+      const released = e.actual!==null && e.actual!==undefined;
+      const cd = !released ? countdown(e.date) : null;
+      const ac = actualClass(e.actual, e.forecast, e.previous);
+      const timeLocal = new Date(e.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
+      return `<div class="cal-event ${ic}${released?' released':''}" data-date="${e.date}">
+        <div class="cal-time"><div>${timeLocal}</div>${cd?`<div class="cal-countdown">${cd}</div>`:''}</div>
+        <div class="cal-country">${FLAGS[e.country]||''} ${e.country}</div>
+        <div><span class="impact-badge ${bc}">${il}</span></div>
+        <div><div class="cal-title">${e.title}</div>${e.period?`<div class="cal-period">${e.period}</div>`:''}</div>
+        <div class="cal-values">
+          <div class="cal-val"><div class="cal-val-label">Prev</div><div class="cal-val-data">${fmtVal(e.previous,e.unit)}</div></div>
+          <div class="cal-val"><div class="cal-val-label">Fore</div><div class="cal-val-data">${fmtVal(e.forecast,e.unit)}</div></div>
+          <div class="cal-val"><div class="cal-val-label">Actual</div><div class="cal-val-data ${ac}">${fmtVal(e.actual,e.unit)}</div></div>
+        </div>
       </div>`;
     }).join('');
-  }
+  }).join('');
+}
 
-  function showError(msg) {
-    document.getElementById('newsFeed').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-text">Connection failed</div><div class="empty-sub">${msg}</div></div>`;
-  }
+// Inject calendar release into news feed
+function injectCalRelease(e) {
+  const ac = actualClass(e.actual, e.forecast, e.previous);
+  const acLabel = ac === 'actual-positive' ? '🟢' : ac === 'actual-negative' ? '🔴' : '🟡';
+  const flag = FLAGS[e.country] || '';
+  const unit = e.unit || '';
+  const headline = `${acLabel} ${flag} ${e.title} — Actual: ${fmtVal(e.actual,unit)} | Forecast: ${fmtVal(e.forecast,unit)} | Previous: ${fmtVal(e.previous,unit)}`;
+  const impact = e.importance === 1 ? 'HIGH' : e.importance === 0 ? 'MEDIUM' : 'LOW';
+  calReleases.unshift({
+    timestamp: new Date().toISOString(),
+    headline_en: headline,
+    impact,
+    assets: 'USD', // fallback
+    url: `https://www.tradingview.com/symbols/${e.ticker || ''}`,
+    source: 'Economic Calendar',
+    _calRelease: true,
+  });
+  if (soundEnabled && e.importance === 1) playAlert();
+  renderNews();
+}
 
-  // ─── Economic Calendar ────────────────────────────────────────
-  let calEvents        = [];
-  let calImpactFilter  = new Set([1, 0]);   // HIGH + MED by default
-  let calCountryFilter = 'ALL';
-  let calCountdownTimer = null;
-
-  const COUNTRY_FLAGS = {
-    US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CH:'🇨🇭',AU:'🇦🇺',
-    CA:'🇨🇦',NZ:'🇳🇿',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷',
-  };
-
-  function calSetImpact(imp, btn) {
-    if (calImpactFilter.has(imp)) {
-      if (calImpactFilter.size > 1) calImpactFilter.delete(imp);
-    } else {
-      calImpactFilter.add(imp);
-    }
-    btn.classList.toggle('active', calImpactFilter.has(imp));
+async function loadCalendar() {
+  try {
+    const res = await fetch(BACKEND_URL + '/calendar?days=7');
+    const data = await res.json();
+    const prevReleased = new Set(calEvents.filter(e => e.actual !== null && e.actual !== undefined).map(e => e.id));
+    calEvents = data.events || [];
+    // Check for newly released events → inject into news feed
+    calEvents.forEach(e => {
+      if (e.actual !== null && e.actual !== undefined && !prevReleased.has(e.id) && !knownCalIds.has(e.id)) {
+        knownCalIds.add(e.id);
+        injectCalRelease(e);
+        // Flash in calendar tab
+        setTimeout(() => {
+          const el = document.querySelector(`[data-date="${e.date}"]`);
+          if (el) el.classList.add('just-out');
+        }, 200);
+      }
+    });
     renderCalendar();
-  }
+  } catch(err) { console.error('[CAL]', err); }
+}
 
-  function calSetCountry(country, btn) {
-    calCountryFilter = country;
-    document.querySelectorAll('[id^="cal-country-"]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderCalendar();
-  }
+// Countdowns update every second
+setInterval(() => {
+  document.querySelectorAll('.cal-event[data-date]').forEach(el => {
+    const cdEl = el.querySelector('.cal-countdown');
+    if (!cdEl) return;
+    const cd = countdown(el.getAttribute('data-date'));
+    cdEl.textContent = cd || '';
+  });
+}, 1000);
 
-  function formatCalValue(val, unit) {
-    if (val === null || val === undefined) return '—';
-    const formatted = parseFloat(val).toFixed(Math.abs(val) < 10 ? 2 : 1);
-    return formatted + (unit || '');
-  }
+// Calendar refreshes every 60s
+setInterval(loadCalendar, 60000);
 
-  function getActualClass(actual, forecast, previous) {
-    if (actual === null || actual === undefined) return '';
-    const ref = forecast !== null && forecast !== undefined ? forecast : previous;
-    if (ref === null || ref === undefined) return 'actual-neutral';
-    return actual > ref ? 'actual-positive' : actual < ref ? 'actual-negative' : 'actual-neutral';
-  }
+// Tab switcher
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  document.getElementById('tab-' + tab + '-btn').classList.add('active');
+  if (tab === 'calendar' && calEvents.length === 0) loadCalendar();
+}
 
-  function countdown(dateStr) {
-    const diff = new Date(dateStr) - Date.now();
-    if (diff <= 0) return null;
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    if (h > 0)  return `in ${h}h ${m}m`;
-    if (m > 0)  return `in ${m}m ${s}s`;
-    return `in ${s}s`;
-  }
-
-  function renderCalendar() {
-    const body = document.getElementById('calBody');
-    let filtered = calEvents.filter(e => {
-      if (!calImpactFilter.has(e.importance)) return false;
-      if (calCountryFilter !== 'ALL' && e.country !== calCountryFilter) return false;
-      return true;
-    });
-
-    if (filtered.length === 0) {
-      body.innerHTML = `<div class="cal-empty"><div class="empty-icon">📅</div><div class="empty-text">No events found</div><div class="empty-sub">Try changing filters</div></div>`;
-      return;
-    }
-
-    // Group by day
-    const days = {};
-    filtered.forEach(e => {
-      const day = e.date.split('T')[0];
-      if (!days[day]) days[day] = [];
-      days[day].push(e);
-    });
-
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0];
-    const tomorrowStr = new Date(now.getTime() + 86400000).toISOString().split('T')[0];
-
-    body.innerHTML = Object.entries(days).sort().map(([day, events]) => {
-      const dayLabel = day === todayStr ? 'Today' : day === tomorrowStr ? 'Tomorrow'
-        : new Date(day + 'T00:00:00Z').toLocaleDateString('en-GB', { weekday:'long', month:'short', day:'numeric' });
-
-      const evHtml = events.map(e => {
-        const impClass  = e.importance === 1 ? 'imp-high' : e.importance === 0 ? 'imp-med' : 'imp-low';
-        const impLabel  = e.importance === 1 ? 'HIGH' : e.importance === 0 ? 'MED' : 'LOW';
-        const badgeCls  = e.importance === 1 ? 'badge-high' : e.importance === 0 ? 'badge-medium' : 'badge-low';
-        const flag      = COUNTRY_FLAGS[e.country] || '';
-        const timeUTC   = new Date(e.date).toUTCString().split(' ')[4];
-        const released  = e.actual !== null && e.actual !== undefined;
-        const cd        = !released ? countdown(e.date) : null;
-        const actualCls = getActualClass(e.actual, e.forecast, e.previous);
-        const unit      = e.unit || '';
-
-        return `<div class="cal-event ${impClass}${released ? ' released' : ''}" data-date="${e.date}">
-          <div class="cal-time">
-            <div>${timeUTC} UTC</div>
-            ${cd ? `<div class="cal-countdown">${cd}</div>` : ''}
-          </div>
-          <div class="cal-country">${flag} ${e.country}</div>
-          <div class="cal-imp"><span class="impact-badge ${badgeCls}">${impLabel}</span></div>
-          <div>
-            <div class="cal-title">${e.title}</div>
-            ${e.period ? `<div class="cal-period">${e.period}</div>` : ''}
-          </div>
-          <div class="cal-values">
-            <div class="cal-val"><div class="cal-val-label">Prev</div><div class="cal-val-data">${formatCalValue(e.previous, unit)}</div></div>
-            <div class="cal-val"><div class="cal-val-label">Fore</div><div class="cal-val-data">${formatCalValue(e.forecast, unit)}</div></div>
-            <div class="cal-val"><div class="cal-val-label">Actual</div><div class="cal-val-data ${actualCls}">${formatCalValue(e.actual, unit)}</div></div>
-          </div>
-        </div>`;
-      }).join('');
-
-      return `<div class="cal-day-header">${dayLabel}</div>${evHtml}`;
-    }).join('');
-  }
-
-  function updateCountdowns() {
-    document.querySelectorAll('.cal-event[data-date]').forEach(el => {
-      const date = el.getAttribute('data-date');
-      const cdEl = el.querySelector('.cal-countdown');
-      if (!cdEl) return;
-      const cd = countdown(date);
-      cdEl.textContent = cd || '';
-    });
-  }
-
-  async function loadCalendar() {
-    try {
-      const res = await fetch(BACKEND_URL + '/calendar?days=7');
-      const data = await res.json();
-      const prev = new Set(calEvents.filter(e => e.actual !== null).map(e => e.id));
-      calEvents = data.events || [];
-      // Highlight newly released events
-      calEvents.forEach(e => {
-        if (e.actual !== null && !prev.has(e.id)) {
-          setTimeout(() => {
-            const el = document.querySelector(`[data-date="${e.date}"]`);
-            if (el) el.classList.add('just-out');
-          }, 100);
-          if (soundEnabled && e.importance === 1) playAlert();
-        }
-      });
-      renderCalendar();
-    } catch(err) {
-      console.error('[CAL] Load error:', err);
-    }
-  }
-
-  // Refresh calendar every 60s and update countdowns every second
-  setInterval(loadCalendar, 60000);
-  setInterval(updateCountdowns, 1000);
-
-  // Load calendar when tab is opened
-  const origSwitchTab = switchTab;
-  function switchTab(tab) {
-    origSwitchTab(tab);
-    if (tab === 'calendar' && calEvents.length === 0) loadCalendar();
-  }
-
-  // ─── Init ─────────────────────────────────────────────────────
-  connectWebSocket();
+// ─── Init ─────────────────────────────────────────────────────────
+connectWebSocket();
+// Pre-load calendar on startup (to detect releases immediately)
+setTimeout(loadCalendar, 3000);
 </script>
 </body>
 </html>

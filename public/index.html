@@ -517,12 +517,12 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="tv-header">
         <div class="tv-header-title" data-i18n="tv.title">Live Financial TV</div>
         <div class="tv-channel-bar">
-          <button class="tv-ch-btn active" data-ch="bloomberg" onclick="switchChannel('bloomberg',this)">Bloomberg TV</button>
-          <button class="tv-ch-btn" data-ch="cnbc"      onclick="switchChannel('cnbc',this)">CNBC</button>
-          <button class="tv-ch-btn" data-ch="aljazeera" onclick="switchChannel('aljazeera',this)">Al Jazeera</button>
+          <button class="tv-ch-btn active" data-ch="aljazeera" onclick="switchChannel('aljazeera',this)">Al Jazeera</button>
           <button class="tv-ch-btn" data-ch="skynews"   onclick="switchChannel('skynews',this)">Sky News</button>
           <button class="tv-ch-btn" data-ch="dw"        onclick="switchChannel('dw',this)">DW News</button>
           <button class="tv-ch-btn" data-ch="france24"  onclick="switchChannel('france24',this)">France 24</button>
+          <button class="tv-ch-btn" data-ch="wion"      onclick="switchChannel('wion',this)">WION</button>
+          <button class="tv-ch-btn" data-ch="euronews"  onclick="switchChannel('euronews',this)">Euronews</button>
         </div>
       </div>
       <div class="tv-body">
@@ -535,17 +535,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="tv-sidebar">
           <div class="tv-sidebar-title" data-i18n="tv.channels">Channels</div>
           <div class="tv-ch-list">
-            <div class="tv-ch-item active" data-ch="bloomberg" onclick="switchChannel('bloomberg',this)">
-              <div class="tv-ch-dot"></div>
-              <div class="tv-ch-info"><div class="tv-ch-name">Bloomberg TV</div><div class="tv-ch-desc">Markets, Economics, Business 24/7</div></div>
-              <div class="tv-live-badge">LIVE</div>
-            </div>
-            <div class="tv-ch-item" data-ch="cnbc" onclick="switchChannel('cnbc',this)">
-              <div class="tv-ch-dot"></div>
-              <div class="tv-ch-info"><div class="tv-ch-name">CNBC</div><div class="tv-ch-desc">Wall Street, Stocks, Economy</div></div>
-              <div class="tv-live-badge">LIVE</div>
-            </div>
-            <div class="tv-ch-item" data-ch="aljazeera" onclick="switchChannel('aljazeera',this)">
+            <div class="tv-ch-item active" data-ch="aljazeera" onclick="switchChannel('aljazeera',this)">
               <div class="tv-ch-dot"></div>
               <div class="tv-ch-info"><div class="tv-ch-name">Al Jazeera English</div><div class="tv-ch-desc">Global News, Geopolitics</div></div>
               <div class="tv-live-badge">LIVE</div>
@@ -563,6 +553,16 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
             <div class="tv-ch-item" data-ch="france24" onclick="switchChannel('france24',this)">
               <div class="tv-ch-dot"></div>
               <div class="tv-ch-info"><div class="tv-ch-name">France 24</div><div class="tv-ch-desc">International News English</div></div>
+              <div class="tv-live-badge">LIVE</div>
+            </div>
+            <div class="tv-ch-item" data-ch="wion" onclick="switchChannel('wion',this)">
+              <div class="tv-ch-dot"></div>
+              <div class="tv-ch-info"><div class="tv-ch-name">WION</div><div class="tv-ch-desc">World News 24/7</div></div>
+              <div class="tv-live-badge">LIVE</div>
+            </div>
+            <div class="tv-ch-item" data-ch="euronews" onclick="switchChannel('euronews',this)">
+              <div class="tv-ch-dot"></div>
+              <div class="tv-ch-info"><div class="tv-ch-name">Euronews</div><div class="tv-ch-desc">European Markets & Politics</div></div>
               <div class="tv-live-badge">LIVE</div>
             </div>
           </div>
@@ -807,13 +807,15 @@ const CATEGORY_KEYWORDS = {
   MARKET_MOVING:{impactOnly:'HIGH'},
 };
 
-// Calendar country → asset (used by COUNTRY_ASSET below)
+// Agricultural/soft commodity terms — these belong ONLY in COMMODITIES/MACRO/ALL
+const AGRI_TERMS = ['wheat','corn','soy','soybean','cotton','cocoa','sugar','coffee','lumber','cattle','lean hog','oat','rice','canola','rapeseed','palm oil','orange juice','feeder cattle','live cattle','pork','wool'];
+function isAgriCommodity(headline) {
+  return AGRI_TERMS.some(t => headline.includes(t));
+}
+
 function calItemMatchesCat(n, catDef) {
-  // If calCountries is null → all calendar events pass (e.g. MACRO)
   if (catDef.calCountries === null) return true;
-  // If calCountries is empty array → no calendar events pass (e.g. CRYPTO)
   if (Array.isArray(catDef.calCountries) && catDef.calCountries.length === 0) return false;
-  // Otherwise check the item's country
   return catDef.calCountries.includes(n._calCountry);
 }
 
@@ -831,13 +833,12 @@ function newsMatchesCategory(n, cat) {
   }
   const def = CATEGORY_KEYWORDS[cat];
   if (!def) return true;
-  // MARKET_MOVING: only HIGH impact, both news and calendar
   if (def.impactOnly) return n.impact === def.impactOnly;
-  // Calendar releases: use per-category country whitelist
   if (n._calRelease) return calItemMatchesCat(n, def);
-  // Regular news items: check assets & keywords
   const headline = (n.headline_en||'').toLowerCase();
-  const assets   = (n.assets||'').split(',').map(x=>x.trim());
+  // Agricultural commodities must NOT appear in FOREX/CRYPTO/BONDS/EQUITIES/INDEXES
+  if (['FOREX','CRYPTO','BONDS','EQUITIES','INDEXES'].includes(cat) && isAgriCommodity(headline)) return false;
+  const assets = (n.assets||'').split(',').map(x=>x.trim());
   if (def.assets && def.assets.some(a => assets.includes(a))) return true;
   if (def.keywords && def.keywords.some(kw => headline.includes(kw))) return true;
   return false;
@@ -1038,14 +1039,14 @@ function clearSearch() {
 
 // ─── Tabs ────────────────────────────────────────────────────────
 // ─── Inline Live Player ───────────────────────────────────────────
-// 24/7 live stream video IDs (verified permanent public streams)
+// 24/7 live stream video IDs — only channels that allow embedding
 const LIVE_STREAM_IDS = {
-  'bloomberg':  'dp8PhLsUcFE',   // Bloomberg Markets & Finance 24/7
-  'cnbc':       '9VkFpvMRoGM',   // CNBC Live
-  'aljazeera':  'FtZoPn--MAs',   // Al Jazeera English 24/7
-  'skynews':    '9Auq9mP2C84',   // Sky News 24/7
-  'dw':         'dGCJ6kXFd-w',   // DW News 24/7
-  'france24':   'UsTNPH6jn6Q',   // France 24 English 24/7
+  'aljazeera':  'FtZoPn--MAs',   // Al Jazeera English 24/7 ✓
+  'skynews':    '9Auq9mP2C84',   // Sky News 24/7 ✓
+  'dw':         'dGCJ6kXFd-w',   // DW News 24/7 ✓
+  'france24':   'UsTNPH6jn6Q',   // France 24 English 24/7 ✓
+  'wion':       '6mEOThyWGBA',   // WION 24/7 ✓
+  'euronews':   'Ij_-VXFkQMI',   // Euronews English 24/7 ✓
 };
 
 function openLiveStream(key, chipEl) {
@@ -1085,7 +1086,7 @@ const TV_CHANNELS = {
   aljazeera:  'https://www.youtube.com/embed/live_stream?channel=UCNye-wNBqNL5ZzHSJj3l8Bg&autoplay=1&mute=0',
   yahoo:      'https://www.youtube.com/embed/live_stream?channel=UCEAZeUIeJs0IjQiqTCdVSIg&autoplay=1&mute=0',
 };
-let currentChannel = 'bloomberg';
+let currentChannel = 'aljazeera';
 
 function switchChannel(ch, btn) {
   currentChannel = ch;

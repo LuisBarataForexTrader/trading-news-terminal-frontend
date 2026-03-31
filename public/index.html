@@ -468,7 +468,14 @@
   }
 
   function getSource(url, sourceName) {
-    const smap = {'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch','yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet','tradingview':'TradingView','wsj':'WSJ','zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider'};
+    const smap = {
+      'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch',
+      'yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet',
+      'tradingview':'TradingView','wsj':'WSJ','dow jones':'Dow Jones',
+      'zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider',
+      'reuters':'Reuters','bloomberg':'Bloomberg','cointelegraph':'Cointelegraph',
+      'ft':'FT','financial times':'FT',
+    };
     if (sourceName && sourceName !== 'undefined') {
       return smap[sourceName.toLowerCase()] || sourceName.toUpperCase();
     }

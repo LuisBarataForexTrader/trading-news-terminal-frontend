@@ -19,90 +19,119 @@
     --accent: #00d4ff;
     --accent2: #0099cc;
     --high: #ff3b5c;
-    --high-bg: rgba(255,59,92,0.08);
-    --high-border: rgba(255,59,92,0.2);
+    --high-bg: rgba(255,59,92,0.09);
+    --high-border: rgba(255,59,92,0.25);
     --medium: #f59e0b;
     --medium-bg: rgba(245,158,11,0.08);
-    --medium-border: rgba(245,158,11,0.2);
+    --medium-border: rgba(245,158,11,0.25);
     --low: #10b981;
-    --low-bg: rgba(16,185,129,0.06);
-    --low-border: rgba(16,185,129,0.15);
+    --low-bg: rgba(16,185,129,0.07);
+    --low-border: rgba(16,185,129,0.2);
     --pro: #a78bfa;
     --font-mono: 'IBM Plex Mono', monospace;
     --font-sans: 'IBM Plex Sans', sans-serif;
+    --header-h: 72px;
+    --sidebar-w: 220px;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:var(--font-mono); min-height:100vh; overflow-x:hidden; }
   body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px); pointer-events:none; z-index:1000; }
 
   /* ── Header ── */
-  .header { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 20px; display:flex; align-items:center; justify-content:space-between; height:52px; position:sticky; top:0; z-index:100; gap:16px; }
-  .logo { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-  .logo-icon { width:26px; height:26px; border:1.5px solid var(--accent); display:flex; align-items:center; justify-content:center; }
-  .logo-icon::before { content:''; width:8px; height:8px; background:var(--accent); display:block; animation:pulse 2s ease-in-out infinite; }
+  .header { background:var(--bg2); border-bottom:2px solid var(--border); padding:0 24px; display:flex; align-items:center; justify-content:space-between; height:var(--header-h); position:sticky; top:0; z-index:100; gap:20px; }
+  .logo { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+  .logo-icon { width:30px; height:30px; border:1.5px solid var(--accent); display:flex; align-items:center; justify-content:center; }
+  .logo-icon::before { content:''; width:10px; height:10px; background:var(--accent); display:block; animation:pulse 2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
-  .logo-text { font-size:11px; font-weight:600; letter-spacing:0.15em; color:var(--text); text-transform:uppercase; }
+  .logo-text { font-size:12px; font-weight:600; letter-spacing:0.15em; color:var(--text); text-transform:uppercase; line-height:1.3; }
   .logo-text span { color:var(--accent); }
+  .logo-sub { font-size:8px; color:var(--text-muted); letter-spacing:0.15em; text-transform:uppercase; margin-top:1px; }
+
+  /* Search bar */
   .header-center { display:flex; align-items:center; gap:16px; flex:1; justify-content:center; }
+  .search-wrap { display:flex; align-items:center; background:var(--bg3); border:1px solid var(--border2); gap:0; width:320px; }
+  .search-wrap:focus-within { border-color:var(--accent2); }
+  .search-icon { padding:0 10px; color:var(--text-muted); font-size:12px; flex-shrink:0; }
+  .search-input { flex:1; background:transparent; border:none; color:var(--text); font-family:var(--font-mono); font-size:11px; letter-spacing:0.04em; padding:9px 10px 9px 0; outline:none; }
+  .search-input::placeholder { color:var(--text-muted); }
+  .search-clear { padding:0 10px; color:var(--text-muted); font-size:10px; cursor:pointer; flex-shrink:0; display:none; }
+  .search-clear:hover { color:var(--text); }
+
+  .live-block { display:flex; flex-direction:column; align-items:center; gap:2px; }
   .live-indicator { display:flex; align-items:center; gap:6px; font-size:10px; letter-spacing:0.1em; color:var(--low); text-transform:uppercase; }
   .live-dot { width:6px; height:6px; border-radius:50%; background:var(--low); animation:blink 1.5s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-  .clock { font-size:12px; font-weight:400; color:var(--text-dim); letter-spacing:0.06em; }
-  .tz-label { font-size:9px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; }
+  .clock { font-size:14px; font-weight:500; color:var(--text); letter-spacing:0.08em; font-variant-numeric:tabular-nums; }
+  .tz-label { font-size:9px; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; text-align:center; }
+
   .header-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
   .lang-toggle { display:flex; background:var(--bg3); border:1px solid var(--border); overflow:hidden; }
-  .lang-btn { padding:5px 10px; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.1em; border:none; background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
+  .lang-btn { padding:6px 11px; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.1em; border:none; background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
   .lang-btn.active { background:var(--accent); color:#000; }
-  .sound-btn { padding:5px 10px; font-family:var(--font-mono); font-size:10px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+  .sound-btn { padding:6px 11px; font-family:var(--font-mono); font-size:10px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
   .sound-btn.active { border-color:var(--low); color:var(--low); }
-  .auth-btn { padding:5px 14px; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.1em; border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
+  .auth-btn { padding:6px 16px; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.1em; border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
   .auth-btn:hover { border-color:var(--accent2); color:var(--accent); }
   .auth-btn.signup { background:var(--accent); border-color:var(--accent); color:#000; font-weight:600; }
   .auth-btn.signup:hover { background:var(--accent2); border-color:var(--accent2); }
 
   /* ── Layout ── */
-  .main { display:grid; grid-template-columns:210px 1fr; height:calc(100vh - 52px); }
-  .sidebar { background:var(--bg2); border-right:1px solid var(--border); padding:16px 0; overflow-y:auto; display:flex; flex-direction:column; gap:0; }
-  .sidebar-section { padding:0 14px 16px; border-bottom:1px solid var(--border); margin-bottom:16px; }
-  .sidebar-label { font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; padding:0 4px; }
+  .main { display:grid; grid-template-columns:var(--sidebar-w) 1fr; height:calc(100vh - var(--header-h)); }
+  .sidebar { background:var(--bg2); border-right:1px solid var(--border); padding:0 0 80px; overflow-y:auto; display:flex; flex-direction:column; }
+  .sidebar-section { padding:14px 14px 12px; border-bottom:1px solid var(--border); }
+  .sidebar-label { font-size:8px; letter-spacing:0.25em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; padding:0 4px; }
   .filter-btn { width:100%; padding:7px 10px; background:transparent; border:1px solid transparent; color:var(--text-dim); font-family:var(--font-mono); font-size:11px; letter-spacing:0.04em; cursor:pointer; text-align:left; transition:all 0.15s; display:flex; align-items:center; gap:8px; margin-bottom:2px; }
   .filter-btn:hover { color:var(--text); background:var(--bg3); border-color:var(--border); }
   .filter-btn.active { color:var(--accent); border-color:var(--accent2); background:rgba(0,212,255,0.06); }
   .filter-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
   .dot-all{background:var(--text-dim)} .dot-high{background:var(--high)} .dot-medium{background:var(--medium)} .dot-low{background:var(--low)}
   .filter-count { margin-left:auto; font-size:9px; color:var(--text-muted); }
-  .asset-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:0 4px; }
-  .asset-btn { padding:6px 4px; background:var(--bg3); border:1px solid var(--border); color:var(--text-dim); font-family:var(--font-mono); font-size:10px; letter-spacing:0.04em; cursor:pointer; text-align:center; transition:all 0.15s; }
-  .asset-btn:hover,.asset-btn.active { color:var(--accent); border-color:var(--accent2); background:rgba(0,212,255,0.06); }
 
-  /* Pack info in sidebar */
-  .pack-info { margin:0 14px 16px; padding:10px 12px; background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.12); }
-  .pack-badge { font-size:8px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
-  .pack-desc { font-size:9px; color:var(--text-muted); letter-spacing:0.03em; line-height:1.5; }
-  .pack-upgrade { display:block; margin-top:8px; padding:5px; text-align:center; background:var(--accent); color:#000; font-size:9px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; border:none; font-family:var(--font-mono); width:100%; transition:background 0.15s; }
-  .pack-upgrade:hover { background:var(--accent2); }
+  /* My News watchlist */
+  .watchlist-grid { display:flex; flex-wrap:wrap; gap:4px; padding:0 4px; }
+  .watch-btn { padding:5px 8px; background:var(--bg3); border:1px solid var(--border); color:var(--text-dim); font-family:var(--font-mono); font-size:10px; letter-spacing:0.04em; cursor:pointer; transition:all 0.15s; }
+  .watch-btn:hover { color:var(--text); border-color:var(--border2); }
+  .watch-btn.selected { color:var(--accent); border-color:var(--accent2); background:rgba(0,212,255,0.07); }
+  .my-news-hint { font-size:9px; color:var(--text-muted); letter-spacing:0.03em; line-height:1.5; padding:6px 4px 2px; }
+
+  /* Pack CTA — red theme */
+  .pack-info { margin:14px 14px 0; padding:14px; background:rgba(255,59,92,0.07); border:1px solid rgba(255,59,92,0.25); }
+  .pack-badge { font-size:8px; font-weight:700; letter-spacing:0.25em; text-transform:uppercase; color:var(--high); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .pack-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--high); animation:blink 1.5s ease-in-out infinite; }
+  .pack-desc { font-size:10px; color:var(--text-dim); letter-spacing:0.03em; line-height:1.6; margin-bottom:10px; }
+  .pack-desc strong { color:#fff; }
+  .pack-upgrade { display:block; padding:8px; text-align:center; background:var(--high); color:#fff; font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; border:none; font-family:var(--font-mono); width:100%; transition:all 0.15s; }
+  .pack-upgrade:hover { background:#e02244; }
 
   /* ── Feed ── */
   .feed { overflow:hidden; background:var(--bg); display:flex; flex-direction:column; }
-  .ticker-bar { background:var(--bg3); border-bottom:1px solid var(--border); height:30px; overflow:hidden; flex-shrink:0; }
-  .ticker-inner { display:flex; align-items:center; height:100%; white-space:nowrap; animation:ticker 30s linear infinite; }
-  @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-  .ticker-item { font-size:10px; letter-spacing:0.06em; padding:0 20px; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
-  .ticker-item .up{color:var(--low)} .ticker-item .down{color:var(--high)}
-  .ticker-separator { color:var(--border2); padding:0 4px; }
+
+  /* TradingView ticker container */
+  .ticker-bar { background:var(--bg3); border-bottom:1px solid var(--border); height:46px; overflow:hidden; flex-shrink:0; }
+  .ticker-bar .tradingview-widget-container { height:46px !important; }
 
   /* ── Tabs ── */
-  .tab-bar { display:flex; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; }
-  .tab-btn { padding:10px 20px; font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; border:none; border-bottom:2px solid transparent; background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+  .tab-bar { display:flex; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; padding:0 8px; gap:4px; }
+  .tab-btn { padding:14px 20px; font-family:var(--font-mono); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; border:none; border-bottom:2px solid transparent; background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
   .tab-btn:hover { color:var(--text-dim); }
   .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
   .tab-content { flex:1; overflow:hidden; display:flex; flex-direction:column; }
   .tab-content.hidden { display:none; }
 
+  /* ── Category bar ── */
+  .category-bar { display:flex; align-items:center; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; overflow-x:auto; padding:0 20px; gap:2px; scrollbar-width:none; }
+  .category-bar::-webkit-scrollbar { display:none; }
+  .cat-btn { padding:10px 14px; font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; border:none; border-bottom:2px solid transparent; background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; white-space:nowrap; flex-shrink:0; }
+  .cat-btn:hover { color:var(--text-dim); }
+  .cat-btn.active { color:var(--text); border-bottom-color:var(--accent); }
+  .cat-btn.cat-my-news.active { color:var(--pro); border-bottom-color:var(--pro); }
+  .cat-btn.cat-market-moving.active { color:var(--high); border-bottom-color:var(--high); }
+  .cat-sep { width:1px; height:16px; background:var(--border); margin:0 4px; flex-shrink:0; align-self:center; }
+
   /* ── Feed header ── */
-  .feed-header { padding:10px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg2); flex-shrink:0; }
-  .feed-title { font-size:14px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text); display:flex; align-items:center; gap:10px; }
-  .feed-title-badge { font-size:9px; font-weight:400; letter-spacing:0.1em; color:var(--text-muted); border:1px solid var(--border); padding:2px 7px; }
+  .feed-header { padding:14px 28px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg2); flex-shrink:0; }
+  .feed-title { font-size:15px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--text); display:flex; align-items:center; gap:10px; }
+  .feed-title-badge { font-size:9px; font-weight:400; letter-spacing:0.1em; color:var(--text-muted); border:1px solid var(--border); padding:2px 8px; }
   .feed-count { font-size:10px; color:var(--text-muted); letter-spacing:0.05em; }
   .feed-inner { overflow-y:auto; flex:1; padding-bottom:40px; }
 
@@ -110,17 +139,29 @@
   .news-item { border-bottom:1px solid var(--border); padding:13px 24px; transition:background 0.15s; cursor:pointer; display:grid; grid-template-columns:76px 1fr auto; gap:14px; align-items:start; animation:slideIn 0.3s ease-out; }
   @keyframes slideIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
   .news-item:hover { background:var(--bg2); }
+
+  /* HIGH */
   .news-item.high { background:var(--high-bg); border-left:2px solid var(--high); border-bottom-color:var(--high-border); }
-  .news-item.high:hover { background:rgba(255,59,92,0.12); }
-  .news-item.medium { border-left:2px solid var(--medium); }
-  .news-item.low { border-left:2px solid transparent; }
+  .news-item.high:hover { background:rgba(255,59,92,0.13); }
+  .news-item.high .news-headline { color:#fff; font-weight:600; }
+
+  /* MEDIUM */
+  .news-item.medium { background:var(--medium-bg); border-left:2px solid var(--medium); border-bottom-color:var(--medium-border); }
+  .news-item.medium:hover { background:rgba(245,158,11,0.12); }
+  .news-item.medium .news-headline { color:#fde8a0; font-weight:500; }
+
+  /* LOW */
+  .news-item.low { background:var(--low-bg); border-left:2px solid var(--low); border-bottom-color:var(--low-border); }
+  .news-item.low:hover { background:rgba(16,185,129,0.1); }
+  .news-item.low .news-headline { color:#d4f5eb; }
+
+  /* Calendar release */
   .news-item.cal-release { border-left:2px solid var(--accent); background:rgba(0,212,255,0.05); }
   .news-item.cal-release:hover { background:rgba(0,212,255,0.09); }
+  .news-item.cal-release .news-headline { color:var(--accent); }
 
   .news-time { font-size:10px; color:var(--text-dim); letter-spacing:0.04em; padding-top:2px; font-weight:300; line-height:1.6; }
-  .news-headline { font-size:12px; font-weight:500; line-height:1.55; color:var(--text); letter-spacing:0.02em; margin-bottom:5px; }
-  .news-item.high .news-headline { color:#fff; }
-  .news-item.cal-release .news-headline { color:var(--accent); }
+  .news-headline { font-size:12px; line-height:1.55; letter-spacing:0.02em; margin-bottom:5px; }
   .news-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .news-source { font-size:9px; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; }
   .asset-tag { font-size:9px; letter-spacing:0.06em; padding:2px 6px; background:var(--bg3); border:1px solid var(--border); color:var(--text-dim); }
@@ -130,22 +171,25 @@
   .share-btn:hover { border-color:var(--accent); color:var(--accent); }
   .news-impact { text-align:right; padding-top:2px; }
   .impact-badge { font-size:9px; font-weight:600; letter-spacing:0.12em; padding:3px 8px; text-transform:uppercase; display:inline-block; }
-  .badge-high { background:var(--high-bg); border:1px solid var(--high-border); color:var(--high); }
+  .badge-high   { background:var(--high-bg);   border:1px solid var(--high-border);   color:var(--high); }
   .badge-medium { background:var(--medium-bg); border:1px solid var(--medium-border); color:var(--medium); }
-  .badge-low { background:var(--low-bg); border:1px solid var(--low-border); color:var(--low); }
-  .badge-cal { background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.25); color:var(--accent); }
+  .badge-low    { background:var(--low-bg);    border:1px solid var(--low-border);    color:var(--low); }
+  .badge-cal    { background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.25); color:var(--accent); }
 
   .market-moves { margin-top:5px; display:flex; gap:8px; flex-wrap:wrap; }
   .move { font-size:10px; letter-spacing:0.04em; }
   .move.up{color:var(--low)} .move.down{color:var(--high)} .move.neutral{color:var(--text-dim)}
 
-  /* ── Delay banner ── */
-  .delay-banner { margin:20px 24px; border:1px solid rgba(255,59,92,0.3); background:rgba(255,59,92,0.05); padding:24px; text-align:center; }
-  .delay-banner-title { font-size:16px; font-weight:600; letter-spacing:0.1em; color:#fff; text-transform:uppercase; margin-bottom:8px; }
-  .delay-banner-sub { font-size:11px; color:var(--text-dim); letter-spacing:0.05em; margin-bottom:16px; line-height:1.6; }
-  .delay-banner-sub span { color:var(--accent); }
-  .delay-banner-btn { display:inline-block; padding:10px 28px; background:var(--accent); color:#000; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; border:none; transition:background 0.15s; }
-  .delay-banner-btn:hover { background:var(--accent2); }
+  /* ── Delay banner — FULL RED, prominent ── */
+  .delay-banner { margin:0 0 1px; border-top:1px solid rgba(255,59,92,0.35); border-bottom:1px solid rgba(255,59,92,0.35); background:rgba(255,59,92,0.08); padding:30px 28px; text-align:center; position:relative; overflow:hidden; }
+  .delay-banner::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,59,92,0.06) 0%,transparent 60%); pointer-events:none; }
+  .delay-banner-eyebrow { font-size:9px; font-weight:600; letter-spacing:0.3em; text-transform:uppercase; color:var(--high); margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .delay-banner-eyebrow::before,.delay-banner-eyebrow::after { content:''; flex:1; max-width:60px; height:1px; background:rgba(255,59,92,0.3); }
+  .delay-banner-title { font-size:18px; font-weight:700; letter-spacing:0.08em; color:#fff; text-transform:uppercase; margin-bottom:10px; }
+  .delay-banner-sub { font-size:11px; color:var(--text-dim); letter-spacing:0.04em; margin-bottom:20px; line-height:1.7; }
+  .delay-banner-sub strong { color:#fff; }
+  .delay-banner-btn { display:inline-block; padding:11px 32px; background:var(--high); color:#fff; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; border:none; transition:all 0.15s; }
+  .delay-banner-btn:hover { background:#e02244; transform:translateY(-1px); }
 
   /* ── Empty / Error ── */
   .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:var(--text-muted); gap:12px; }
@@ -154,21 +198,24 @@
   .empty-sub { font-size:10px; color:var(--text-muted); letter-spacing:0.04em; }
 
   /* ── Calendar tab ── */
-  .cal-toolbar { display:flex; align-items:center; gap:8px; padding:10px 20px; background:var(--bg2); border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap; }
-  .cal-filter-btn { padding:4px 10px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+  .cal-header { padding:14px 28px; border-bottom:1px solid var(--border); background:var(--bg2); flex-shrink:0; }
+  .cal-header-title { font-size:15px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--text); margin-bottom:10px; }
+  .cal-toolbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .cal-filter-btn { padding:5px 11px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
   .cal-filter-btn:hover { color:var(--text-dim); border-color:var(--border2); }
   .cal-filter-btn.active { color:var(--accent); border-color:var(--accent2); background:rgba(0,212,255,0.05); }
-  .cal-filter-btn.f-high.active { color:var(--high); border-color:var(--high); background:var(--high-bg); }
+  .cal-filter-btn.f-high.active { color:var(--high);   border-color:var(--high);   background:var(--high-bg); }
   .cal-filter-btn.f-med.active  { color:var(--medium); border-color:var(--medium); background:var(--medium-bg); }
-  .cal-filter-btn.f-low.active  { color:var(--low); border-color:var(--low); background:var(--low-bg); }
+  .cal-filter-btn.f-low.active  { color:var(--low);    border-color:var(--low);    background:var(--low-bg); }
   .cal-sep { width:1px; height:16px; background:var(--border); margin:0 4px; }
   .cal-body { flex:1; overflow-y:auto; padding-bottom:40px; }
-  .cal-day-header { padding:8px 20px; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:5; }
-  .cal-event { display:grid; grid-template-columns:90px 52px 58px 1fr auto; gap:12px; align-items:center; padding:10px 20px; border-bottom:1px solid var(--border); transition:background 0.15s; }
+  .cal-day-header { padding:8px 24px; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:0; z-index:5; }
+  .cal-event { display:grid; grid-template-columns:90px 52px 58px 1fr auto; gap:12px; align-items:center; padding:10px 24px; border-bottom:1px solid var(--border); transition:background 0.15s; }
   .cal-event:hover { background:var(--bg2); }
   .cal-event.imp-high { border-left:2px solid var(--high); background:var(--high-bg); }
   .cal-event.imp-high:hover { background:rgba(255,59,92,0.12); }
-  .cal-event.imp-med  { border-left:2px solid var(--medium); }
+  .cal-event.imp-med  { border-left:2px solid var(--medium); background:var(--medium-bg); }
+  .cal-event.imp-med:hover  { background:rgba(245,158,11,0.11); }
   .cal-event.imp-low  { border-left:2px solid var(--border2); }
   .cal-event.released { opacity:0.7; }
   .cal-event.just-out { animation:flashEvent 2s ease-out forwards; }
@@ -182,22 +229,22 @@
   .cal-val { text-align:right; }
   .cal-val-label { font-size:8px; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; }
   .cal-val-data { font-size:11px; color:var(--text-dim); letter-spacing:0.03em; }
-  .cal-val-data.actual-positive { color:var(--low); font-weight:600; }
-  .cal-val-data.actual-negative { color:var(--high); font-weight:600; }
+  .cal-val-data.actual-positive { color:var(--low);    font-weight:600; }
+  .cal-val-data.actual-negative { color:var(--high);   font-weight:600; }
   .cal-val-data.actual-neutral  { color:var(--medium); font-weight:600; }
   .cal-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; gap:12px; color:var(--text-muted); }
   @media (max-width:900px) { .cal-event { grid-template-columns:80px 40px 50px 1fr; } .cal-values { display:none; } }
 
   /* ── Status bar ── */
-  .status-bar { background:var(--bg2); border-top:1px solid var(--border); padding:5px 24px; display:flex; align-items:center; gap:20px; position:fixed; bottom:0; left:210px; right:0; z-index:50; }
+  .status-bar { background:var(--bg2); border-top:1px solid var(--border); padding:5px 24px; display:flex; align-items:center; gap:20px; position:fixed; bottom:0; left:var(--sidebar-w); right:0; z-index:50; }
   .status-item { font-size:9px; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; display:flex; align-items:center; gap:5px; }
   .status-item span { color:var(--text-dim); }
   .ws-badge { font-size:8px; padding:1px 5px; font-weight:600; letter-spacing:0.05em; }
-  .ws-badge.connected    { background:rgba(16,185,129,0.15); border:1px solid var(--low-border); color:var(--low); }
-  .ws-badge.disconnected { background:rgba(255,59,92,0.1);  border:1px solid var(--high-border); color:var(--high); }
+  .ws-badge.connected    { background:rgba(16,185,129,0.15); border:1px solid var(--low-border);  color:var(--low); }
+  .ws-badge.disconnected { background:rgba(255,59,92,0.1);   border:1px solid var(--high-border); color:var(--high); }
 
   /* ── Misc ── */
-  @keyframes flashHigh { 0%{background:rgba(255,59,92,0.25)} 100%{background:var(--high-bg)} }
+  @keyframes flashHigh { 0%{background:rgba(255,59,92,0.3)} 100%{background:var(--high-bg)} }
   .news-item.high.new-item { animation:flashHigh 1.5s ease-out forwards, slideIn 0.3s ease-out; }
   .toast { position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:var(--bg3); border:1px solid var(--accent); color:var(--accent); font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; padding:8px 20px; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; }
   .toast.show { opacity:1; }
@@ -210,23 +257,31 @@
 <header class="header">
   <div class="logo">
     <div class="logo-icon"></div>
-    <div class="logo-text">Trading <span>News Terminal</span></div>
+    <div>
+      <div class="logo-text">Trading <span>News Terminal</span></div>
+      <div class="logo-sub">Real-time Market Intelligence</div>
+    </div>
   </div>
 
   <div class="header-center">
-    <div class="live-indicator"><div class="live-dot"></div>Live</div>
-    <div>
+    <div class="search-wrap">
+      <div class="search-icon">⌕</div>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search news, assets, keywords..." oninput="onSearchInput(this.value)" />
+      <div class="search-clear" id="searchClear" onclick="clearSearch()">✕</div>
+    </div>
+    <div class="live-block">
+      <div class="live-indicator"><div class="live-dot"></div>Live Feed</div>
       <div class="clock" id="clock">--:--:--</div>
       <div class="tz-label" id="tzLabel">Local</div>
     </div>
+  </div>
+
+  <div class="header-right">
     <button class="sound-btn active" id="soundBtn" onclick="toggleSound()">🔔 Alerts ON</button>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
       <button class="lang-btn" onclick="setLang('pt',this)">PT</button>
     </div>
-  </div>
-
-  <div class="header-right">
     <button class="auth-btn" onclick="showToast('Login coming soon — Pro features')">Login</button>
     <button class="auth-btn signup" onclick="showToast('Sign up coming soon — Get Pro access')">Sign Up</button>
   </div>
@@ -246,46 +301,61 @@
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-label">Assets</div>
-      <div class="asset-grid">
-        <button class="asset-btn active" onclick="toggleAsset('ALL',this)">ALL</button>
-        <button class="asset-btn" onclick="toggleAsset('USD',this)">USD</button>
-        <button class="asset-btn" onclick="toggleAsset('EUR',this)">EUR</button>
-        <button class="asset-btn" onclick="toggleAsset('GOLD',this)">XAU</button>
-        <button class="asset-btn" onclick="toggleAsset('OIL',this)">OIL</button>
-        <button class="asset-btn" onclick="toggleAsset('SP500',this)">SPX</button>
-        <button class="asset-btn" onclick="toggleAsset('BTC',this)">BTC</button>
-        <button class="asset-btn" onclick="toggleAsset('GBP',this)">GBP</button>
-        <button class="asset-btn" onclick="toggleAsset('JPY',this)">JPY</button>
+      <div class="sidebar-label">My News — Watchlist</div>
+      <div class="my-news-hint">Select assets to pin to MY NEWS</div>
+      <div class="watchlist-grid" style="margin-top:8px;">
+        <button class="watch-btn" data-asset="USD"   onclick="toggleWatch('USD',this)">USD</button>
+        <button class="watch-btn" data-asset="EUR"   onclick="toggleWatch('EUR',this)">EUR</button>
+        <button class="watch-btn" data-asset="GBP"   onclick="toggleWatch('GBP',this)">GBP</button>
+        <button class="watch-btn" data-asset="JPY"   onclick="toggleWatch('JPY',this)">JPY</button>
+        <button class="watch-btn" data-asset="GOLD"  onclick="toggleWatch('GOLD',this)">XAU</button>
+        <button class="watch-btn" data-asset="OIL"   onclick="toggleWatch('OIL',this)">OIL</button>
+        <button class="watch-btn" data-asset="SP500" onclick="toggleWatch('SP500',this)">SPX</button>
+        <button class="watch-btn" data-asset="BTC"   onclick="toggleWatch('BTC',this)">BTC</button>
       </div>
     </div>
 
+    <!-- Pack CTA — red -->
     <div class="pack-info" id="packInfo">
-      <div class="pack-badge">⚡ Basic Pack</div>
-      <div class="pack-desc">News delayed ~1 min.<br>Upgrade for <strong>real-time</strong> feed.</div>
-      <button class="pack-upgrade" onclick="showToast('Pro Pack coming soon!')">Go Pro →</button>
+      <div class="pack-badge">Basic Pack</div>
+      <div class="pack-desc">You're on the <strong>free plan</strong>.<br>Upgrade to <strong>Pro</strong> for instant real-time news, no delays, priority alerts and full calendar data.</div>
+      <button class="pack-upgrade" onclick="showToast('Pro Pack coming soon!')">⚡ Upgrade to Pro →</button>
     </div>
   </aside>
 
   <!-- FEED -->
   <main class="feed">
-    <!-- Ticker -->
+    <!-- TradingView Ticker Tape (real-time) -->
     <div class="ticker-bar">
-      <div class="ticker-inner">
-        <div class="ticker-item">EUR/USD <span class="up">▲ 1.0923</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">GBP/USD <span class="down">▼ 1.2734</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">GOLD <span class="up">▲ 2,341.50</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">OIL <span class="down">▼ 72.14</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">S&P 500 <span class="up">▲ 5,218.40</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">BTC/USD <span class="up">▲ 68,420</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">USD/JPY <span class="down">▼ 149.82</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">EUR/USD <span class="up">▲ 1.0923</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">GBP/USD <span class="down">▼ 1.2734</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">GOLD <span class="up">▲ 2,341.50</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">OIL <span class="down">▼ 72.14</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">S&P 500 <span class="up">▲ 5,218.40</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">BTC/USD <span class="up">▲ 68,420</span></div><div class="ticker-separator">|</div>
-        <div class="ticker-item">USD/JPY <span class="down">▼ 149.82</span></div><div class="ticker-separator">|</div>
+      <div class="tradingview-widget-container" style="height:46px;overflow:hidden;">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+          "symbols": [
+            {"proName":"FOREXCOM:EURUSD","title":"EUR/USD"},
+            {"proName":"FOREXCOM:GBPUSD","title":"GBP/USD"},
+            {"proName":"FOREXCOM:USDJPY","title":"USD/JPY"},
+            {"proName":"FOREXCOM:USDCHF","title":"USD/CHF"},
+            {"proName":"FOREXCOM:AUDUSD","title":"AUD/USD"},
+            {"proName":"FOREXCOM:USDCAD","title":"USD/CAD"},
+            {"proName":"TVC:GOLD","title":"GOLD"},
+            {"proName":"TVC:SILVER","title":"SILVER"},
+            {"proName":"NYMEX:CL1!","title":"CRUDE OIL"},
+            {"proName":"SP:SPX","title":"S&P 500"},
+            {"proName":"NASDAQ:NDX","title":"NASDAQ"},
+            {"proName":"DJ:DJI","title":"DOW JONES"},
+            {"proName":"BITSTAMP:BTCUSD","title":"BTC/USD"},
+            {"proName":"BITSTAMP:ETHUSD","title":"ETH/USD"},
+            {"proName":"TVC:US10Y","title":"US 10Y"},
+            {"proName":"TVC:DXY","title":"DXY"}
+          ],
+          "showSymbolLogo": false,
+          "colorTheme": "dark",
+          "isTransparent": true,
+          "displayMode": "adaptive",
+          "locale": "en"
+        }
+        </script>
       </div>
     </div>
 
@@ -297,6 +367,23 @@
 
     <!-- NEWS TAB -->
     <div class="tab-content" id="tab-news">
+
+      <!-- Category filter bar -->
+      <div class="category-bar" id="categoryBar">
+        <button class="cat-btn cat-my-news active" data-cat="ALL" onclick="setCategory('ALL',this)">All</button>
+        <button class="cat-btn cat-my-news"        data-cat="MY_NEWS" onclick="setCategory('MY_NEWS',this)">★ My News</button>
+        <div class="cat-sep"></div>
+        <button class="cat-btn" data-cat="FOREX"         onclick="setCategory('FOREX',this)">Forex</button>
+        <button class="cat-btn" data-cat="CRYPTO"        onclick="setCategory('CRYPTO',this)">Crypto</button>
+        <button class="cat-btn" data-cat="MACRO"         onclick="setCategory('MACRO',this)">Macro</button>
+        <button class="cat-btn" data-cat="BONDS"         onclick="setCategory('BONDS',this)">Bonds</button>
+        <button class="cat-btn" data-cat="EQUITIES"      onclick="setCategory('EQUITIES',this)">Equities</button>
+        <button class="cat-btn" data-cat="INDEXES"       onclick="setCategory('INDEXES',this)">Indexes</button>
+        <button class="cat-btn" data-cat="COMMODITIES"   onclick="setCategory('COMMODITIES',this)">Commodities</button>
+        <div class="cat-sep"></div>
+        <button class="cat-btn cat-market-moving" data-cat="MARKET_MOVING" onclick="setCategory('MARKET_MOVING',this)">🔴 Market Moving</button>
+      </div>
+
       <div class="feed-header">
         <div class="feed-title" id="feedTitle">
           All News
@@ -315,19 +402,22 @@
 
     <!-- CALENDAR TAB -->
     <div class="tab-content hidden" id="tab-calendar">
-      <div class="cal-toolbar">
-        <button class="cal-filter-btn f-high active" onclick="calSetImpact(1,this)">● High</button>
-        <button class="cal-filter-btn f-med  active" onclick="calSetImpact(0,this)">● Medium</button>
-        <button class="cal-filter-btn f-low"         onclick="calSetImpact(-1,this)">● Low</button>
-        <div class="cal-sep"></div>
-        <button class="cal-filter-btn active" id="cal-country-ALL" onclick="calSetCountry('ALL',this)">ALL</button>
-        <button class="cal-filter-btn" id="cal-country-US"  onclick="calSetCountry('US',this)">🇺🇸 US</button>
-        <button class="cal-filter-btn" id="cal-country-EU"  onclick="calSetCountry('EU',this)">🇪🇺 EU</button>
-        <button class="cal-filter-btn" id="cal-country-GB"  onclick="calSetCountry('GB',this)">🇬🇧 GB</button>
-        <button class="cal-filter-btn" id="cal-country-JP"  onclick="calSetCountry('JP',this)">🇯🇵 JP</button>
-        <button class="cal-filter-btn" id="cal-country-CN"  onclick="calSetCountry('CN',this)">🇨🇳 CN</button>
-        <button class="cal-filter-btn" id="cal-country-AU"  onclick="calSetCountry('AU',this)">🇦🇺 AU</button>
-        <button class="cal-filter-btn" id="cal-country-CA"  onclick="calSetCountry('CA',this)">🇨🇦 CA</button>
+      <div class="cal-header">
+        <div class="cal-header-title">Economic Calendar</div>
+        <div class="cal-toolbar">
+          <button class="cal-filter-btn f-high active" onclick="calSetImpact(1,this)">● High</button>
+          <button class="cal-filter-btn f-med  active" onclick="calSetImpact(0,this)">● Medium</button>
+          <button class="cal-filter-btn f-low"         onclick="calSetImpact(-1,this)">● Low</button>
+          <div class="cal-sep"></div>
+          <button class="cal-filter-btn active" id="cal-country-ALL" onclick="calSetCountry('ALL',this)">ALL</button>
+          <button class="cal-filter-btn" id="cal-country-US"  onclick="calSetCountry('US',this)">🇺🇸 US</button>
+          <button class="cal-filter-btn" id="cal-country-EU"  onclick="calSetCountry('EU',this)">🇪🇺 EU</button>
+          <button class="cal-filter-btn" id="cal-country-GB"  onclick="calSetCountry('GB',this)">🇬🇧 GB</button>
+          <button class="cal-filter-btn" id="cal-country-JP"  onclick="calSetCountry('JP',this)">🇯🇵 JP</button>
+          <button class="cal-filter-btn" id="cal-country-CN"  onclick="calSetCountry('CN',this)">🇨🇳 CN</button>
+          <button class="cal-filter-btn" id="cal-country-AU"  onclick="calSetCountry('AU',this)">🇦🇺 AU</button>
+          <button class="cal-filter-btn" id="cal-country-CA"  onclick="calSetCountry('CA',this)">🇨🇦 CA</button>
+        </div>
       </div>
       <div class="cal-body" id="calBody">
         <div class="cal-empty"><div class="empty-icon">📅</div><div class="empty-text">Loading calendar...</div></div>
@@ -349,31 +439,81 @@
 <script>
 // ─── Config ───────────────────────────────────────────────────────
 const BACKEND_URL = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
-const USER_PACK   = 'basic'; // 'basic' | 'pro'  — future: set from auth
-const DELAY_AFTER = 8;       // show delay banner after this many news items
+const USER_PACK   = 'basic'; // 'basic' | 'pro'
+const DELAY_AFTER = 3;       // show delay banner after this many items
 
 // ─── State ────────────────────────────────────────────────────────
-let lang         = 'en';
-let impactFilter = 'ALL';
-let assetFilter  = 'ALL';
-let allNews      = [];
-let calReleases  = []; // calendar events injected into news feed
-let soundEnabled = true;
-let knownUrls    = new Set();
-let knownCalIds  = new Set();
-let audioCtx     = null;
-let ws           = null;
+let lang           = 'en';
+let impactFilter   = 'ALL';
+let categoryFilter = 'ALL';
+let searchQuery    = '';
+let allNews        = [];
+let calReleases    = [];
+let soundEnabled   = true;
+let knownUrls      = new Set();
+let knownCalIds    = new Set();
+let audioCtx       = null;
+let ws             = null;
 let wsReconnectTimer = null;
 
-// ─── Clock (local timezone) ───────────────────────────────────────
+// My News watchlist — persisted to localStorage
+let myWatchlist = JSON.parse(localStorage.getItem('myWatchlist') || '[]');
+
+// ─── Category definitions ─────────────────────────────────────────
+const CATEGORY_KEYWORDS = {
+  FOREX:         { assets: ['USD','EUR','GBP','JPY','CHF','AUD','CAD','NZD'], keywords: ['forex','currency','exchange rate','dollar','euro','pound','yen','franc','fx','fx market'] },
+  CRYPTO:        { assets: ['BTC'], keywords: ['bitcoin','btc','crypto','ethereum','eth','blockchain','defi','altcoin','digital asset','coinbase','binance','token'] },
+  MACRO:         { assets: [], keywords: ['fed','federal reserve','ecb','boj','boe','central bank','interest rate','rate hike','rate cut','cpi','inflation','gdp','nfp','non-farm','unemployment','recession','monetary','fiscal','stimulus','tariff','sanction','powell','lagarde','yellen','fomc'] },
+  BONDS:         { assets: [], keywords: ['bond','yield','treasury','10-year','2-year','gilt','bund','spread','debt','sovereign','fixed income'] },
+  EQUITIES:      { assets: ['SP500'], keywords: ['stocks','stock','shares','equity','equities','earnings','ipo','dividend','s&p','nasdaq','dow','nyse','listed','quarterly results'] },
+  INDEXES:       { assets: ['SP500'], keywords: ['s&p','sp500','nasdaq','dow jones','dax','ftse','nikkei','index','indices','vix'] },
+  COMMODITIES:   { assets: ['GOLD','OIL'], keywords: ['gold','silver','crude','oil','opec','brent','wti','copper','wheat','gas','energy','commodity','commodities','precious metals'] },
+  MARKET_MOVING: { assets: [], keywords: [], impactOnly: 'HIGH' },
+};
+
+function newsMatchesCategory(n, cat) {
+  if (cat === 'ALL') return true;
+  if (cat === 'MY_NEWS') {
+    if (myWatchlist.length === 0) return false;
+    const a = (n.assets || '').split(',').map(x => x.trim());
+    return myWatchlist.some(w => a.includes(w));
+  }
+  const def = CATEGORY_KEYWORDS[cat];
+  if (!def) return true;
+  if (def.impactOnly) return n.impact === def.impactOnly;
+  const headline = (n.headline_en || '').toLowerCase();
+  const assets = (n.assets || '').split(',').map(x => x.trim());
+  if (def.assets.length && def.assets.some(a => assets.includes(a))) return true;
+  if (def.keywords.some(kw => headline.includes(kw))) return true;
+  return false;
+}
+
+// ─── Clock ────────────────────────────────────────────────────────
 function updateClock() {
   const now = new Date();
   document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB', { hour12: false });
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  document.getElementById('tzLabel').textContent = tz.replace('_', ' ');
+  document.getElementById('tzLabel').textContent = tz.replace(/_/g,' ');
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+// ─── Watchlist ────────────────────────────────────────────────────
+function toggleWatch(asset, btn) {
+  if (myWatchlist.includes(asset)) {
+    myWatchlist = myWatchlist.filter(a => a !== asset);
+    btn.classList.remove('selected');
+  } else {
+    myWatchlist.push(asset);
+    btn.classList.add('selected');
+  }
+  localStorage.setItem('myWatchlist', JSON.stringify(myWatchlist));
+  if (categoryFilter === 'MY_NEWS') renderNews();
+}
+// Restore watchlist state on load
+document.querySelectorAll('.watch-btn').forEach(btn => {
+  if (myWatchlist.includes(btn.dataset.asset)) btn.classList.add('selected');
+});
 
 // ─── Translations ─────────────────────────────────────────────────
 const PT_TRANS = {
@@ -453,24 +593,21 @@ function handleNewsData(data, isUpdate) {
   document.getElementById('totalCount').textContent = data.length;
 }
 
-// Basic pack: poll every 60s as fallback / sole update mechanism
 if (USER_PACK === 'basic') {
-  setInterval(async () => {
-    try {
-      await fetch(BACKEND_URL + '/fetch');
-    } catch(e) {}
-  }, 60000);
+  setInterval(async () => { try { await fetch(BACKEND_URL + '/fetch'); } catch(e) {} }, 60000);
 }
 
-// ─── Manual refresh (hidden but callable) ─────────────────────────
-async function fetchAndRefresh() {
-  try {
-    await fetch(BACKEND_URL + '/fetch');
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      const res = await fetch(BACKEND_URL + '/news?limit=50');
-      handleNewsData(await res.json(), false);
-    }
-  } catch(e) {}
+// ─── Search ───────────────────────────────────────────────────────
+function onSearchInput(val) {
+  searchQuery = val.trim().toLowerCase();
+  document.getElementById('searchClear').style.display = searchQuery ? 'block' : 'none';
+  updateFeedTitle(); renderNews();
+}
+function clearSearch() {
+  searchQuery = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchClear').style.display = 'none';
+  updateFeedTitle(); renderNews();
 }
 
 // ─── Tabs ─────────────────────────────────────────────────────────
@@ -482,18 +619,18 @@ function switchTab(tab) {
   if (tab === 'calendar' && calEvents.length === 0) loadCalendar();
 }
 
-// ─── Filters ──────────────────────────────────────────────────────
-const FILTER_TITLES = {
-  ALL: 'All News', HIGH: 'High Impact', MEDIUM: 'Medium Impact', LOW: 'Low Impact',
-};
-const ASSET_TITLES = {
-  ALL: null, USD: 'USD News', EUR: 'EUR News', GOLD: 'Gold News',
-  OIL: 'Oil News', SP500: 'S&P 500 News', BTC: 'Bitcoin News', GBP: 'GBP News', JPY: 'JPY News',
+// ─── Filters / Categories ─────────────────────────────────────────
+const FEED_TITLES = {
+  ALL:'All News', HIGH:'High Impact', MEDIUM:'Medium Impact', LOW:'Low Impact',
+  ALL_CAT:'All News', MY_NEWS:'My News', FOREX:'Forex News', CRYPTO:'Crypto News',
+  MACRO:'Macro News', BONDS:'Bonds & Yields', EQUITIES:'Equities News',
+  INDEXES:'Indexes News', COMMODITIES:'Commodities News', MARKET_MOVING:'Market Moving',
 };
 function updateFeedTitle() {
-  const asset = assetFilter !== 'ALL' ? ASSET_TITLES[assetFilter] : null;
-  const impact = impactFilter !== 'ALL' ? FILTER_TITLES[impactFilter] : null;
-  const title = asset || impact || 'All News';
+  let title = 'All News';
+  if (searchQuery) title = `Search: "${searchQuery}"`;
+  else if (categoryFilter !== 'ALL') title = FEED_TITLES[categoryFilter] || 'All News';
+  else if (impactFilter !== 'ALL') title = FEED_TITLES[impactFilter] || 'All News';
   document.getElementById('feedTitle').childNodes[0].textContent = title + ' ';
 }
 function setLang(l, btn) {
@@ -506,9 +643,9 @@ function setImpact(impact, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active'); updateFeedTitle(); renderNews();
 }
-function toggleAsset(asset, btn) {
-  assetFilter = asset;
-  document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
+function setCategory(cat, btn) {
+  categoryFilter = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active'); updateFeedTitle(); renderNews();
 }
 function showToast(msg) {
@@ -554,18 +691,14 @@ function getSource(url, src) {
     return h.split('.')[0].toUpperCase();
   } catch { return 'Unknown'; }
 }
-
 function formatTime(ts) {
-  try {
-    return new Date(ts).toLocaleTimeString('en-GB', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  } catch { return '--:--'; }
+  try { return new Date(ts).toLocaleTimeString('en-GB', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit' }); }
+  catch { return '--:--'; }
 }
-
 function getAssetTags(a) {
   if (!a) return [];
   return a.split(',').map(x => x.trim()).filter(Boolean);
 }
-
 function getMarketMoves(h) {
   const l = h.toLowerCase(), m = [];
   if (l.includes('cpi')||l.includes('inflation')) {
@@ -581,11 +714,12 @@ function getMarketMoves(h) {
 
 // ─── Render News ──────────────────────────────────────────────────
 function renderNews() {
-  // Merge regular news + calendar releases, sort by time desc
   const combined = [...allNews, ...calReleases].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
   let filtered = combined;
-  if (impactFilter !== 'ALL') filtered = filtered.filter(n => n.impact === impactFilter);
-  if (assetFilter  !== 'ALL') filtered = filtered.filter(n => n.assets && n.assets.includes(assetFilter));
+  if (impactFilter !== 'ALL')   filtered = filtered.filter(n => n.impact === impactFilter);
+  if (categoryFilter !== 'ALL') filtered = filtered.filter(n => newsMatchesCategory(n, categoryFilter));
+  if (searchQuery)              filtered = filtered.filter(n => (n.headline_en || '').toLowerCase().includes(searchQuery) || (n.source || '').toLowerCase().includes(searchQuery));
+
   document.getElementById('feedCount').textContent = filtered.length + ' items';
 
   if (filtered.length === 0) {
@@ -595,14 +729,14 @@ function renderNews() {
 
   const items = filtered.map((n, idx) => {
     const isCalRelease = !!n._calRelease;
-    const headline   = lang === 'pt' ? translatePT(n.headline_en) : n.headline_en;
-    const impactCls  = (n.impact || 'LOW').toLowerCase();
-    const tags       = getAssetTags(n.assets);
-    const moves      = isCalRelease ? [] : getMarketMoves(n.headline_en);
-    const src        = isCalRelease ? 'Economic Calendar' : getSource(n.url || '', n.source);
-    const itemCls    = isCalRelease ? 'cal-release' : impactCls;
-    const badgeCls   = isCalRelease ? 'badge-cal' : `badge-${impactCls}`;
-    const badgeLbl   = isCalRelease ? 'DATA' : (n.impact || 'LOW');
+    const headline  = lang === 'pt' ? translatePT(n.headline_en) : n.headline_en;
+    const impactCls = (n.impact || 'LOW').toLowerCase();
+    const tags      = getAssetTags(n.assets);
+    const moves     = isCalRelease ? [] : getMarketMoves(n.headline_en);
+    const src       = isCalRelease ? 'Economic Calendar' : getSource(n.url || '', n.source);
+    const itemCls   = isCalRelease ? 'cal-release' : impactCls;
+    const badgeCls  = isCalRelease ? 'badge-cal' : `badge-${impactCls}`;
+    const badgeLbl  = isCalRelease ? 'DATA' : (n.impact || 'LOW');
 
     const cardHtml = `<div class="news-item ${itemCls}" onclick="window.open('${n.url}','_blank')">
       <div class="news-time">${formatTime(n.timestamp)}</div>
@@ -621,12 +755,13 @@ function renderNews() {
       <div class="news-impact"><span class="impact-badge ${badgeCls}">${badgeLbl}</span></div>
     </div>`;
 
-    // Insert delay banner after DELAY_AFTER items (basic pack only)
+    // Delay banner after 3rd item — no time mention
     if (USER_PACK === 'basic' && idx === DELAY_AFTER) {
       return cardHtml + `<div class="delay-banner">
+        <div class="delay-banner-eyebrow">Notice</div>
         <div class="delay-banner-title">⚠ This Feed is Delayed</div>
-        <div class="delay-banner-sub">Basic Pack news has a ~<span>1 minute delay</span>.<br>Upgrade to <span>Pro</span> for instant real-time updates.</div>
-        <button class="delay-banner-btn" onclick="showToast('Pro Pack coming soon!')">Go Real-Time →</button>
+        <div class="delay-banner-sub">You're viewing the <strong>Basic Plan</strong> feed.<br>News below this point may be delayed. Upgrade to <strong>Pro</strong> for instant real-time coverage with zero delay.</div>
+        <button class="delay-banner-btn" onclick="showToast('Pro Pack coming soon!')">⚡ Go Real-Time — Upgrade to Pro</button>
       </div>`;
     }
     return cardHtml;
@@ -709,7 +844,6 @@ function renderCalendar() {
   }).join('');
 }
 
-// Inject calendar release into news feed
 function injectCalRelease(e) {
   const ac = actualClass(e.actual, e.forecast, e.previous);
   const acLabel = ac === 'actual-positive' ? '🟢' : ac === 'actual-negative' ? '🔴' : '🟡';
@@ -721,7 +855,7 @@ function injectCalRelease(e) {
     timestamp: new Date().toISOString(),
     headline_en: headline,
     impact,
-    assets: 'USD', // fallback
+    assets: 'USD',
     url: `https://www.tradingview.com/symbols/${e.ticker || ''}`,
     source: 'Economic Calendar',
     _calRelease: true,
@@ -736,12 +870,10 @@ async function loadCalendar() {
     const data = await res.json();
     const prevReleased = new Set(calEvents.filter(e => e.actual !== null && e.actual !== undefined).map(e => e.id));
     calEvents = data.events || [];
-    // Check for newly released events → inject into news feed
     calEvents.forEach(e => {
       if (e.actual !== null && e.actual !== undefined && !prevReleased.has(e.id) && !knownCalIds.has(e.id)) {
         knownCalIds.add(e.id);
         injectCalRelease(e);
-        // Flash in calendar tab
         setTimeout(() => {
           const el = document.querySelector(`[data-date="${e.date}"]`);
           if (el) el.classList.add('just-out');
@@ -752,7 +884,6 @@ async function loadCalendar() {
   } catch(err) { console.error('[CAL]', err); }
 }
 
-// Countdowns update every second
 setInterval(() => {
   document.querySelectorAll('.cal-event[data-date]').forEach(el => {
     const cdEl = el.querySelector('.cal-countdown');
@@ -762,21 +893,10 @@ setInterval(() => {
   });
 }, 1000);
 
-// Calendar refreshes every 60s
 setInterval(loadCalendar, 60000);
-
-// Tab switcher
-function switchTab(tab) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.remove('hidden');
-  document.getElementById('tab-' + tab + '-btn').classList.add('active');
-  if (tab === 'calendar' && calEvents.length === 0) loadCalendar();
-}
 
 // ─── Init ─────────────────────────────────────────────────────────
 connectWebSocket();
-// Pre-load calendar on startup (to detect releases immediately)
 setTimeout(loadCalendar, 3000);
 </script>
 </body>

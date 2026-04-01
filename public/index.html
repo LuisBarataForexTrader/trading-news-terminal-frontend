@@ -1257,7 +1257,34 @@ function renderNews() {
   // Category filter (multi-select) — 0 selected = ALL
   if (selectedCategories.size > 0) filtered = filtered.filter(n=>newsMatchesSelected(n));
   // Search filter
-  if (searchQuery) filtered = filtered.filter(n=>(n.headline_en||'').toLowerCase().includes(searchQuery)||(n.source||'').toLowerCase().includes(searchQuery));
+  if (searchQuery) {
+    // Expand forex pair searches: "eurusd" → ["eur","usd"], "gbpjpy" → ["gbp","jpy"]
+    const PAIR_EXPAND = {
+      'eurusd':['eur','usd'],'gbpusd':['gbp','usd'],'usdjpy':['usd','jpy'],
+      'usdchf':['usd','chf'],'audusd':['aud','usd'],'usdcad':['usd','cad'],
+      'nzdusd':['nzd','usd'],'eurgbp':['eur','gbp'],'eurjpy':['eur','jpy'],
+      'gbpjpy':['gbp','jpy'],'eurchf':['eur','chf'],'audjpy':['aud','jpy'],
+      'cadjpy':['cad','jpy'],'chfjpy':['chf','jpy'],'gbpchf':['gbp','chf'],
+      'euraud':['eur','aud'],'eurcad':['eur','cad'],'gbpaud':['gbp','aud'],
+      'gbpcad':['gbp','cad'],'audcad':['aud','cad'],'audnzd':['aud','nzd'],
+      'usdcnh':['usd','cny'],'usdmxn':['usd','mxn'],'usdsek':['usd','sek'],
+      'usdnok':['usd','nok'],'btcusd':['btc','usd'],'ethusd':['eth','usd'],
+      'xauusd':['gold','usd'],'xagusd':['silver','usd'],
+    };
+    const expanded = PAIR_EXPAND[searchQuery];
+    filtered = filtered.filter(n => {
+      const h = (n.headline_en||'').toLowerCase();
+      const s = (n.source||'').toLowerCase();
+      const a = (n.assets||'').toLowerCase();
+      if (h.includes(searchQuery) || s.includes(searchQuery)) return true;
+      if (a.includes(searchQuery)) return true;
+      // Match asset tags (e.g. "eurusd" → news tagged EUR and USD)
+      if (expanded && expanded.every(part => a.includes(part))) return true;
+      // Also match single currency (e.g. "eur" matches EUR-tagged news)
+      if (a.split(',').map(x=>x.trim().toLowerCase()).includes(searchQuery)) return true;
+      return false;
+    });
+  }
 
   const total = filtered.length;
   const countEl = document.getElementById('feedCount');

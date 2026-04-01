@@ -1025,7 +1025,16 @@ function clearNotification() { newItemsCount = 0; updateNotificationBadge(); }
 
 // ─── Polling (basic plan fallback) ───────────────────────────────
 if (USER_PACK === 'basic') {
+  // Trigger backend fetch every 30s
   setInterval(async () => { try { await fetch(BACKEND_URL+'/fetch'); } catch(e){} }, 30000);
+  // Fallback: poll /news directly every 60s in case WebSocket broadcast missed updates
+  setInterval(async () => {
+    try {
+      const r = await fetch(BACKEND_URL+'/news?limit=100');
+      const data = await r.json();
+      if (data && data.length) handleNewsData(data);
+    } catch(e){}
+  }, 60000);
 }
 
 // ─── Search ──────────────────────────────────────────────────────

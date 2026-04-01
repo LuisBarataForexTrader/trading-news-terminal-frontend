@@ -1423,13 +1423,14 @@ function injectCalRelease(e) {
   const headline=`${acLabel} ${flag} ${e.title} — Actual: ${fmtVal(e.actual,unit)} | Forecast: ${fmtVal(e.forecast,unit)} | Previous: ${fmtVal(e.previous,unit)}`;
   const impact=e.importance===1?'HIGH':e.importance===0?'MEDIUM':'LOW';
   const calAsset=COUNTRY_ASSET[e.country]||'USD';
-  // Use the actual event release time (e.date), not the current time
-  // This ensures cal releases sort chronologically with other news
+  const _d=new Date(e.date);
+  const _mon=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][_d.getUTCMonth()];
+  const calUrl=`https://www.forexfactory.com/calendar?day=${_mon}${_d.getUTCDate()}.${_d.getUTCFullYear()}`;
   calReleases.push({
-    timestamp: e.date,   // ← real event time, not now()
+    timestamp: e.date,
     headline_en:headline, impact,
     assets:calAsset,
-    url:(()=>{const d=new Date(e.date);const mon=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][d.getUTCMonth()];return `https://www.forexfactory.com/calendar?day=${mon}${d.getUTCDate()}.${d.getUTCFullYear()}`;})(),
+    url:calUrl,
     source:'Economic Calendar', _calRelease:true, _ac:ac, _calCountry:e.country,
     _calId: e.id,
   });

@@ -940,10 +940,18 @@ function drainSquawkQueue() {
              || voices.find(v => v.lang.startsWith(langPfx))
              || voices[0];
   if (voice) utter.voice = voice;
-  // Highlight matching card
+  // Switch to news tab so the card is visible, then highlight it
   if (item.url) {
-    const card = document.querySelector(`.news-item[data-url="${CSS.escape(item.url)}"]`);
-    if (card) { card.classList.add('squawk-reading'); card.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+    if (currentTab !== 'news') switchTab('news');
+    // Use setTimeout to let the DOM settle after any tab switch / re-render
+    setTimeout(() => {
+      const card = [...document.querySelectorAll('.news-item[data-url]')]
+        .find(el => el.dataset.url === item.url);
+      if (card) {
+        card.classList.add('squawk-reading');
+        card.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+    }, 120);
   }
   utter.onend   = () => drainSquawkQueue();
   utter.onerror = () => { squawkSpeaking = false; drainSquawkQueue(); };

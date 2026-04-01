@@ -1207,7 +1207,7 @@ function getSource(url,src) {
   if (src&&src!=='undefined') return sm[src.toLowerCase()]||src.toUpperCase();
   try {
     const h=new URL(url).hostname.replace('www.','');
-    const dm={'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg','investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive','fxstreet.com':'FXStreet','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView','wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice','businessinsider.com':'Business Insider'};
+    const dm={'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg','investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive','fxstreet.com':'FXStreet','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView','wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice','businessinsider.com':'Business Insider','nypost.com':'NY Post','aawsat.com':'Asharq Al-Awsat'};
     for(const[k,v]of Object.entries(dm)) if(h.includes(k))return v;
     return h.split('.')[0].toUpperCase();
   } catch{return 'Unknown';}

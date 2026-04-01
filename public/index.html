@@ -211,7 +211,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .news-headline{font-size:13px;font-weight:400;line-height:1.55;color:var(--text);margin-bottom:6px;}
 .news-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
 .news-source{font-size:10px;font-weight:500;letter-spacing:0.06em;color:var(--text-muted);text-transform:uppercase;}
-.asset-tag{font-size:10px;font-weight:500;padding:2px 7px;background:var(--bg3);border:1px solid var(--border);color:var(--text-dim);border-radius:2px;}
+.asset-tag{font-size:11px;font-weight:600;padding:3px 8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.22);color:var(--accent);border-radius:3px;letter-spacing:0.04em;}
 .cal-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:2px;}
 .cal-tag-positive{background:rgba(16,185,129,0.12);border:1px solid var(--low-border);color:var(--low);}
 .cal-tag-negative{background:rgba(255,59,92,0.1);border:1px solid var(--high-border);color:var(--high);}
@@ -618,6 +618,7 @@ let myWatchlist      = JSON.parse(localStorage.getItem('myWatchlist') || '[]');
 const COUNTRY_ASSET  = {US:'USD',EU:'EUR',GB:'GBP',JP:'JPY',CH:'CHF',AU:'AUD',CA:'CAD',NZ:'NZD',CN:'CNY',DE:'EUR',FR:'EUR'};
 const ASSET_COUNTRIES= {USD:['US'],EUR:['EU','DE','FR'],GBP:['GB'],JPY:['JP'],AUD:['AU'],CAD:['CA'],CNY:['CN'],CHF:['CH'],NZD:['NZ']};
 const FLAGS          = {US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CH:'🇨🇭',AU:'🇦🇺',CA:'🇨🇦',NZ:'🇳🇿',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷'};
+const ASSET_FLAG     = {USD:'🇺🇸',EUR:'🇪🇺',GBP:'🇬🇧',JPY:'🇯🇵',CHF:'🇨🇭',AUD:'🇦🇺',CAD:'🇨🇦',NZD:'🇳🇿',CNY:'🇨🇳',BTC:'₿',ETH:'Ξ',XRP:'◎',GOLD:'🟡',OIL:'🛢',SPX:'🇺🇸',NDX:'🇺🇸',DAX:'🇩🇪',FTSE:'🇬🇧',NKY:'🇯🇵'};
 
 // ─── i18n ────────────────────────────────────────────────────────
 const STRINGS = {
@@ -1214,7 +1215,13 @@ function getSource(url,src) {
 function formatTime(ts) {
   try{return new Date(ts).toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});}catch{return '--:--';}
 }
-function getAssetTags(a) { if(!a)return[]; return a.split(',').map(x=>x.trim()).filter(Boolean); }
+function getAssetTags(a) {
+  if(!a) return [];
+  return a.split(',').map(x=>x.trim()).filter(Boolean).map(tag=>{
+    const flag = ASSET_FLAG[tag] || '';
+    return flag ? `${flag} ${tag}` : tag;
+  });
+}
 function getMarketMoves(h) {
   const l=h.toLowerCase(),m=[];
   if(l.includes('cpi')||l.includes('inflation')){m.push({asset:'USD',dir:l.includes('above')||l.includes('rise')||l.includes('high')?'up':'down'});m.push({asset:'GOLD',dir:l.includes('above')||l.includes('rise')?'down':'up'});}
@@ -1292,9 +1299,15 @@ function renderNews() {
          </div>`
       : '';
 
-    // Calendar releases open the TradingView economic calendar; no-URL items are not clickable
+    // Calendar releases open ForexFactory on the specific event date
     const clickAction = isCalRelease
-      ? `window.open('https://www.tradingview.com/economic-calendar/','_blank')`
+      ? (()=>{
+          const d = new Date(n.timestamp);
+          const mon = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][d.getUTCMonth()];
+          const day = d.getUTCDate();
+          const yr  = d.getUTCFullYear();
+          return `window.open('https://www.forexfactory.com/calendar?day=${mon}${day}.${yr}','_blank')`;
+        })()
       : (n.url && !ytId ? `window.open('${n.url}','_blank')` : 'void(0)');
 
     const card = `<div class="news-item ${itemCls}${freshCls}${ytId?' has-video':''}" style="opacity:${opacity}" onclick="${clickAction}">
@@ -1416,7 +1429,7 @@ function injectCalRelease(e) {
     timestamp: e.date,   // ← real event time, not now()
     headline_en:headline, impact,
     assets:calAsset,
-    url:`https://www.tradingview.com/economic-calendar/`,
+    url:(()=>{const d=new Date(e.date);const mon=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][d.getUTCMonth()];return `https://www.forexfactory.com/calendar?day=${mon}${d.getUTCDate()}.${d.getUTCFullYear()}`;})(),
     source:'Economic Calendar', _calRelease:true, _ac:ac, _calCountry:e.country,
     _calId: e.id,
   });

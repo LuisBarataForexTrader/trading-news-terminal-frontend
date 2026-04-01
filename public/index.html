@@ -607,12 +607,10 @@ let calReleases      = [];
 let displayLimit     = PAGE_SIZE;
 let soundEnabled     = true;
 let knownUrls        = new Set();
-// Persist knownCalIds across reloads so old events don't reappear at top
-let knownCalIds = new Set(JSON.parse(localStorage.getItem('tnt_cal_ids')||'[]'));
-function saveCalIds() {
-  // Keep only IDs from last 48h to avoid unbounded growth
-  try { localStorage.setItem('tnt_cal_ids', JSON.stringify([...knownCalIds].slice(-500))); } catch(e){}
-}
+// In-session only — prevents duplicates within a session but resets on page load
+// so recent events always show after refresh
+let knownCalIds = new Set();
+function saveCalIds() { /* no-op: in-session only */ }
 let recentNewUrls    = new Set(); // URLs arrived in last 3 min → show NEW badge
 let newItemsCount    = 0;         // count for notification badge
 let lastSoundTime    = 0;         // throttle: 1 sound per 60s max
@@ -1056,7 +1054,7 @@ const LIVE_STREAM_IDS = {
   'france24':   {type:'channel', id:'UCQfwfsi5VrQ8yKZ-UWmAEFg'},  // France 24 English
   'wion':       {type:'channel', id:'UCJYifGXaZCXxBIY0YkNFBiw'},  // WION
   'euronews':   {type:'channel', id:'UCg2PveIFoQEg2DVwTiT1wYA'},  // Euronews English
-  'ap':         {type:'channel', id:'UC52X5wxOL_s5yw0dQk7NtgA'},  // Associated Press
+  'ap':         {type:'video',   id:'v8tpjzHPDJc'},                // Associated Press live
 };
 
 function openLiveStream(key, chipEl) {

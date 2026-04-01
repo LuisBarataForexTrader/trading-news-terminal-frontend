@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <style>
 :root {
   --bg:#0a0c0f; --bg2:#0f1217; --bg3:#141820;
@@ -211,15 +212,18 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .news-item.is-fresh.cal-positive{background:rgba(16,185,129,0.14);}
 .news-item.is-fresh.cal-negative{background:rgba(255,59,92,0.14);}
 .news-item.is-fresh.cal-neutral{background:rgba(245,158,11,0.13);}
-/* Age fade — only background fades, text always stays white */
-.news-item.age-2{filter:brightness(0.82);}
-.news-item.age-3{filter:brightness(0.66);}
-.news-item.age-4{filter:brightness(0.52);}
-.news-item.age-2 .news-headline,.news-item.age-3 .news-headline,.news-item.age-4 .news-headline,
-.news-item.age-2 .news-source,.news-item.age-3 .news-source,.news-item.age-4 .news-source,
-.news-item.age-2 .news-time,.news-item.age-3 .news-time,.news-item.age-4 .news-time,
-.news-item.age-2 .asset-tag,.news-item.age-3 .asset-tag,.news-item.age-4 .asset-tag,
-.news-item.age-2 .cal-release-time,.news-item.age-3 .cal-release-time,.news-item.age-4 .cal-release-time{filter:brightness(2.5);}
+/* Squawk: item currently being read aloud */
+.news-item.squawk-reading{animation:squawkPulse .75s ease-in-out infinite!important;}
+@keyframes squawkPulse{
+  0%,100%{box-shadow:inset 0 0 0 2px rgba(0,212,255,0.3),0 0 10px rgba(0,212,255,0.15);}
+  50%{box-shadow:inset 0 0 0 2px rgba(0,212,255,0.9),0 0 22px rgba(0,212,255,0.45);}
+}
+/* Age fade — ::before dark overlay dims background, text stays full white */
+.news-item{position:relative;}
+.news-item.age-2::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.26);pointer-events:none;z-index:0;}
+.news-item.age-3::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.46);pointer-events:none;z-index:0;}
+.news-item.age-4::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.63);pointer-events:none;z-index:0;}
+.news-item>*{position:relative;z-index:1;}
 
 .news-time{font-size:12px;font-family:var(--font-mono);color:#fff;padding-top:2px;font-weight:500;line-height:1.6;}
 .news-headline{font-size:13px;font-weight:400;line-height:1.55;color:#fff;margin-bottom:6px;}
@@ -899,19 +903,21 @@ function toggleWatch(asset, btn) {
 document.querySelectorAll('.watch-btn').forEach(btn => { if (myWatchlist.includes(btn.dataset.asset)) btn.classList.add('selected'); });
 
 // ─── Squawk (Web Speech API) ─────────────────────────────────────
-function squawkSpeak(text) {
+function squawkSpeak(text, url) {
   if (!squawkEnabled || !text) return;
   // Strip HTML tags and emoji shortcodes, clean up for TTS
   const clean = text.replace(/<[^>]*>/g,'').replace(/[🟢🔴🟡▲▼●★◈▶]/gu,'').replace(/\s+/g,' ').trim();
-  squawkQueue.push(clean);
+  squawkQueue.push({text: clean, url: url||''});
   if (!squawkSpeaking) drainSquawkQueue();
 }
 function drainSquawkQueue() {
+  document.querySelectorAll('.squawk-reading').forEach(el => el.classList.remove('squawk-reading'));
   if (!squawkQueue.length || !squawkEnabled) {
     squawkSpeaking = false; updateSquawkBtn(); return;
   }
   squawkSpeaking = true; updateSquawkBtn();
-  const utter = new SpeechSynthesisUtterance(squawkQueue.shift());
+  const item = squawkQueue.shift();
+  const utter = new SpeechSynthesisUtterance(item.text);
   utter.lang  = lang === 'pt' ? 'pt-PT' : 'en-US';
   utter.rate  = 1.15;
   utter.pitch = 1.0;
@@ -922,6 +928,11 @@ function drainSquawkQueue() {
              || voices.find(v => v.lang.startsWith(langPfx) && v.default)
              || voices.find(v => v.lang.startsWith(langPfx));
   if (voice) utter.voice = voice;
+  // Highlight the matching news card
+  if (item.url) {
+    const card = document.querySelector(`.news-item[data-url="${CSS.escape(item.url)}"]`);
+    if (card) { card.classList.add('squawk-reading'); card.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+  }
   utter.onend   = () => drainSquawkQueue();
   utter.onerror = () => { squawkSpeaking = false; drainSquawkQueue(); };
   speechSynthesis.speak(utter);
@@ -1036,7 +1047,7 @@ function handleNewsData(data) {
     }
   });
   // Squawk new headlines (sorted oldest→newest so they read in order)
-  squawkItems.reverse().forEach(n => squawkSpeak(lang==='pt' ? translatePT(n.headline_en) : n.headline_en));
+  squawkItems.reverse().forEach(n => squawkSpeak(lang==='pt' ? translatePT(n.headline_en) : n.headline_en, n.url));
 
   // Sound: always fire for any new item < 5min old, throttled to max 1 per 60s
   if (hasRecentNew && soundEnabled) {
@@ -1295,11 +1306,11 @@ function updateCounts(news) {
 
 // ─── Helpers ─────────────────────────────────────────────────────
 function getSource(url,src) {
-  const sm={'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch','yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet','tradingview':'TradingView','wsj':'WSJ','dow jones':'Dow Jones','zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider','reuters':'Reuters','bloomberg':'Bloomberg','cointelegraph':'Cointelegraph','ft':'FT'};
+  const sm={'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch','yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet','tradingview':'TradingView','wsj':'WSJ','dow jones':'Dow Jones','zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider','reuters':'Reuters','bloomberg':'Bloomberg','cointelegraph':'Cointelegraph','ft':'FT','tass':'TASS','the telegraph':'The Telegraph','benzinga':'Benzinga','axios':'Axios','the atlantic':'The Atlantic','aei':'AEI','ny post':'NY Post'};
   if (src&&src!=='undefined') return sm[src.toLowerCase()]||src.toUpperCase();
   try {
     const h=new URL(url).hostname.replace('www.','');
-    const dm={'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg','investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive','fxstreet.com':'FXStreet','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView','wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice','businessinsider.com':'Business Insider','nypost.com':'NY Post','aawsat.com':'Asharq Al-Awsat'};
+    const dm={'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg','investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive','fxstreet.com':'FXStreet','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView','wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice','businessinsider.com':'Business Insider','nypost.com':'NY Post','aawsat.com':'Asharq Al-Awsat','tass.com':'TASS','telegraph.co.uk':'The Telegraph','benzinga.com':'Benzinga','axios.com':'Axios','theatlantic.com':'The Atlantic',};
     for(const[k,v]of Object.entries(dm)) if(h.includes(k))return v;
     return h.split('.')[0].toUpperCase();
   } catch{return 'Unknown';}
@@ -1444,7 +1455,8 @@ function renderNews() {
         })()
       : (n.url && !ytId ? `window.open('${n.url}','_blank')` : 'void(0)');
 
-    const card = `<div class="news-item ${itemCls}${freshCls}${ageCls?' '+ageCls:''}${ytId?' has-video':''}" onclick="${clickAction}">
+    const safeUrl = (n.url||'').replace(/"/g,'&quot;');
+    const card = `<div class="news-item ${itemCls}${freshCls}${ageCls?' '+ageCls:''}${ytId?' has-video':''}" data-url="${safeUrl}" onclick="${clickAction}">
       <div class="news-time">${formatTime(n.timestamp)}</div>
       <div>
         <div class="news-headline">${headline}${newBadge}</div>
@@ -1458,7 +1470,7 @@ function renderNews() {
         ${videoEmbed}
         <div class="news-actions">
           ${isCalRelease?`<span class="cal-release-time">🕐 ${new Date(n.timestamp).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false})}</span>`:''}
-          ${!ytId&&!isCalRelease?`<button class="share-btn" onclick="event.stopPropagation();shareNews('${n.url}','${safeH}')">${t('share.btn')}</button>`:''}
+          ${!ytId&&!isCalRelease&&n.url?`<button class="share-btn" onclick="event.stopPropagation();shareNews('${n.url}','${safeH}')">${t('share.btn')}</button>`:''}
         </div>
       </div>
       <div class="news-impact"><span class="impact-badge ${badgeCls}">${badgeLbl}</span></div>
@@ -1475,6 +1487,8 @@ function renderNews() {
     <div class="scroll-sentinel" id="scrollSentinel"></div>` : '';
 
   document.getElementById('newsFeed').innerHTML = html + loadMoreHtml;
+  // Render flag emoji as images so they work on Windows
+  if (window.twemoji) twemoji.parse(document.getElementById('newsFeed'), {folder:'svg',ext:'.svg'});
 
   // Infinite scroll
   if (hasMore) {
@@ -1569,7 +1583,7 @@ function injectCalRelease(e) {
     _calId: e.id,
   });
   if(soundEnabled&&e.importance===1){const now=Date.now();if(now-lastSoundTime>60000){lastSoundTime=now;playAlert();}}
-  if(e.importance===1) squawkSpeak(lang==='pt' ? translatePT(headline) : headline);
+  if(e.importance===1) squawkSpeak(lang==='pt' ? translatePT(headline) : headline, calUrl);
   renderNews();
 }
 async function loadCalendar() {

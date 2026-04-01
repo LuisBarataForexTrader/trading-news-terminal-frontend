@@ -208,6 +208,15 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .news-item.is-fresh.cal-positive{background:rgba(16,185,129,0.14);}
 .news-item.is-fresh.cal-negative{background:rgba(255,59,92,0.14);}
 .news-item.is-fresh.cal-neutral{background:rgba(245,158,11,0.13);}
+/* Age fade — only background fades, text always stays white */
+.news-item.age-2{filter:brightness(0.82);}
+.news-item.age-3{filter:brightness(0.66);}
+.news-item.age-4{filter:brightness(0.52);}
+.news-item.age-2 .news-headline,.news-item.age-3 .news-headline,.news-item.age-4 .news-headline,
+.news-item.age-2 .news-source,.news-item.age-3 .news-source,.news-item.age-4 .news-source,
+.news-item.age-2 .news-time,.news-item.age-3 .news-time,.news-item.age-4 .news-time,
+.news-item.age-2 .asset-tag,.news-item.age-3 .asset-tag,.news-item.age-4 .asset-tag,
+.news-item.age-2 .cal-release-time,.news-item.age-3 .cal-release-time,.news-item.age-4 .cal-release-time{filter:brightness(2.5);}
 
 .news-time{font-size:12px;font-family:var(--font-mono);color:#fff;padding-top:2px;font-weight:500;line-height:1.6;}
 .news-headline{font-size:13px;font-weight:400;line-height:1.55;color:#fff;margin-bottom:6px;}
@@ -247,7 +256,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .scroll-sentinel{height:1px;}
 
 /* ── Delay banner ── */
-.delay-banner{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:20px;border-left:4px solid var(--medium);border-top:1px solid rgba(245,158,11,0.35);border-bottom:2px solid rgba(245,158,11,0.45);background:rgba(245,158,11,0.1);padding:18px 24px;flex-shrink:0;min-height:100px;}
+.delay-banner{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:20px;border-left:4px solid var(--medium);border-top:1px solid rgba(245,158,11,0.35);border-bottom:2px solid rgba(245,158,11,0.45);background:rgba(245,158,11,0.1);padding:38px 24px;flex-shrink:0;min-height:190px;}
 .delay-banner-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--medium);margin-bottom:5px;}
 .delay-banner-title{font-size:15px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
 .delay-banner-sub{font-size:12px;font-weight:400;color:rgba(255,255,255,0.85);line-height:1.55;}
@@ -1261,13 +1270,13 @@ function getMarketMoves(h) {
   return m;
 }
 // Age-based opacity: most recent = 1, older fades
-function getAgeOpacity(ts) {
+function getAgeFade(ts) {
+  // Returns a CSS class that only fades the background, never the text
   const ageMin = (Date.now()-new Date(ts).getTime())/60000;
-  if (ageMin<5)  return 1;
-  if (ageMin<15) return 0.88;
-  if (ageMin<30) return 0.76;
-  if (ageMin<60) return 0.62;
-  return 0.48;
+  if (ageMin<15) return '';
+  if (ageMin<30) return 'age-2';
+  if (ageMin<60) return 'age-3';
+  return 'age-4';
 }
 function isFresh(ts) { return (Date.now()-new Date(ts).getTime()) < 10*60*1000; }
 
@@ -1343,7 +1352,7 @@ function renderNews() {
     const tags      = getAssetTags(n.assets);
     const moves     = isCalRelease ? [] : getMarketMoves(n.headline_en);
     const src       = isCalRelease ? t('cal.source') : getSource(n.url||'',n.source);
-    const opacity   = getAgeOpacity(n.timestamp);
+    const ageCls    = getAgeFade(n.timestamp);
     const fresh     = isFresh(n.timestamp) || recentNewUrls.has(n.url);
     const newBadge  = fresh ? `<span class="new-badge">${t('badge.new')}</span>` : '';
     const freshCls  = fresh ? ' is-fresh' : '';
@@ -1380,7 +1389,7 @@ function renderNews() {
         })()
       : (n.url && !ytId ? `window.open('${n.url}','_blank')` : 'void(0)');
 
-    const card = `<div class="news-item ${itemCls}${freshCls}${ytId?' has-video':''}" style="opacity:${opacity}" onclick="${clickAction}">
+    const card = `<div class="news-item ${itemCls}${freshCls}${ageCls?' '+ageCls:''}${ytId?' has-video':''}" onclick="${clickAction}">
       <div class="news-time">${formatTime(n.timestamp)}</div>
       <div>
         <div class="news-headline">${headline}${newBadge}</div>

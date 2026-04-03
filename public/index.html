@@ -58,6 +58,27 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .squawk-btn{padding:6px 12px;font-family:var(--font);font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer;transition:all .15s;border-radius:3px;}
 .squawk-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,0.06);}
 .squawk-btn.speaking{border-color:var(--low);color:var(--low);animation:blink 1s ease-in-out infinite;}
+
+/* ── Upgrade Modal ── */
+.upgrade-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+.upgrade-overlay.show{display:flex;}
+.upgrade-modal{background:#0f1217;border:1px solid rgba(167,139,250,0.4);border-radius:6px;padding:40px;max-width:440px;width:100%;text-align:center;position:relative;box-shadow:0 40px 80px rgba(0,0,0,0.6),0 0 60px rgba(167,139,250,0.08);}
+.upgrade-modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#a78bfa,transparent);}
+.upgrade-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#7a9ab0;cursor:pointer;font-size:18px;line-height:1;}
+.upgrade-icon{font-size:36px;margin-bottom:16px;}
+.upgrade-title{font-size:22px;font-weight:800;margin-bottom:8px;}
+.upgrade-desc{font-size:14px;color:#c8d8e8;line-height:1.6;margin-bottom:28px;}
+.upgrade-feature{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#a78bfa;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);padding:4px 12px;border-radius:2px;margin-bottom:20px;}
+.upgrade-benefits{display:flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:28px;}
+.upgrade-benefit{display:flex;align-items:center;gap:10px;font-size:13px;color:#c8d8e8;}
+.upgrade-benefit::before{content:'✓';color:#a78bfa;font-weight:700;flex-shrink:0;}
+.upgrade-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-family:var(--font);font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;border:none;cursor:pointer;border-radius:3px;text-decoration:none;transition:all .2s;box-shadow:0 4px 20px rgba(167,139,250,0.3);}
+.upgrade-btn:hover{box-shadow:0 6px 28px rgba(167,139,250,0.5);transform:translateY(-1px);}
+.upgrade-btn-later{display:block;margin-top:12px;font-size:12px;color:#7a9ab0;cursor:pointer;background:none;border:none;width:100%;text-align:center;}
+.upgrade-btn-later:hover{color:#c8d8e8;}
+
+/* ── Pro locked badge on tab ── */
+.tab-pro-lock{font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#a78bfa;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);padding:1px 5px;border-radius:2px;margin-left:6px;vertical-align:middle;}
 .auth-btn{padding:7px 16px;font-family:var(--font);font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer;transition:all .15s;border-radius:3px;}
 .auth-btn:hover{border-color:var(--accent2);color:var(--accent);}
 .auth-btn.signup{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
@@ -467,7 +488,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
     <div class="tab-bar">
       <button class="tab-btn active" id="tab-news-btn" onclick="switchTab('news')" data-i18n="tab.news">📰 News Feed</button>
       <button class="tab-btn" id="tab-calendar-btn" onclick="switchTab('calendar')" data-i18n="tab.calendar">📅 Economic Calendar</button>
-      <button class="tab-btn" id="tab-tv-btn" onclick="switchTab('tv')" data-i18n="tab.tv">📺 Live TV</button>
+      <button class="tab-btn" id="tab-tv-btn" onclick="IS_PRO ? switchTab('tv') : showUpgrade('Live Financial TV')" data-i18n="tab.tv">📺 Live TV<span class="tab-pro-lock" id="tv-lock-badge" style="display:none">PRO</span></button>
     </div>
 
     <!-- NEWS TAB -->
@@ -615,39 +636,42 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 // ─── Auth Gate ──────────────────────────────────────────────────
 const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
 (function authGate() {
+  // Pick up token + user passed via URL hash from login page (cross-origin)
+  const hashParams = new URLSearchParams(location.hash.slice(1));
+  const hashToken = hashParams.get('token');
+  if (hashToken) {
+    localStorage.setItem('tnt_token', decodeURIComponent(hashToken));
+    const hashUser = hashParams.get('user');
+    if (hashUser) localStorage.setItem('tnt_user', decodeURIComponent(hashUser));
+    history.replaceState(null, '', location.pathname);
+  }
   const token = localStorage.getItem('tnt_token');
   if (!token) { window.location.replace(LOGIN_URL); return; }
-  // Validate token with backend silently
-  fetch('https://tracker-fx-news-terminal-backend-production.up.railway.app/auth/me', {
-    headers: { 'Authorization': 'Bearer ' + token }
-  }).then(r => {
-    if (!r.ok) { localStorage.removeItem('tnt_token'); localStorage.removeItem('tnt_user'); window.location.replace(LOGIN_URL); return; }
-    return r.json();
-  }).then(user => {
-    if (!user) return;
-    // Update stored user info
-    localStorage.setItem('tnt_user', JSON.stringify(user));
-    // Show user label + logout in header
+  // Load user info from cache — no backend call to avoid redirect loops
+  try {
+    const user = JSON.parse(localStorage.getItem('tnt_user') || '{}');
     const label = document.getElementById('userLabel');
     const btn   = document.getElementById('logoutBtn');
-    if (label) label.textContent = user.name || user.email;
-    if (btn)   btn.style.display = '';
-    // Mark plan on window for pack checks
-    window._tntPlan = user.plan;
-  }).catch(() => {}); // network error → let them in, backend will handle
+    if (label && (user.name || user.email)) label.textContent = user.name || user.email;
+    if (btn) btn.style.display = '';
+    window._tntPlan = user.plan || 'free';
+  } catch(e) {}
 })();
 
 function doLogout() {
   localStorage.removeItem('tnt_token');
   localStorage.removeItem('tnt_user');
-  window.location.replace(LOGIN_URL);
+  window.location.replace(LOGIN_URL + '?logout=1');
 }
 
 // ─── Config ─────────────────────────────────────────────────────
-const BACKEND_URL = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
-const USER_PACK   = 'basic';
-const DELAY_AFTER = 3;
-const PAGE_SIZE   = 30;  // items per page (infinite scroll)
+const BACKEND_URL   = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+const UPGRADE_URL   = 'https://www.tradingnewsterminal.com/#pricing';
+// Plan is set from cached user data; authoritative check happens server-side
+const _cachedUser   = (() => { try { return JSON.parse(localStorage.getItem('tnt_user')||'{}'); } catch(e){ return {}; } })();
+const USER_PLAN     = (_cachedUser.plan === 'pro') ? 'pro' : 'free'; // 'pro' or 'free'
+const IS_PRO        = USER_PLAN === 'pro';
+const PAGE_SIZE     = 30;
 
 // ─── State ──────────────────────────────────────────────────────
 let lang             = 'en';
@@ -1001,6 +1025,11 @@ function toggleSquawk() {
 function updateSquawkBtn() {
   const btn = document.getElementById('squawkBtn');
   if (!btn) return;
+  if (!IS_PRO) {
+    btn.innerHTML = '🔒 Squawk <span style="font-size:8px;color:#a78bfa;border:1px solid rgba(167,139,250,0.4);padding:1px 4px;border-radius:2px;margin-left:4px;">PRO</span>';
+    btn.className = 'squawk-btn';
+    return;
+  }
   if (!squawkEnabled) { btn.textContent = t('squawk.off'); btn.className = 'squawk-btn'; }
   else if (squawkSpeaking) { btn.textContent = t('squawk.speaking'); btn.className = 'squawk-btn active speaking'; }
   else { btn.textContent = t('squawk.on'); btn.className = 'squawk-btn active'; }
@@ -1037,7 +1066,8 @@ function toggleSound() {
 
 // ─── WebSocket ────────────────────────────────────────────────────
 function connectWebSocket() {
-  const url = BACKEND_URL.replace('https://','wss://').replace('http://','ws://') + '/ws';
+  const token = localStorage.getItem('tnt_token') || '';
+  const url = BACKEND_URL.replace('https://','wss://').replace('http://','ws://') + '/ws?token=' + encodeURIComponent(token);
   ws = new WebSocket(url);
   ws.onopen = () => {
     clearTimeout(wsReconnectTimer);
@@ -1153,6 +1183,18 @@ function handleNewsData(data) {
   document.getElementById('lastUpdate').textContent = '(cached)';
 }());
 
+// ─── Startup HTTP fetch (WS fallback) ────────────────────────────
+// Fetch news via HTTP immediately so data appears even if WS is slow/down
+(async function startupFetch() {
+  try {
+    const tok = localStorage.getItem('tnt_token');
+    const headers = tok ? { 'Authorization': 'Bearer ' + tok } : {};
+    const r = await fetch(BACKEND_URL + '/news?limit=100', { headers });
+    const data = await r.json();
+    if (Array.isArray(data) && data.length) handleNewsData(data);
+  } catch(e) {}
+}());
+
 // ─── Notification badge ───────────────────────────────────────────
 function updateNotificationBadge() {
   const dot = document.getElementById('allNotifDot');
@@ -1168,19 +1210,21 @@ function updateNotificationBadge() {
 }
 function clearNotification() { newItemsCount = 0; updateNotificationBadge(); }
 
-// ─── Polling (basic plan fallback) ───────────────────────────────
-if (USER_PACK === 'basic') {
-  // Trigger backend fetch every 30s
-  setInterval(async () => { try { await fetch(BACKEND_URL+'/fetch'); } catch(e){} }, 30000);
-  // Fallback: poll /news directly every 60s in case WebSocket broadcast missed updates
-  setInterval(async () => {
-    try {
-      const r = await fetch(BACKEND_URL+'/news?limit=100');
-      const data = await r.json();
-      if (data && data.length) handleNewsData(data);
-    } catch(e){}
-  }, 60000);
-}
+// ─── Polling fallback ────────────────────────────────────────────
+const _authHeader = () => {
+  const t = localStorage.getItem('tnt_token');
+  return t ? {'Authorization': 'Bearer ' + t} : {};
+};
+// Trigger backend fetch every 30s
+setInterval(async () => { try { await fetch(BACKEND_URL+'/fetch'); } catch(e){} }, 30000);
+// Fallback poll every 60s
+setInterval(async () => {
+  try {
+    const r = await fetch(BACKEND_URL+'/news?limit=100', {headers: _authHeader()});
+    const data = await r.json();
+    if (data && data.length) handleNewsData(data);
+  } catch(e){}
+}, 60000);
 
 // ─── Search ──────────────────────────────────────────────────────
 function onSearchInput(val) {
@@ -1452,14 +1496,14 @@ function renderNews() {
   const countEl = document.getElementById('feedCount');
   if (countEl) countEl.textContent = total + ' ' + t('feed.items');
 
-  // Delay banner — fixed at top, rendered once
+  // Delay banner — fixed at top, rendered once (only for basic/free users)
   const bannerWrap = document.getElementById('delayBannerWrap');
   if (bannerWrap) {
-    if (USER_PACK==='basic') {
+    if (!IS_PRO) {
       bannerWrap.innerHTML = `<div class="delay-banner">
         <div><div class="delay-banner-eyebrow">${t('delay.notice')}</div><div class="delay-banner-title">${t('delay.title')}</div></div>
         <div class="delay-banner-sub">${t('delay.sub')}</div>
-        <button class="delay-banner-btn" onclick="showToast(t('toast.pro'))">${t('delay.btn')}</button>
+        <button class="delay-banner-btn" onclick="showUpgrade('Real-time News')">${t('delay.btn')}</button>
       </div>`;
     } else {
       bannerWrap.innerHTML = '';
@@ -1675,10 +1719,67 @@ setInterval(()=>{
 },1000);
 setInterval(loadCalendar,60000);
 
+// ─── Plan gating ─────────────────────────────────────────────────
+const PRO_FEATURES = {
+  'Live Financial TV':   'Watch Bloomberg TV, CNBC, Al Jazeera and 4 more live financial channels inside the terminal.',
+  'Live Squawk':         'Hands-free voice reading of every breaking headline as it arrives — instantly, with no delay.',
+  'Real-Time News Feed': 'Get news the instant it breaks. Basic plan has a delay. Pro delivers every headline in real time.',
+};
+
+function showUpgrade(featureName) {
+  const desc = PRO_FEATURES[featureName] || 'This feature is available on the Pro plan.';
+  document.getElementById('upgrade-feature-name').textContent = featureName;
+  document.getElementById('upgrade-feature-desc').textContent = desc;
+  document.getElementById('upgrade-overlay').classList.add('show');
+}
+function hideUpgrade() {
+  document.getElementById('upgrade-overlay').classList.remove('show');
+}
+
+// Apply plan gates on load
+(function applyPlanGates() {
+  if (IS_PRO) {
+    // Hide upgrade CTA from sidebar for pro users
+    const packInfo = document.querySelector('.pack-info');
+    if (packInfo) packInfo.style.display = 'none';
+    return;
+  }
+  // Show PRO lock badge on TV tab
+  const tvBadge = document.getElementById('tv-lock-badge');
+  if (tvBadge) tvBadge.style.display = '';
+  // Mark squawk button as Pro-locked (onclick only — updateSquawkBtn handles visuals)
+  const sq = document.getElementById('squawkBtn');
+  if (sq) {
+    sq.title = 'Pro feature — upgrade to unlock';
+    sq.onclick = () => showUpgrade('Live Squawk');
+  }
+})();
+
 // ─── Init ────────────────────────────────────────────────────────
 applyTranslations();
 connectWebSocket();
 setTimeout(loadCalendar,3000);
 </script>
+
+<!-- ── Upgrade Modal ── -->
+<div class="upgrade-overlay" id="upgrade-overlay" onclick="if(event.target===this)hideUpgrade()">
+  <div class="upgrade-modal">
+    <button class="upgrade-close" onclick="hideUpgrade()">✕</button>
+    <div class="upgrade-icon">🔒</div>
+    <div class="upgrade-feature" id="upgrade-feature-name">Pro Feature</div>
+    <h2 class="upgrade-title">Upgrade to Pro</h2>
+    <p class="upgrade-desc" id="upgrade-feature-desc"></p>
+    <div class="upgrade-benefits">
+      <div class="upgrade-benefit">Real-time news feed — zero delay</div>
+      <div class="upgrade-benefit">Live squawk — instant voice alerts</div>
+      <div class="upgrade-benefit">Live financial TV — 7 channels</div>
+      <div class="upgrade-benefit">Comprehensive source coverage</div>
+      <div class="upgrade-benefit">100% ad-free experience</div>
+    </div>
+    <a href="https://www.tradingnewsterminal.com/#pricing" class="upgrade-btn" target="_blank">Upgrade to Pro →</a>
+    <button class="upgrade-btn-later" onclick="hideUpgrade()">Maybe later</button>
+  </div>
+</div>
+
 </body>
 </html>

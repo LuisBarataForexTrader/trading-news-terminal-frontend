@@ -551,6 +551,79 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .company-filing-form{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent);min-width:52px;}
 .company-filing-desc{font-size:11px;color:var(--text-muted);flex:1;}
 .company-filing-date{font-size:10px;color:#4a6070;font-family:var(--font-mono);}
+
+/* ════════════════════ SCREENER ════════════════════ */
+#screener-body{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.sc-subtabs{display:flex;gap:2px;padding:8px 12px 0;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
+.sc-stab{padding:7px 18px;border:none;background:transparent;color:#556;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.sc-stab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.sc-stab:hover:not(.active){color:#aaa;}
+.sc-filters{display:flex;flex-wrap:wrap;gap:6px;padding:7px 12px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;align-items:center;}
+.sc-fg{display:flex;align-items:center;gap:4px;}
+.sc-fl{font-size:9px;color:#445;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.sc-sel,.sc-inp{background:#0d1018;border:1px solid #1a2030;color:#bcd;font-size:11px;padding:3px 7px;border-radius:4px;outline:none;cursor:pointer;}
+.sc-sel:focus,.sc-inp:focus{border-color:var(--accent);}
+.sc-inp{width:58px;}
+.sc-fbtn{padding:3px 10px;background:#00d4aa22;border:1px solid #00d4aa44;color:var(--accent);font-size:11px;border-radius:4px;cursor:pointer;transition:background .15s;}
+.sc-fbtn:hover{background:#00d4aa33;}
+.sc-fbtn.rst{background:transparent;border-color:#223;color:#445;}
+.sc-fbtn.rst:hover{color:#889;border-color:#445;}
+.sc-meta{margin-left:auto;font-size:10px;color:#334;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.sc-refresh-btn{padding:2px 7px;background:transparent;border:1px solid #1a2030;color:#445;font-size:10px;border-radius:4px;cursor:pointer;transition:all .15s;}
+.sc-refresh-btn:hover{color:#00d4aa;border-color:#00d4aa44;}
+.sc-strength{padding:7px 14px;background:#07090d;border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0;align-items:center;}
+.sc-strength-lbl{font-size:9px;color:#334;text-transform:uppercase;letter-spacing:.5px;margin-right:2px;}
+.sc-si{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.sc-si-sym{font-size:9px;font-weight:700;color:#667;letter-spacing:.5px;}
+.sc-si-bar{width:44px;height:5px;background:#111820;border-radius:3px;overflow:hidden;}
+.sc-si-fill{height:100%;border-radius:3px;transition:width .4s ease;}
+.sc-si-val{font-size:8px;color:#334;font-family:var(--font-mono);}
+.sc-table-wrap{flex:1;overflow:auto;}
+.sc-table{width:100%;border-collapse:collapse;font-size:12px;}
+.sc-table thead th{position:sticky;top:0;z-index:1;background:#080b0f;padding:6px 10px;text-align:left;color:#445;font-size:9px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #111820;cursor:pointer;white-space:nowrap;user-select:none;}
+.sc-table thead th:hover{color:#00d4aa;}
+.sc-table thead th.sc-sorted{color:#00d4aa;}
+.sc-table thead th .sar{margin-left:2px;opacity:.4;font-size:9px;}
+.sc-table thead th.sc-sorted .sar{opacity:1;}
+.sc-table tbody tr{border-bottom:1px solid #0a0e14;transition:background .1s;}
+.sc-table tbody tr:hover{background:#0d1420!important;cursor:pointer;}
+.sc-table tbody tr:nth-child(even){background:#080b10;}
+.sc-table td{padding:5px 10px;white-space:nowrap;vertical-align:middle;}
+.sc-sym{font-weight:700;color:#e0e8ff;font-size:12px;letter-spacing:.3px;}
+.sc-sym:hover{color:#00d4aa;}
+.sc-name{color:#556;font-size:11px;max-width:150px;overflow:hidden;text-overflow:ellipsis;display:block;}
+.sc-tag{font-size:9px;padding:1px 5px;border-radius:3px;background:#0f1520;color:#556;white-space:nowrap;}
+.sc-price{font-weight:600;color:#c8daf0;font-family:var(--font-mono);font-size:12px;}
+.sc-up{color:#00d4aa;font-weight:700;font-size:11px;}
+.sc-dn{color:#ff4d6a;font-weight:700;font-size:11px;}
+.sc-flat{color:#445;font-size:11px;}
+.sc-rsi{display:inline-flex;align-items:center;justify-content:center;min-width:36px;padding:2px 5px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-mono);}
+.rv-ob{background:#ff4d6a1a;color:#ff4d6a;border:1px solid #ff4d6a33;}
+.rv-bu{background:#00d4aa1a;color:#00d4aa;border:1px solid #00d4aa33;}
+.rv-ne{background:#111820;color:#445;border:1px solid #1a2030;}
+.rv-be{background:#ff8c001a;color:#ff8c00;border:1px solid #ff8c0033;}
+.rv-os{background:#00ff881a;color:#00ff88;border:1px solid #00ff8833;}
+.sc-sig{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.ss-ob{color:#ff4d6a;}.ss-bu{color:#00d4aa;}.ss-ne{color:#334;}.ss-be{color:#ff8c00;}.ss-os{color:#00ff88;}
+.sc-range{display:flex;align-items:center;gap:4px;}
+.sc-range-bar{width:52px;height:3px;background:#0d1018;border-radius:2px;overflow:hidden;}
+.sc-range-fill{height:100%;background:linear-gradient(90deg,#ff4d6a,#ffaa00 50%,#00d4aa);border-radius:2px;}
+.sc-range-lbl{font-size:9px;color:#334;font-family:var(--font-mono);}
+.sc-vol{display:flex;align-items:center;gap:3px;font-size:10px;font-family:var(--font-mono);color:#556;}
+.sc-vol-bar{width:22px;height:6px;background:#0d1018;border-radius:2px;overflow:hidden;}
+.sc-vol-fill{height:100%;background:#1a3a7a;border-radius:2px;}
+.sc-vol-fill.vhigh{background:#00d4aa55;}.sc-vol-fill.vmid{background:#2266dd44;}
+.sc-cap{font-size:8px;padding:1px 4px;border-radius:2px;font-weight:700;letter-spacing:.3px;}
+.cap-Mega{background:#7c3aed18;color:#a78bfa;border:1px solid #7c3aed33;}
+.cap-Large{background:#2563eb18;color:#60a5fa;border:1px solid #2563eb33;}
+.cap-Mid{background:#05966918;color:#34d399;border:1px solid #05966933;}
+.cap-Small{background:#d9770618;color:#fb923c;border:1px solid #d9770633;}
+.cap-Micro{background:#64748b18;color:#94a3b8;border:1px solid #64748b33;}
+.sc-atype{font-size:9px;padding:2px 5px;border-radius:3px;font-weight:700;white-space:nowrap;}
+.at-Stock{background:#2563eb18;color:#60a5fa;}.at-Forex{background:#05966918;color:#34d399;}
+.at-Crypto{background:#f59e0b18;color:#fbbf24;}.at-Commodity{background:#dc262618;color:#f87171;}
+.sc-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;color:#334;font-size:13px;}
+.sc-spinner{width:28px;height:28px;border:2px solid #1a2030;border-top-color:#00d4aa;border-radius:50%;animation:spin .7s linear infinite;}
 </style>
 </head>
 <body>
@@ -680,6 +753,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       <button class="tab-btn" id="tab-sentiment-btn" onclick="IS_PRO ? switchTab('sentiment') : showUpgrade('Market Sentiment')">Sentiment<span class="tab-pro-lock">·PRO</span></button>
       <button class="tab-btn" id="tab-earnings-btn" onclick="IS_PRO ? switchTab('earnings') : showUpgrade('Earnings Calendar')">Earnings<span class="tab-pro-lock">·PRO</span></button>
       <button class="tab-btn" id="tab-centralbanks-btn" onclick="IS_PRO ? switchTab('centralbanks') : showUpgrade('Central Bank News')">Central Banks<span class="tab-pro-lock">·PRO</span></button>
+      <button class="tab-btn" id="tab-screener-btn" onclick="IS_PRO ? switchTab('screener') : showUpgrade('Market Screener')">Screener<span class="tab-pro-lock">·PRO</span></button>
     </div>
 
     <!-- NEWS TAB -->
@@ -846,6 +920,24 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
     <!-- CENTRAL BANKS TAB (PRO) -->
     <div class="tab-content hidden" id="tab-centralbanks">
       <div id="centralbanks-body" style="flex:1;display:flex;flex-direction:column;overflow:hidden;"><div class="data-loading">⟳ Loading central bank news...</div></div>
+    </div>
+
+    <!-- SCREENER TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-screener">
+      <div id="screener-body">
+        <div class="sc-subtabs">
+          <button class="sc-stab active" id="sc-tab-stocks"      onclick="switchScreener('stocks')">📈 Stocks</button>
+          <button class="sc-stab"        id="sc-tab-forex"       onclick="switchScreener('forex')">💱 Forex</button>
+          <button class="sc-stab"        id="sc-tab-crypto"      onclick="switchScreener('crypto')">₿ Crypto</button>
+          <button class="sc-stab"        id="sc-tab-commodities" onclick="switchScreener('commodities')">🛢 Commodities</button>
+          <button class="sc-stab"        id="sc-tab-multi"       onclick="switchScreener('multi')">🌐 Multi-Asset</button>
+        </div>
+        <div id="sc-strength-wrap" style="display:none;"></div>
+        <div id="sc-filters-wrap"></div>
+        <div id="sc-content" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+          <div class="sc-loading"><div class="sc-spinner"></div><span>Select a screener above</span></div>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -1598,6 +1690,7 @@ function switchTab(tab) {
   if (tab==='sentiment')    { loadSentiment(); }
   if (tab==='earnings')     { loadEarnings(); }
   if (tab==='centralbanks') { loadCentralBanks(); }
+  if (tab==='screener')    { _initScreener(); }
   _savePrefs({tab});
 }
 function pulseTab(tabId) {
@@ -3074,6 +3167,352 @@ function initTVTickers() {
   ]);
 }
 initTVTickers();
+
+// ══════════════════════════════════════════════════════════
+//  SCREENER  (Stocks · Forex · Crypto · Commodities · Multi)
+// ══════════════════════════════════════════════════════════
+let _scType = 'stocks';
+let _scData = [];
+let _scSort = {col: null, dir: 'desc'};
+let _scLoaded = {stocks:false, forex:false, crypto:false, commodities:false, multi:false};
+let _scTimer  = null;
+let _scInited = false;
+
+function _initScreener() {
+  if (!_scInited) {
+    _scInited = true;
+    _renderScFilters('stocks');
+    loadScreener('stocks', false);
+  }
+}
+
+function switchScreener(type) {
+  _scType = type;
+  document.querySelectorAll('.sc-stab').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('sc-tab-' + type);
+  if (btn) btn.classList.add('active');
+  _renderScFilters(type);
+  loadScreener(type, false);
+}
+
+async function loadScreener(type, force) {
+  if (!IS_PRO) { showUpgrade('Market Screener'); return; }
+  if (_scLoaded[type] && !force) return;
+  const content = document.getElementById('sc-content');
+  content.innerHTML = `<div class="sc-loading"><div class="sc-spinner"></div><span>Loading ${type} data…</span></div>`;
+  const params = _buildScParams(type);
+  const url = API_BASE + '/screener/' + type + (params ? '?' + params : '');
+  try {
+    const r = await fetch(url, {headers:{'Authorization':'Bearer '+token}});
+    if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+    const json = await r.json();
+    _scData = json.data || [];
+    _scLoaded[type] = true;
+    // Strength meter (Forex only)
+    const sw = document.getElementById('sc-strength-wrap');
+    if (type === 'forex' && json.strength) {
+      sw.style.display = '';
+      sw.innerHTML = _renderStrengthMeter(json.strength);
+    } else { sw.style.display = 'none'; }
+    _scSort = {col: null, dir: 'desc'};
+    _renderScTable(type, _scData);
+    const mc = document.getElementById('sc-meta-count');
+    if (mc) mc.textContent = _scData.length + ' results';
+    const mt = document.getElementById('sc-meta-ts');
+    if (mt && json.updated) mt.textContent = 'Updated ' + _fmtScTs(json.updated);
+    // Auto-refresh
+    if (_scTimer) clearInterval(_scTimer);
+    const ttl = {stocks:900, forex:120, crypto:300, commodities:300, multi:300}[type] || 300;
+    _scTimer = setInterval(() => {
+      if (currentTab === 'screener' && _scType === type) loadScreener(type, true);
+    }, ttl * 1000);
+  } catch(e) {
+    content.innerHTML = `<div class="sc-loading" style="color:#ff4d6a;">⚠ Failed to load screener.<br><small style="color:#445;">${e.message}</small></div>`;
+  }
+}
+
+function _buildScParams(type) {
+  const parts = [];
+  const add = (k, id) => {
+    const el = document.getElementById('sc-f-' + id);
+    if (el && el.value !== '') parts.push(k + '=' + encodeURIComponent(el.value));
+  };
+  if (type === 'stocks') {
+    add('sector','sector'); add('cap_tier','cap'); add('min_change','minchg');
+    add('max_change','maxchg'); add('min_rsi','minrsi'); add('max_rsi','maxrsi');
+    add('min_pe','minpe'); add('max_pe','maxpe'); add('signal','signal');
+  } else if (type === 'forex') {
+    add('group','grp'); add('signal','signal');
+  } else if (type === 'crypto') {
+    add('min_change','minchg'); add('max_change','maxchg'); add('period','period');
+  } else if (type === 'commodities') {
+    add('group','grp'); add('signal','signal');
+  } else if (type === 'multi') {
+    add('asset_type','atype'); add('signal','signal');
+    add('min_change','minchg'); add('max_change','maxchg');
+  }
+  return parts.join('&');
+}
+
+function _renderScFilters(type) {
+  const wrap = document.getElementById('sc-filters-wrap');
+  if (!wrap) return;
+  let h = '<div class="sc-filters">';
+  if (type === 'stocks') {
+    h += `<div class="sc-fg"><span class="sc-fl">Sector</span>
+      <select class="sc-sel" id="sc-f-sector"><option value="">All</option>
+      <option>Technology</option><option>Financials</option><option>Healthcare</option>
+      <option>Consumer Discretionary</option><option>Communication Services</option>
+      <option>Industrials</option><option>Consumer Staples</option><option>Energy</option>
+      <option>Materials</option><option>Utilities</option><option>Real Estate</option>
+      </select></div>
+      <div class="sc-fg"><span class="sc-fl">Cap</span>
+      <select class="sc-sel" id="sc-f-cap"><option value="">All</option>
+      <option>Mega</option><option>Large</option><option>Mid</option><option>Small</option><option>Micro</option>
+      </select></div>
+      <div class="sc-fg"><span class="sc-fl">Chg%</span>
+      <input class="sc-inp" id="sc-f-minchg" placeholder="min" type="number" step="0.1">
+      <input class="sc-inp" id="sc-f-maxchg" placeholder="max" type="number" step="0.1"></div>
+      <div class="sc-fg"><span class="sc-fl">RSI</span>
+      <input class="sc-inp" id="sc-f-minrsi" placeholder="min" type="number" min="0" max="100">
+      <input class="sc-inp" id="sc-f-maxrsi" placeholder="max" type="number" min="0" max="100"></div>
+      <div class="sc-fg"><span class="sc-fl">P/E</span>
+      <input class="sc-inp" id="sc-f-minpe" placeholder="min" type="number">
+      <input class="sc-inp" id="sc-f-maxpe" placeholder="max" type="number"></div>
+      <div class="sc-fg"><span class="sc-fl">Signal</span>
+      <select class="sc-sel" id="sc-f-signal"><option value="">All</option>
+      <option>Oversold</option><option>Bullish</option><option>Neutral</option>
+      <option>Bearish</option><option>Overbought</option></select></div>`;
+  } else if (type === 'forex') {
+    h += `<div class="sc-fg"><span class="sc-fl">Group</span>
+      <select class="sc-sel" id="sc-f-grp"><option value="">All</option>
+      <option>Majors</option><option>Crosses</option><option>EM</option></select></div>
+      <div class="sc-fg"><span class="sc-fl">Signal</span>
+      <select class="sc-sel" id="sc-f-signal"><option value="">All</option>
+      <option>Oversold</option><option>Bullish</option><option>Neutral</option>
+      <option>Bearish</option><option>Overbought</option></select></div>`;
+  } else if (type === 'crypto') {
+    h += `<div class="sc-fg"><span class="sc-fl">Period</span>
+      <select class="sc-sel" id="sc-f-period">
+      <option value="24h">24h</option><option value="1h">1h</option>
+      <option value="7d">7D</option><option value="30d">30D</option></select></div>
+      <div class="sc-fg"><span class="sc-fl">Chg%</span>
+      <input class="sc-inp" id="sc-f-minchg" placeholder="min" type="number" step="0.1">
+      <input class="sc-inp" id="sc-f-maxchg" placeholder="max" type="number" step="0.1"></div>`;
+  } else if (type === 'commodities') {
+    h += `<div class="sc-fg"><span class="sc-fl">Group</span>
+      <select class="sc-sel" id="sc-f-grp"><option value="">All</option>
+      <option>Metals</option><option>Energy</option><option>Agriculture</option></select></div>
+      <div class="sc-fg"><span class="sc-fl">Signal</span>
+      <select class="sc-sel" id="sc-f-signal"><option value="">All</option>
+      <option>Oversold</option><option>Bullish</option><option>Neutral</option>
+      <option>Bearish</option><option>Overbought</option></select></div>`;
+  } else if (type === 'multi') {
+    h += `<div class="sc-fg"><span class="sc-fl">Type</span>
+      <select class="sc-sel" id="sc-f-atype"><option value="">All</option>
+      <option>Stock</option><option>Forex</option><option>Crypto</option><option>Commodity</option>
+      </select></div>
+      <div class="sc-fg"><span class="sc-fl">Signal</span>
+      <select class="sc-sel" id="sc-f-signal"><option value="">All</option>
+      <option>Oversold</option><option>Bullish</option><option>Neutral</option>
+      <option>Bearish</option><option>Overbought</option></select></div>
+      <div class="sc-fg"><span class="sc-fl">Chg%</span>
+      <input class="sc-inp" id="sc-f-minchg" placeholder="min" type="number" step="0.1">
+      <input class="sc-inp" id="sc-f-maxchg" placeholder="max" type="number" step="0.1"></div>`;
+  }
+  h += `<button class="sc-fbtn" onclick="_applyScFilters()">Apply</button>
+    <button class="sc-fbtn rst" onclick="_resetScFilters()">Reset</button>
+    <div class="sc-meta">
+      <span id="sc-meta-count">—</span>
+      <span id="sc-meta-ts" style="color:#334;">—</span>
+      <button class="sc-refresh-btn" onclick="loadScreener('${type}',true)">⟳</button>
+    </div></div>`;
+  wrap.innerHTML = h;
+}
+
+function _applyScFilters()  { _scLoaded[_scType] = false; loadScreener(_scType, true); }
+function _resetScFilters()  { document.querySelectorAll('.sc-sel,.sc-inp').forEach(el=>el.value=''); _applyScFilters(); }
+
+function _renderStrengthMeter(strength) {
+  const sorted = Object.entries(strength).sort((a,b)=>b[1]-a[1]);
+  const cols = {USD:'#60a5fa',EUR:'#34d399',GBP:'#a78bfa',JPY:'#fbbf24',CHF:'#f87171',AUD:'#fb923c',NZD:'#38bdf8',CAD:'#4ade80'};
+  let h = '<div class="sc-strength"><span class="sc-strength-lbl">Currency Strength (24h)</span>';
+  for (const [cur, val] of sorted) {
+    const col = cols[cur] || '#778';
+    const pct = Math.max(4, val);
+    h += `<div class="sc-si">
+      <div class="sc-si-sym">${cur}</div>
+      <div class="sc-si-bar"><div class="sc-si-fill" style="width:${pct}%;background:${col};"></div></div>
+      <div class="sc-si-val">${val.toFixed(0)}</div>
+    </div>`;
+  }
+  return h + '</div>';
+}
+
+function _renderScTable(type, data) {
+  const content = document.getElementById('sc-content');
+  if (!data || data.length === 0) {
+    content.innerHTML = '<div class="sc-loading" style="color:#445;">No results match your filters.</div>';
+    return;
+  }
+  let h = '<div class="sc-table-wrap"><table class="sc-table"><thead><tr>';
+  if (type === 'stocks') {
+    h += _scTh('symbol','Symbol') + _scTh('name','Company') + _scTh('sector','Sector') +
+         _scTh('price','Price') + _scTh('change_pct','Chg%') + _scTh('volume','Volume') +
+         _scTh('market_cap','Mkt Cap') + _scTh('pe','P/E') + _scTh('beta','Beta') +
+         _scTh('div_yield','Div%') + _scTh('week52_pct','52W') + _scTh('rsi','RSI') + _scTh('signal','Signal');
+  } else if (type === 'forex') {
+    h += _scTh('pair','Pair') + _scTh('group','Group') + _scTh('price','Price') +
+         _scTh('change_1d','1D%') + _scTh('change_1w','1W%') + _scTh('change_1m','1M%') +
+         _scTh('change_3m','3M%') + _scTh('rsi','RSI') + _scTh('signal','Signal');
+  } else if (type === 'crypto') {
+    h += _scTh('rank','#') + _scTh('symbol','Coin') + _scTh('name','Name') +
+         _scTh('price','Price') + _scTh('change_1h','1H%') + _scTh('change_24h','24H%') +
+         _scTh('change_7d','7D%') + _scTh('change_30d','30D%') +
+         _scTh('market_cap','Mkt Cap') + _scTh('volume_24h','Vol 24H') + _scTh('ath_change','vs ATH');
+  } else if (type === 'commodities') {
+    h += _scTh('name','Commodity') + _scTh('group','Group') + _scTh('price','Price') +
+         _scTh('change_1d','1D%') + _scTh('change_1w','1W%') + _scTh('change_1m','1M%') +
+         _scTh('week52_pct','52W') + _scTh('rsi','RSI') + _scTh('signal','Signal');
+  } else if (type === 'multi') {
+    h += _scTh('asset_type','Type') + _scTh('symbol','Symbol') + _scTh('name','Name') +
+         _scTh('sector','Sector') + _scTh('price','Price') + _scTh('change_pct','Chg%') +
+         _scTh('market_cap','Mkt Cap') + _scTh('rsi','RSI') + _scTh('signal','Signal') + _scTh('extra','Info');
+  }
+  h += '</tr></thead><tbody>';
+  for (const d of data) {
+    h += '<tr>';
+    if (type === 'stocks') {
+      h += `<td><span class="sc-sym">${d.symbol}</span></td>
+            <td><span class="sc-name" title="${d.name}">${d.name}</span></td>
+            <td><span class="sc-tag">${d.sector||'—'}</span></td>
+            <td class="sc-price">$${_fmtN(d.price)}</td>
+            <td>${_scChg(d.change_pct)}</td>
+            <td>${_scVol(d.volume,d.avg_volume,d.vol_ratio)}</td>
+            <td>${_scMcap(d.market_cap,d.cap_tier)}</td>
+            <td class="sc-flat">${d.pe!=null?d.pe:'—'}</td>
+            <td class="sc-flat">${d.beta!=null?d.beta:'—'}</td>
+            <td class="sc-flat">${d.div_yield!=null?d.div_yield+'%':'—'}</td>
+            <td>${_scRange(d.week52_pct)}</td>
+            <td>${_scRsi(d.rsi)}</td>
+            <td>${_scSig(d.signal)}</td>`;
+    } else if (type === 'forex') {
+      const dec = d.price < 10 ? 5 : 3;
+      h += `<td><span class="sc-sym">${d.pair}</span></td>
+            <td><span class="sc-tag">${d.group||'—'}</span></td>
+            <td class="sc-price">${d.price.toFixed(dec)}</td>
+            <td>${_scChg(d.change_1d)}</td><td>${_scChg(d.change_1w)}</td>
+            <td>${_scChg(d.change_1m)}</td><td>${_scChg(d.change_3m)}</td>
+            <td>${_scRsi(d.rsi)}</td><td>${_scSig(d.signal)}</td>`;
+    } else if (type === 'crypto') {
+      h += `<td class="sc-flat" style="color:#445;">${d.rank}</td>
+            <td><span class="sc-sym">${d.symbol}</span></td>
+            <td><span class="sc-name" title="${d.name}">${d.name}</span></td>
+            <td class="sc-price">$${_fmtCrypto(d.price)}</td>
+            <td>${_scChg(d.change_1h)}</td><td>${_scChg(d.change_24h)}</td>
+            <td>${_scChg(d.change_7d)}</td><td>${_scChg(d.change_30d)}</td>
+            <td>${_scMcap(d.market_cap,null)}</td>
+            <td class="sc-flat">${_fmtCompact(d.volume_24h)}</td>
+            <td>${d.ath_change!=null?_scChg(d.ath_change):'—'}</td>`;
+    } else if (type === 'commodities') {
+      h += `<td><span class="sc-sym">${d.name}</span></td>
+            <td><span class="sc-tag">${d.group||'—'}</span></td>
+            <td class="sc-price">$${_fmtN(d.price)}</td>
+            <td>${_scChg(d.change_1d)}</td><td>${_scChg(d.change_1w)}</td><td>${_scChg(d.change_1m)}</td>
+            <td>${_scRange(d.week52_pct)}</td>
+            <td>${_scRsi(d.rsi)}</td><td>${_scSig(d.signal)}</td>`;
+    } else if (type === 'multi') {
+      h += `<td><span class="sc-atype at-${d.asset_type}">${d.asset_type}</span></td>
+            <td><span class="sc-sym">${d.symbol}</span></td>
+            <td><span class="sc-name" title="${d.name}">${d.name}</span></td>
+            <td><span class="sc-tag">${d.sector||'—'}</span></td>
+            <td class="sc-price">${d.price<0.1?d.price.toFixed(6):'$'+_fmtN(d.price)}</td>
+            <td>${_scChg(d.change_pct)}</td>
+            <td>${_scMcap(d.market_cap,null)}</td>
+            <td>${_scRsi(d.rsi)}</td><td>${_scSig(d.signal)}</td>
+            <td class="sc-flat" style="font-size:10px;color:#445;">${d.extra||'—'}</td>`;
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table></div>';
+  content.innerHTML = h;
+}
+
+// ─── Screener helper renderers ───────────────────────────────────
+function _scTh(col, label) {
+  const sorted = _scSort.col === col;
+  const arrow  = sorted ? (_scSort.dir === 'desc' ? '▼' : '▲') : '⇅';
+  return `<th onclick="_scSortBy('${col}')" class="${sorted?'sc-sorted':''}">${label}<span class="sar">${arrow}</span></th>`;
+}
+function _scSortBy(col) {
+  if (_scSort.col === col) _scSort.dir = _scSort.dir === 'desc' ? 'asc' : 'desc';
+  else { _scSort.col = col; _scSort.dir = 'desc'; }
+  const sorted = [..._scData].sort((a,b) => {
+    let va = a[col], vb = b[col];
+    if (va == null) va = _scSort.dir === 'desc' ? -Infinity : Infinity;
+    if (vb == null) vb = _scSort.dir === 'desc' ? -Infinity : Infinity;
+    if (typeof va === 'string') return _scSort.dir === 'desc' ? vb.localeCompare(va) : va.localeCompare(vb);
+    return _scSort.dir === 'desc' ? vb - va : va - vb;
+  });
+  _renderScTable(_scType, sorted);
+}
+function _scChg(v) {
+  if (v == null) return '<span class="sc-flat">—</span>';
+  const cls = v > 0.05 ? 'sc-up' : v < -0.05 ? 'sc-dn' : 'sc-flat';
+  return `<span class="${cls}">${v>0?'+':''}${v.toFixed(2)}%</span>`;
+}
+function _scRsi(v) {
+  if (v == null) return '<span class="sc-flat">—</span>';
+  const cls = v>=70?'rv-ob':v>=55?'rv-bu':v<=30?'rv-os':v<=45?'rv-be':'rv-ne';
+  return `<span class="sc-rsi ${cls}">${v.toFixed(0)}</span>`;
+}
+function _scSig(v) {
+  if (!v||v==='N/A') return '<span class="sc-sig ss-ne">—</span>';
+  const cls={Overbought:'ss-ob',Bullish:'ss-bu',Neutral:'ss-ne',Bearish:'ss-be',Oversold:'ss-os'}[v]||'ss-ne';
+  return `<span class="sc-sig ${cls}">${v}</span>`;
+}
+function _scRange(pct) {
+  if (pct==null) return '—';
+  const p = Math.max(3,Math.min(97,pct));
+  return `<div class="sc-range"><div class="sc-range-bar"><div class="sc-range-fill" style="width:${p}%"></div></div><span class="sc-range-lbl">${pct.toFixed(0)}%</span></div>`;
+}
+function _scVol(vol, avg, ratio) {
+  if (!vol) return '<span class="sc-flat">—</span>';
+  const r = ratio || 1;
+  const pct = Math.min(100, r * 50);
+  const cls = r > 1.5 ? 'vhigh' : r > 0.8 ? 'vmid' : '';
+  return `<div class="sc-vol"><div class="sc-vol-bar"><div class="sc-vol-fill ${cls}" style="width:${pct}%"></div></div>${_fmtCompact(vol)}</div>`;
+}
+function _scMcap(v, tier) {
+  if (!v) return '<span class="sc-flat">—</span>';
+  const badge = tier ? `<span class="sc-cap cap-${tier}">${tier}</span> ` : '';
+  return badge + '<span class="sc-flat">' + _fmtCompact(v) + '</span>';
+}
+function _fmtN(v) {
+  if (v==null) return '—';
+  if (v >= 1000) return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return v.toFixed(v<0.01?4:2);
+}
+function _fmtCrypto(v) {
+  if (v==null) return '—';
+  if (v>=1000) return v.toLocaleString('en-US',{maximumFractionDigits:2});
+  if (v>=1)    return v.toFixed(2);
+  if (v>=0.01) return v.toFixed(4);
+  return v.toFixed(6);
+}
+function _fmtCompact(v) {
+  if (!v && v!==0) return '—';
+  if (v>=1e12) return (v/1e12).toFixed(1)+'T';
+  if (v>=1e9)  return (v/1e9).toFixed(1)+'B';
+  if (v>=1e6)  return (v/1e6).toFixed(1)+'M';
+  if (v>=1e3)  return (v/1e3).toFixed(1)+'K';
+  return String(Math.round(v));
+}
+function _fmtScTs(ts) {
+  if (!ts) return '—';
+  try { return new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+  catch { return ts; }
+}
 </script>
 
 <!-- ── Company Detail Modal ── -->

@@ -76,6 +76,28 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .upgrade-btn:hover{box-shadow:0 6px 28px rgba(167,139,250,0.5);transform:translateY(-1px);}
 .upgrade-btn-later{display:block;margin-top:12px;font-size:12px;color:#7a9ab0;cursor:pointer;background:none;border:none;width:100%;text-align:center;}
 .upgrade-btn-later:hover{color:#c8d8e8;}
+/* ── Plan chooser cards ── */
+.plan-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;align-items:stretch;}
+.plan-card{background:#141820;border:1px solid #2a3444;border-radius:5px;padding:18px 14px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.plan-card:hover{border-color:#7c3aed;background:#1a1530;}
+.plan-card.annual{border:2px solid #a78bfa;background:linear-gradient(160deg,rgba(124,58,237,0.18),rgba(167,139,250,0.08));box-shadow:0 0 28px rgba(167,139,250,0.18),inset 0 1px 0 rgba(167,139,250,0.15);}
+.plan-card.annual:hover{background:linear-gradient(160deg,rgba(124,58,237,0.28),rgba(167,139,250,0.14));box-shadow:0 0 40px rgba(167,139,250,0.3),inset 0 1px 0 rgba(167,139,250,0.2);}
+.plan-card.annual::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#a78bfa,#c4b5fd,#a78bfa,transparent);}
+.plan-card-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#10b981;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);padding:3px 10px;border-radius:2px;margin-bottom:10px;}
+.plan-card-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#7a9ab0;margin-bottom:8px;}
+.annual .plan-card-label{color:#c4b5fd;font-size:11px;}
+.plan-card-price{font-size:28px;font-weight:800;color:#fff;line-height:1;}
+.annual .plan-card-price{font-size:38px;color:#e9d5ff;text-shadow:0 0 20px rgba(167,139,250,0.5);}
+.plan-card-price span{font-size:14px;font-weight:500;color:#7a9ab0;}
+.annual .plan-card-price span{font-size:15px;color:#a78bfa;}
+.plan-card-sub{font-size:10px;color:#7a9ab0;margin-top:4px;margin-bottom:14px;min-height:28px;flex:1;}
+.annual .plan-card-sub{font-size:11px;color:#c4b5fd;}
+.plan-card-sub s{color:#4a6070;}
+.plan-card-btn{width:100%;padding:9px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;border:none;cursor:pointer;border-radius:3px;transition:all .2s;box-shadow:0 2px 12px rgba(167,139,250,0.25);margin-top:auto;}
+.annual .plan-card-btn{padding:11px;font-size:11px;background:linear-gradient(135deg,#6d28d9,#a78bfa,#c4b5fd);box-shadow:0 4px 20px rgba(167,139,250,0.45);}
+.plan-card-btn:hover{box-shadow:0 4px 20px rgba(167,139,250,0.45);transform:translateY(-1px);}
+.annual .plan-card-btn:hover{box-shadow:0 6px 28px rgba(167,139,250,0.65);transform:translateY(-2px);}
+.plan-card-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 
 /* ── Pro locked badge on tab ── */
 .tab-pro-lock{font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#a78bfa;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);padding:1px 5px;border-radius:2px;margin-left:6px;vertical-align:middle;}
@@ -168,7 +190,8 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .tv-toggle-btn .tv-dot{width:5px;height:5px;border-radius:50%;background:var(--high);animation:blink 1.5s ease-in-out infinite;}
 
 /* ── Tabs — glow all around ── */
-.tab-bar{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;padding:0 12px;gap:4px;}
+.tab-bar{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;padding:0 12px;gap:4px;overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
 .tab-btn{padding:15px 22px;font-family:var(--font);font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;border:none;background:transparent;color:#fff;cursor:pointer;transition:all .2s;position:relative;border-radius:4px;}
 .tab-btn:hover{color:#fff;background:rgba(255,255,255,0.04);}
 .tab-btn.active{color:var(--accent);background:rgba(0,212,255,0.06);box-shadow:0 0 0 1px rgba(0,212,255,0.35),0 0 14px rgba(0,212,255,0.25),inset 0 0 10px rgba(0,212,255,0.06);}
@@ -284,23 +307,24 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .load-more-btn:hover{border-color:var(--accent);color:var(--accent);}
 .scroll-sentinel{height:1px;}
 
-/* ── Delay banner ── */
-.delay-banner{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(245,158,11,0.07);border-bottom:2px solid rgba(245,158,11,0.3);padding:9px 20px;flex-shrink:0;}
+/* ── Delay banner (logo cyan) ── */
+.delay-banner-wrap{margin:10px 16px 8px;}
+.delay-banner{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-left:3px solid #00d4ff;padding:9px 20px;flex-shrink:0;border-radius:3px;}
 .delay-banner-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
 .delay-banner-icon{font-size:14px;flex-shrink:0;}
-.delay-banner-text{font-size:11px;color:rgba(255,255,255,0.85);line-height:1.5;overflow:hidden;}
-.delay-banner-text strong{color:#fff;font-weight:700;}
-.delay-banner-btn{flex-shrink:0;padding:6px 16px;background:var(--medium);color:#000;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;border-radius:3px;white-space:nowrap;}
-.delay-banner-btn:hover{background:#fbbf24;}
-/* ── Inline feed ad ── */
-.feed-ad-card{padding:11px 20px;background:rgba(167,139,250,0.04);border-top:1px solid rgba(167,139,250,0.12);border-bottom:1px solid rgba(167,139,250,0.12);border-left:3px solid rgba(167,139,250,0.45);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:14px;}
-.feed-ad-card:hover{background:rgba(167,139,250,0.09);}
-.feed-ad-badge{font-size:8px;font-weight:700;letter-spacing:0.15em;color:rgba(167,139,250,0.65);text-transform:uppercase;border:1px solid rgba(167,139,250,0.25);padding:2px 5px;border-radius:2px;flex-shrink:0;}
+.delay-banner-text{font-size:11px;color:rgba(255,255,255,0.88);line-height:1.5;overflow:hidden;}
+.delay-banner-text strong{color:#00d4ff;font-weight:700;}
+.delay-banner-btn{flex-shrink:0;padding:6px 16px;background:#00d4ff;color:#000;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:none;transition:background .15s;border-radius:3px;white-space:nowrap;}
+.delay-banner-btn:hover{background:#0099cc;}
+/* ── Inline feed ad (logo cyan) ── */
+.feed-ad-card{padding:12px 20px;background:rgba(0,212,255,0.05);border-top:1px solid rgba(0,212,255,0.2);border-bottom:1px solid rgba(0,212,255,0.2);border-left:4px solid #00d4ff;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:14px;}
+.feed-ad-card:hover{background:rgba(0,212,255,0.1);}
+.feed-ad-badge{font-size:8px;font-weight:800;letter-spacing:0.18em;color:#00d4ff;text-transform:uppercase;border:1px solid rgba(0,212,255,0.4);padding:2px 6px;border-radius:2px;flex-shrink:0;}
 .feed-ad-body{flex:1;}
-.feed-ad-headline{font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:2px;}
-.feed-ad-sub{font-size:10px;color:var(--text-muted);}
-.feed-ad-cta{flex-shrink:0;padding:5px 12px;border:1px solid rgba(167,139,250,0.35);color:#a78bfa;background:transparent;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:0.06em;border-radius:3px;cursor:pointer;text-transform:uppercase;transition:all .15s;}
-.feed-ad-card:hover .feed-ad-cta{background:rgba(167,139,250,0.12);}
+.feed-ad-headline{font-size:12px;font-weight:700;color:#fff;margin-bottom:2px;}
+.feed-ad-sub{font-size:10px;color:rgba(0,212,255,0.65);}
+.feed-ad-cta{flex-shrink:0;padding:6px 14px;background:#00d4ff;color:#000;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:0.06em;border-radius:3px;border:none;cursor:pointer;text-transform:uppercase;transition:background .15s;}
+.feed-ad-card:hover .feed-ad-cta{background:#0099cc;color:#fff;}
 
 /* ── Empty ── */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--text-muted);gap:12px;}
@@ -391,6 +415,76 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--accent);color:var(--accent);font-family:var(--font);font-size:11px;font-weight:500;padding:9px 22px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;border-radius:3px;}
 .toast.show{opacity:1;}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2)}::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
+/* ── Tab bar scrollable ── */
+.tab-bar{overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+
+/* ── Data Panels (Pro tabs) ── */
+.data-panel{flex:1;overflow-y:auto;padding-bottom:40px;}
+.data-section{padding:20px 28px 0;}
+.data-section-title{font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+/* Data table */
+.data-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+.data-table th{font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);padding:8px 14px;text-align:left;border-bottom:2px solid var(--border);background:var(--bg2);white-space:nowrap;}
+.data-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-dim);transition:background .1s;}
+.data-table tr:hover td{background:var(--bg3);}
+.data-table .num{font-family:var(--font-mono);color:var(--text);}
+.data-table .pos{color:var(--low)!important;}
+.data-table .neg{color:var(--high)!important;}
+.data-table .sym{font-family:var(--font-mono);font-weight:600;color:var(--accent);}
+.data-table .dim{color:var(--text-muted);font-size:11px;}
+
+/* Crypto cards */
+.crypto-global-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;}
+.crypto-global-item{display:flex;flex-direction:column;gap:2px;}
+.crypto-global-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);}
+.crypto-global-value{font-size:13px;font-weight:600;font-family:var(--font-mono);color:var(--text);}
+.crypto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;padding:20px 28px;}
+.crypto-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:14px;transition:border-color .15s,background .15s;cursor:default;}
+.crypto-card:hover{border-color:var(--border2);background:var(--bg3);}
+.crypto-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.crypto-icon{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--bg3);flex-shrink:0;}
+.crypto-card-rank{margin-left:auto;font-size:9px;color:var(--text-muted);font-family:var(--font-mono);}
+.crypto-card-name{font-size:12px;font-weight:600;color:var(--text);}
+.crypto-card-sym{font-size:10px;color:var(--text-muted);font-family:var(--font-mono);}
+.crypto-card-price{font-size:17px;font-weight:700;color:var(--text);font-family:var(--font-mono);margin-bottom:3px;}
+.crypto-card-change{font-size:11px;font-weight:600;font-family:var(--font-mono);}
+.crypto-card-cap{font-size:10px;color:var(--text-muted);margin-top:6px;}
+
+/* Macro cards */
+.macro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;padding:20px 28px;}
+.macro-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px;transition:border-color .15s;}
+.macro-card:hover{border-color:var(--border2);}
+.macro-card-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.macro-card-value{font-size:28px;font-weight:800;color:var(--text);font-family:var(--font-mono);margin-bottom:2px;line-height:1;}
+.macro-card-unit{font-size:10px;color:var(--text-muted);margin-bottom:8px;}
+.macro-card-change{font-size:11px;font-weight:600;font-family:var(--font-mono);margin-bottom:4px;}
+.macro-card-date{font-size:10px;color:var(--text-muted);}
+.macro-card-source{font-size:9px;color:#4a6070;margin-top:3px;}
+
+/* Sentiment */
+.sentiment-layout{display:grid;grid-template-columns:300px 1fr;height:100%;overflow:hidden;}
+.fg-panel{padding:24px;border-right:1px solid var(--border);overflow-y:auto;}
+.fg-section-title{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;}
+.fg-score-wrap{text-align:center;margin-bottom:20px;}
+.fg-score{font-size:68px;font-weight:800;font-family:var(--font-mono);line-height:1;}
+.fg-rating{font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-top:6px;}
+.fg-bar-wrap{height:8px;border-radius:4px;background:linear-gradient(90deg,#ff3b5c 0%,#f59e0b 50%,#10b981 100%);margin:14px 0 6px;position:relative;}
+.fg-bar-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #0a0c0f;box-shadow:0 0 8px rgba(0,0,0,0.6);}
+.fg-bar-labels{display:flex;justify-content:space-between;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
+.fg-sparkline-wrap{margin-top:18px;}
+.fg-sparkline-title{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+.fg-spark-bar-wrap{display:flex;align-items:flex-end;gap:2px;height:50px;}
+.fg-spark-bar{flex:1;border-radius:1px 1px 0 0;min-height:2px;}
+.cot-panel{padding:24px;overflow-y:auto;}
+.cot-section-title{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;}
+
+/* Data loading */
+.data-loading{display:flex;align-items:center;justify-content:center;flex:1;min-height:200px;font-size:12px;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.08em;}
+.data-source-footer{padding:12px 28px 20px;font-size:10px;color:#4a6070;}
+.data-note{margin:16px 28px;padding:12px 16px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);border-radius:4px;font-size:12px;color:var(--text-muted);line-height:1.6;}
 </style>
 </head>
 <body>
@@ -458,14 +552,20 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
         <div class="pack-plan-name" data-i18n="pack.plan_name">Free Plan</div>
       </div>
       <div class="pack-features">
-        <div class="pack-feat feat-current"><span class="feat-icon">✓</span><span data-i18n="pack.feat1">News with delay</span></div>
+        <div class="pack-feat feat-current"><span class="feat-icon">✓</span><span data-i18n="pack.feat1">News (2-min delay)</span></div>
+        <div class="pack-feat feat-current"><span class="feat-icon">✓</span><span data-i18n="pack.feat1b">Economic calendar</span></div>
         <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span data-i18n="pack.feat2">Real-time feed</span></div>
-        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span data-i18n="pack.feat3">Zero delay</span></div>
-        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span data-i18n="pack.feat4">Priority alerts</span></div>
+        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span data-i18n="pack.feat3">Live squawk</span></div>
+        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span data-i18n="pack.feat4">Live TV — 7 channels</span></div>
+        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span>FX Rates · Crypto · Commodities</span></div>
+        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span>Macro · Sentiment (COT + F&amp;G)</span></div>
+        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span>Earnings Calendar · SEC Filings</span></div>
+        <div class="pack-feat feat-pro"><span class="feat-icon">✦</span><span data-i18n="pack.feat5">Ad-free experience</span></div>
       </div>
       <div class="pack-cta">
         <div class="pack-cta-text" data-i18n-html="pack.cta_text">You're on the <strong>Basic Plan</strong>.<br>Upgrade to <strong>Pro</strong> for real-time coverage.</div>
-        <button class="pack-upgrade" onclick="window.open('https://www.tradingnewsterminal.com/#pricing','_blank')" data-i18n="pack.upgrade_btn">⚡ Upgrade to Pro →</button>
+        <button class="pack-upgrade" onclick="showUpgrade('Upgrade to Pro')" data-i18n="pack.upgrade_btn">⚡ Upgrade to Pro →</button>
+        <div style="font-size:10px;color:#4a6070;text-align:center;margin-top:8px;">From €30/mo · excl. VAT · Billed in EUR</div>
       </div>
     </div>
   </aside>
@@ -492,6 +592,13 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       <button class="tab-btn active" id="tab-news-btn" onclick="switchTab('news')" data-i18n="tab.news">📰 News Feed</button>
       <button class="tab-btn" id="tab-calendar-btn" onclick="switchTab('calendar')" data-i18n="tab.calendar">📅 Economic Calendar</button>
       <button class="tab-btn" id="tab-tv-btn" onclick="IS_PRO ? switchTab('tv') : showUpgrade('Live Financial TV')" data-i18n="tab.tv">📺 Live TV<span class="tab-pro-lock" id="tv-lock-badge" style="display:none">PRO</span></button>
+      <button class="tab-btn" id="tab-fx-btn" onclick="IS_PRO ? switchTab('fx') : showUpgrade('FX Rates')">💱 FX Rates <span class="tab-pro-lock">PRO</span></button>
+      <button class="tab-btn" id="tab-crypto-btn" onclick="IS_PRO ? switchTab('crypto') : showUpgrade('Crypto Markets')">₿ Crypto <span class="tab-pro-lock">PRO</span></button>
+      <button class="tab-btn" id="tab-commodities-btn" onclick="IS_PRO ? switchTab('commodities') : showUpgrade('Commodities')">🛢️ Commodities <span class="tab-pro-lock">PRO</span></button>
+      <button class="tab-btn" id="tab-macro-btn" onclick="IS_PRO ? switchTab('macro') : showUpgrade('Macro Dashboard')">📊 Macro <span class="tab-pro-lock">PRO</span></button>
+      <button class="tab-btn" id="tab-sentiment-btn" onclick="IS_PRO ? switchTab('sentiment') : showUpgrade('Market Sentiment')">🧠 Sentiment <span class="tab-pro-lock">PRO</span></button>
+      <button class="tab-btn" id="tab-earnings-btn" onclick="IS_PRO ? switchTab('earnings') : showUpgrade('Earnings Calendar')">📈 Earnings <span class="tab-pro-lock">PRO</span></button>
+      <button class="tab-btn" id="tab-centralbanks-btn" onclick="IS_PRO ? switchTab('centralbanks') : showUpgrade('Central Bank News')">🏦 Central Banks <span class="tab-pro-lock">PRO</span></button>
     </div>
 
     <!-- NEWS TAB -->
@@ -518,7 +625,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
         <div class="feed-title" id="feedTitle">All News <span class="feed-title-badge" data-i18n="feed.live">LIVE</span></div>
         <div class="feed-count" id="feedCount">Connecting...</div>
       </div>
-      <div id="delayBannerWrap"></div>
+      <div class="delay-banner-wrap" id="delayBannerWrap"></div>
       <div class="feed-inner" id="newsFeed">
         <div class="empty-state">
           <div class="empty-icon">◈</div>
@@ -554,6 +661,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
           <button class="cal-asset-btn" data-asset="NZD" onclick="calSetAsset('NZD',this)">🇳🇿 NZD</button>
         </div>
       </div>
+      <div class="delay-banner-wrap" id="calBannerWrap"></div>
       <div class="cal-body" id="calBody">
         <div class="cal-empty"><div class="empty-icon">📅</div><div class="empty-text" data-i18n="cal.loading">Loading calendar...</div></div>
       </div>
@@ -624,6 +732,41 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       </div>
     </div>
 
+    <!-- FX RATES TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-fx">
+      <div class="data-panel" id="fx-body"><div class="data-loading">⟳ Loading FX rates...</div></div>
+    </div>
+
+    <!-- CRYPTO TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-crypto">
+      <div class="data-panel" id="crypto-body"><div class="data-loading">⟳ Loading crypto prices...</div></div>
+    </div>
+
+    <!-- COMMODITIES TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-commodities">
+      <div class="data-panel" id="commodities-body"><div class="data-loading">⟳ Loading commodities...</div></div>
+    </div>
+
+    <!-- MACRO TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-macro">
+      <div class="data-panel" id="macro-body"><div class="data-loading">⟳ Loading macro indicators...</div></div>
+    </div>
+
+    <!-- SENTIMENT TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-sentiment">
+      <div id="sentiment-body" style="flex:1;display:flex;flex-direction:column;overflow:hidden;"><div class="data-loading">⟳ Loading sentiment data...</div></div>
+    </div>
+
+    <!-- EARNINGS TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-earnings">
+      <div class="data-panel" id="earnings-body"><div class="data-loading">⟳ Loading earnings calendar...</div></div>
+    </div>
+
+    <!-- CENTRAL BANKS TAB (PRO) -->
+    <div class="tab-content hidden" id="tab-centralbanks">
+      <div id="centralbanks-body" style="flex:1;display:flex;flex-direction:column;overflow:hidden;"><div class="data-loading">⟳ Loading central bank news...</div></div>
+    </div>
+
   </main>
 </div>
 
@@ -647,6 +790,38 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
     const hashUser = hashParams.get('user');
     if (hashUser) localStorage.setItem('tnt_user', decodeURIComponent(hashUser));
     history.replaceState(null, '', location.pathname);
+  }
+  // Check for Stripe payment success redirect — auto-refresh plan from backend
+  const urlParams = new URLSearchParams(location.search);
+  if (urlParams.get('payment') === 'success') {
+    history.replaceState(null, '', location.pathname);
+    // Run async in its own IIFE so authGate stays synchronous
+    (async function handlePaymentSuccess() {
+      const tok = localStorage.getItem('tnt_token');
+      if (!tok) return;
+      const BURL = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+      const refreshPlan = async () => {
+        const r = await fetch(BURL + '/auth/me', { headers: { 'Authorization': 'Bearer ' + tok } });
+        if (!r.ok) return null;
+        return (await r.json()).plan;
+      };
+      try {
+        let plan = await refreshPlan();
+        if (plan !== 'pro') {
+          // Webhook might not have arrived yet — wait 3s and retry once
+          await new Promise(res => setTimeout(res, 3000));
+          plan = await refreshPlan();
+        }
+        const cached = JSON.parse(localStorage.getItem('tnt_user') || '{}');
+        cached.plan = plan || cached.plan;
+        localStorage.setItem('tnt_user', JSON.stringify(cached));
+        showToast(plan === 'pro' ? '🎉 Bem-vindo ao Pro! A activar...' : '🎉 Pagamento confirmado! A recarregar...');
+        setTimeout(() => location.reload(), 1800);
+      } catch(e) {
+        showToast('🎉 Pagamento confirmado! A recarregar...');
+        setTimeout(() => location.reload(), 2000);
+      }
+    })();
   }
   const token = localStorage.getItem('tnt_token');
   if (!token) { window.location.replace(LOGIN_URL); return; }
@@ -721,9 +896,10 @@ const STRINGS = {
     'sidebar.medium':'Medium','sidebar.low':'Low',
     'sidebar.watchlist_label':'My News — Watchlist',
     'sidebar.watchlist_hint':'Select assets to pin to MY NEWS',
-    'pack.badge':'Basic Pack','pack.plan_name':'Free Plan',
-    'pack.feat1':'News with delay','pack.feat2':'Real-time feed','pack.feat3':'Zero delay','pack.feat4':'Priority alerts',
-    'pack.cta_text':"You're on the <strong>Basic Plan</strong>.<br>Upgrade to <strong>Pro</strong> for real-time coverage.",
+    'pack.badge':'Basic Plan','pack.plan_name':'Free',
+    'pack.feat1':'News (2-min delay)','pack.feat1b':'Economic calendar',
+    'pack.feat2':'Real-time feed','pack.feat3':'Live squawk','pack.feat4':'Live TV — 7 channels','pack.feat5':'Ad-free experience',
+    'pack.cta_text':"You're on the <strong>Basic Plan</strong>. Upgrade to <strong>Pro</strong> for real-time news, squawk, TV &amp; no ads.",
     'pack.upgrade_btn':'⚡ Upgrade to Pro →',
     'cat.all':'All','cat.my_news':'★ My News','cat.forex':'Forex','cat.crypto':'Crypto','cat.macro':'Macro',
     'cat.bonds':'Bonds','cat.equities':'Equities','cat.indexes':'Indexes','cat.commodities':'Commodities',
@@ -767,9 +943,10 @@ const STRINGS = {
     'sidebar.medium':'Médio','sidebar.low':'Baixo',
     'sidebar.watchlist_label':'As Minhas Notícias',
     'sidebar.watchlist_hint':'Seleciona ativos para As Minhas Notícias',
-    'pack.badge':'Plano Básico','pack.plan_name':'Plano Gratuito',
-    'pack.feat1':'Notícias com atraso','pack.feat2':'Feed em tempo real','pack.feat3':'Sem atrasos','pack.feat4':'Alertas prioritários',
-    'pack.cta_text':"Estás no <strong>Plano Básico</strong>.<br>Muda para <strong>Pro</strong> para cobertura em tempo real.",
+    'pack.badge':'Plano Básico','pack.plan_name':'Gratuito',
+    'pack.feat1':'Notícias (2 min atraso)','pack.feat1b':'Calendário económico',
+    'pack.feat2':'Feed em tempo real','pack.feat3':'Squawk ao vivo','pack.feat4':'TV ao vivo — 7 canais','pack.feat5':'Sem anúncios',
+    'pack.cta_text':"Estás no <strong>Plano Básico</strong>. Muda para <strong>Pro</strong> — tempo real, squawk, TV e sem anúncios.",
     'pack.upgrade_btn':'⚡ Mudar para Pro →',
     'cat.all':'Todas','cat.my_news':'★ As Minhas','cat.forex':'Forex','cat.crypto':'Cripto','cat.macro':'Macro',
     'cat.bonds':'Obrigações','cat.equities':'Ações','cat.indexes':'Índices','cat.commodities':'Matérias-Primas',
@@ -1324,12 +1501,16 @@ function switchTab(tab) {
   document.getElementById('tab-'+tab).classList.remove('hidden');
   const btn = document.getElementById('tab-'+tab+'-btn');
   btn.classList.add('active');
-  btn.classList.remove('tab-pulse'); // stop pulse when user enters the tab
-  if (tab==='calendar') { renderCalendar(); if(calEvents.length===0) loadCalendar(); }
-  if (tab==='tv') {
-    const frame = document.getElementById('tvPlayerFrame');
-    if (frame && !frame.getAttribute('src')) switchChannel(currentChannel, null);
-  }
+  btn.classList.remove('tab-pulse');
+  if (tab==='calendar')     { renderCalendar(); if(calEvents.length===0) loadCalendar(); }
+  if (tab==='tv')           { const frame = document.getElementById('tvPlayerFrame'); if (frame && !frame.getAttribute('src')) switchChannel(currentChannel, null); }
+  if (tab==='fx')           { loadFxRates(); }
+  if (tab==='crypto')       { loadCrypto(); }
+  if (tab==='commodities')  { loadCommodities(); }
+  if (tab==='macro')        { loadMacro(); }
+  if (tab==='sentiment')    { loadSentiment(); }
+  if (tab==='earnings')     { loadEarnings(); }
+  if (tab==='centralbanks') { loadCentralBanks(); }
 }
 function pulseTab(tabId) {
   const btn = document.getElementById(tabId);
@@ -1509,21 +1690,18 @@ function renderNews() {
   const countEl = document.getElementById('feedCount');
   if (countEl) countEl.textContent = total + ' ' + t('feed.items');
 
-  // Delay banner — fixed at top, rendered once (only for basic/free users)
+  // Delay banner — rendered in both news and calendar tabs (only for basic/free users)
+  const bannerHtml = !IS_PRO ? `<div class="delay-banner">
+      <div class="delay-banner-left">
+        <span class="delay-banner-icon">⏱</span>
+        <span class="delay-banner-text"><strong>${t('delay.title')}</strong> — ${t('delay.sub')}</span>
+      </div>
+      <button class="delay-banner-btn" onclick="showUpgrade('Real-Time News Feed')">${t('delay.btn')}</button>
+    </div>` : '';
   const bannerWrap = document.getElementById('delayBannerWrap');
-  if (bannerWrap) {
-    if (!IS_PRO) {
-      bannerWrap.innerHTML = `<div class="delay-banner">
-        <div class="delay-banner-left">
-          <span class="delay-banner-icon">⏱</span>
-          <span class="delay-banner-text"><strong>${t('delay.title')}</strong> — ${t('delay.sub')}</span>
-        </div>
-        <button class="delay-banner-btn" onclick="showUpgrade('Real-time News')">${t('delay.btn')}</button>
-      </div>`;
-    } else {
-      bannerWrap.innerHTML = '';
-    }
-  }
+  if (bannerWrap) bannerWrap.innerHTML = bannerHtml;
+  const calBannerWrap = document.getElementById('calBannerWrap');
+  if (calBannerWrap) calBannerWrap.innerHTML = bannerHtml;
 
   if (total === 0) {
     document.getElementById('newsFeed').innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-text">${t('empty.no_news')}</div><div class="empty-sub">${t('empty.no_news_sub')}</div></div>`;
@@ -1744,6 +1922,25 @@ setInterval(()=>{
   });
 },1000);
 // ─── Plan gating ─────────────────────────────────────────────────
+const STRIPE_PK = 'pk_live_51THn9APgXWxcInoU9BsbUmurmdQyS9m5nSJVNkvThhtieWP65gJXSKqeerhwLXZSsVKcUnxbmifjfow4euXTwiWd004gRqmHEh';
+
+async function goToPro(btnEl, priceId) {
+  if (btnEl) { btnEl.disabled = true; btnEl.dataset.orig = btnEl.textContent; btnEl.textContent = 'Loading...'; }
+  try {
+    const tok = localStorage.getItem('tnt_token');
+    const headers = {'Content-Type':'application/json'};
+    if (tok) headers['Authorization'] = 'Bearer ' + tok;
+    const body = priceId ? JSON.stringify({price_id: priceId}) : JSON.stringify({});
+    const r = await fetch(BACKEND_URL + '/create-checkout-session', {method:'POST', headers, body});
+    const data = await r.json();
+    if (data.url) { window.location.href = data.url; return; }
+    throw new Error(data.detail || 'Checkout unavailable');
+  } catch(e) {
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnEl.dataset.orig || 'Upgrade to Pro →'; }
+    showToast('Error: ' + e.message);
+  }
+}
+
 const PRO_FEATURES = {
   'Live Financial TV':   'Watch Bloomberg TV, CNBC, Al Jazeera and more live financial channels directly inside the terminal.',
   'Live Squawk':         'Hands-free voice reading of every breaking headline the instant it arrives — with zero delay.',
@@ -1751,6 +1948,420 @@ const PRO_FEATURES = {
   'Real-time News':      'Pro delivers every headline in real time. Basic plan receives news with a 2-minute delay.',
   'Ad-Free Experience':  'Pro removes all ads and upgrade prompts from the terminal. Pure market intelligence, zero distractions.',
 };
+
+// ══════════════════════════════════════════════════════
+//  PRO DATA TABS — Fetch & Render
+// ══════════════════════════════════════════════════════
+
+// ── Helpers ───────────────────────────────────────────
+function fmtMoney(n) {
+  if (n===null||n===undefined||isNaN(n)) return '—';
+  if (n>=1e12) return '$'+(n/1e12).toFixed(2)+'T';
+  if (n>=1e9)  return '$'+(n/1e9).toFixed(2)+'B';
+  if (n>=1e6)  return '$'+(n/1e6).toFixed(2)+'M';
+  return '$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
+}
+function fmtPct(n,decimals=2) {
+  if (n===null||n===undefined||isNaN(n)) return '—';
+  const sign = n>=0?'+':'';
+  return sign+Number(n).toFixed(decimals)+'%';
+}
+function fmtNum(n,dec=4) {
+  if (n===null||n===undefined||isNaN(n)) return '—';
+  return Number(n).toLocaleString('en-US',{maximumFractionDigits:dec,minimumFractionDigits:dec});
+}
+
+// ── 1. FX RATES ───────────────────────────────────────
+let fxLoaded=false, fxRefreshTimer=null;
+
+const FX_PAIRS = [
+  {pair:'EUR/USD',from:'EUR',to:'USD',dec:4},{pair:'GBP/USD',from:'GBP',to:'USD',dec:4},
+  {pair:'USD/JPY',from:'USD',to:'JPY',dec:2},{pair:'USD/CHF',from:'USD',to:'CHF',dec:4},
+  {pair:'AUD/USD',from:'AUD',to:'USD',dec:4},{pair:'USD/CAD',from:'USD',to:'CAD',dec:4},
+  {pair:'NZD/USD',from:'NZD',to:'USD',dec:4},{pair:'EUR/GBP',from:'EUR',to:'GBP',dec:4},
+  {pair:'EUR/JPY',from:'EUR',to:'JPY',dec:2},{pair:'GBP/JPY',from:'GBP',to:'JPY',dec:2},
+  {pair:'EUR/CHF',from:'EUR',to:'CHF',dec:4},{pair:'AUD/JPY',from:'AUD',to:'JPY',dec:2},
+  {pair:'USD/SEK',from:'USD',to:'SEK',dec:4},{pair:'USD/NOK',from:'USD',to:'NOK',dec:4},
+  {pair:'USD/CNY',from:'USD',to:'CNY',dec:4},{pair:'USD/HKD',from:'USD',to:'HKD',dec:4},
+  {pair:'USD/MXN',from:'USD',to:'MXN',dec:4},{pair:'USD/BRL',from:'USD',to:'BRL',dec:4},
+  {pair:'USD/ZAR',from:'USD',to:'ZAR',dec:4},{pair:'USD/TRY',from:'USD',to:'TRY',dec:4},
+  {pair:'USD/INR',from:'USD',to:'INR',dec:2},{pair:'USD/KRW',from:'USD',to:'KRW',dec:0},
+];
+const FX_METALS=[{pair:'XAU/USD',from:'XAU',to:'USD',dec:2},{pair:'XAG/USD',from:'XAG',to:'USD',dec:4}];
+
+function calcRate(rates,from,to){
+  if(from==='USD') return rates[to];
+  if(to==='USD')   return rates[from]?1/rates[from]:null;
+  if(!rates[from]||!rates[to]) return null;
+  return rates[to]/rates[from];
+}
+
+async function loadFxRates(force=false){
+  if(fxLoaded&&!force) return;
+  const body=document.getElementById('fx-body');
+  if(!body) return;
+  if(!fxLoaded) body.innerHTML='<div class="data-loading">⟳ Loading FX rates (ECB)...</div>';
+  try{
+    const r=await fetch(BACKEND_URL+'/fx-rates?base=USD&symbols=EUR,GBP,JPY,CHF,AUD,CAD,NZD,SEK,NOK,DKK,HKD,SGD,CNY,BRL,MXN,ZAR,TRY,INR,KRW,XAU,XAG');
+    const data=await r.json();
+    const rates=data.rates||{};
+    const date=data.date||'—';
+
+    function pairRows(pairs){
+      return pairs.map(({pair,from,to,dec})=>{
+        const rate=calcRate(rates,from,to);
+        const rateStr=rate?rate.toFixed(dec):'—';
+        const f1=ASSET_FLAG[from]||'';
+        const f2=ASSET_FLAG[to]||'';
+        return `<tr><td class="sym">${f1} ${from}</td><td class="dim">/ ${f2} ${to}</td><td class="num" style="font-size:14px;font-weight:700;">${rateStr}</td><td class="dim">${date}</td></tr>`;
+      }).join('');
+    }
+
+    const major=FX_PAIRS.filter(p=>['EUR','GBP','AUD','NZD'].includes(p.from)&&p.to==='USD'||p.from==='USD'&&['JPY','CHF','CAD'].includes(p.to));
+    const cross=FX_PAIRS.filter(p=>!major.includes(p)&&!['SEK','NOK','DKK','HKD','SGD','CNY','BRL','MXN','ZAR','TRY','INR','KRW'].some(x=>p.to===x));
+    const em=FX_PAIRS.filter(p=>['SEK','NOK','DKK','HKD','SGD','CNY','BRL','MXN','ZAR','TRY','INR','KRW'].includes(p.to));
+
+    body.innerHTML=`
+      <div class="data-section"><div class="data-section-title">Major Pairs</div>
+        <table class="data-table"><thead><tr><th>Currency</th><th></th><th>Rate</th><th>ECB Date</th></tr></thead>
+        <tbody>${pairRows(major)}</tbody></table></div>
+      <div class="data-section"><div class="data-section-title">Cross Pairs</div>
+        <table class="data-table"><thead><tr><th>Currency</th><th></th><th>Rate</th><th>ECB Date</th></tr></thead>
+        <tbody>${pairRows(cross)}</tbody></table></div>
+      <div class="data-section"><div class="data-section-title">Emerging Markets (USD base)</div>
+        <table class="data-table"><thead><tr><th>Currency</th><th></th><th>Rate</th><th>ECB Date</th></tr></thead>
+        <tbody>${pairRows(em)}</tbody></table></div>
+      <div class="data-section"><div class="data-section-title">Precious Metals (vs USD)</div>
+        <table class="data-table"><thead><tr><th>Metal</th><th></th><th>Price (USD)</th><th>ECB Date</th></tr></thead>
+        <tbody>${pairRows(FX_METALS)}</tbody></table></div>
+      <div class="data-source-footer">Source: European Central Bank (ECB) via Frankfurter API · ${date} · Auto-refreshes every 60s</div>`;
+    fxLoaded=true;
+    if(fxRefreshTimer) clearInterval(fxRefreshTimer);
+    fxRefreshTimer=setInterval(()=>{if(currentTab==='fx') loadFxRates(true);},60000);
+  } catch(e){
+    document.getElementById('fx-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+    fxLoaded=false;
+  }
+}
+
+// ── 2. CRYPTO ─────────────────────────────────────────
+let cryptoLoaded=false, cryptoTimer=null;
+
+async function loadCrypto(force=false){
+  if(cryptoLoaded&&!force) return;
+  const body=document.getElementById('crypto-body');
+  if(!body) return;
+  if(!cryptoLoaded) body.innerHTML='<div class="data-loading">⟳ Loading crypto markets (CoinGecko)...</div>';
+  try{
+    const [cr,gr]=await Promise.all([
+      fetch(BACKEND_URL+'/crypto?coins=bitcoin,ethereum,ripple,solana,cardano,dogecoin,chainlink,avalanche-2,polkadot,uniswap,litecoin,stellar,monero,tron,shiba-inu'),
+      fetch(BACKEND_URL+'/crypto/global')
+    ]);
+    const cd=await cr.json(); const gd=await gr.json();
+    const coins=cd.coins||[];
+
+    const globalBar=`<div class="crypto-global-bar">
+      <div class="crypto-global-item"><div class="crypto-global-label">Market Cap</div><div class="crypto-global-value">${fmtMoney(gd.total_market_cap_usd)}</div></div>
+      <div class="crypto-global-item"><div class="crypto-global-label">24h Volume</div><div class="crypto-global-value">${fmtMoney(gd.total_volume_usd)}</div></div>
+      <div class="crypto-global-item"><div class="crypto-global-label">BTC Dom.</div><div class="crypto-global-value" style="color:var(--accent)">${gd.btc_dominance?gd.btc_dominance.toFixed(1)+'%':'—'}</div></div>
+      <div class="crypto-global-item"><div class="crypto-global-label">ETH Dom.</div><div class="crypto-global-value" style="color:#a78bfa">${gd.eth_dominance?gd.eth_dominance.toFixed(1)+'%':'—'}</div></div>
+      <div class="crypto-global-item"><div class="crypto-global-label">24h Chg</div><div class="crypto-global-value ${(gd.market_cap_change_24h||0)>=0?'pos':'neg'}">${fmtPct(gd.market_cap_change_24h)}</div></div>
+      <div class="crypto-global-item" style="margin-left:auto;"><div class="crypto-global-label">Active Coins</div><div class="crypto-global-value">${(gd.active_coins||0).toLocaleString()}</div></div>
+    </div>`;
+
+    const cards=coins.map(c=>{
+      const ch=c.price_change_percentage_24h;
+      const p=c.current_price;
+      const pStr=p>=1000?p.toLocaleString('en-US',{maximumFractionDigits:2}):p>=1?p.toFixed(2):p?p.toFixed(6):'—';
+      return `<div class="crypto-card">
+        <div class="crypto-card-top">
+          <img class="crypto-icon" src="${c.image||''}" alt="${c.symbol}" onerror="this.style.display='none'">
+          <div><div class="crypto-card-name">${c.name}</div><div class="crypto-card-sym">${(c.symbol||'').toUpperCase()}</div></div>
+          <div class="crypto-card-rank">#${c.market_cap_rank||'—'}</div>
+        </div>
+        <div class="crypto-card-price">$${pStr}</div>
+        <div class="crypto-card-change ${(ch||0)>=0?'pos':'neg'}">${fmtPct(ch)} 24h</div>
+        <div class="crypto-card-cap">MCap: ${fmtMoney(c.market_cap)}</div>
+      </div>`;
+    }).join('');
+
+    body.innerHTML=globalBar+`<div class="crypto-grid">${cards}</div><div class="data-source-footer">Source: CoinGecko · No API key required · Auto-refreshes every 60s</div>`;
+    cryptoLoaded=true;
+    if(cryptoTimer) clearInterval(cryptoTimer);
+    cryptoTimer=setInterval(()=>{if(currentTab==='crypto') loadCrypto(true);},60000);
+  } catch(e){
+    document.getElementById('crypto-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+    cryptoLoaded=false;
+  }
+}
+
+// ── 3. COMMODITIES ────────────────────────────────────
+let commLoaded=false, commTimer=null;
+
+async function loadCommodities(force=false){
+  if(commLoaded&&!force) return;
+  const body=document.getElementById('commodities-body');
+  if(!body) return;
+  if(!commLoaded) body.innerHTML='<div class="data-loading">⟳ Loading commodity prices (Yahoo Finance)...</div>';
+  try{
+    const r=await fetch(BACKEND_URL+'/commodities');
+    const data=await r.json();
+    const comms=data.commodities||{};
+
+    const GROUPS={
+      '🥇 Precious Metals':['gold','silver','platinum','palladium'],
+      '⛽ Energy':['oil_wti','oil_brent','natural_gas'],
+      '🏭 Industrial & Agricultural':['copper','wheat','corn','soybeans','coffee','cocoa','sugar','lumber'],
+    };
+
+    let html='';
+    for(const [gname,keys] of Object.entries(GROUPS)){
+      const rows=keys.map(k=>{
+        const c=comms[k]||{};
+        const p=c.price;
+        const pStr=p?(p>=1000?p.toLocaleString('en-US',{maximumFractionDigits:2}):p.toFixed(2)):'—';
+        const chg=c.change_pct;
+        const chgStr=chg!=null?(chg>=0?'+':'')+chg.toFixed(2)+'%':'—';
+        const cls=chg!=null?(chg>=0?'pos':'neg'):'';
+        return `<tr><td class="sym">${c.label||k}</td><td class="num" style="font-size:14px;font-weight:700;">${pStr}</td><td class="dim">${c.unit||''}</td><td class="num ${cls}">${chgStr}</td><td class="dim">${c.currency||'USD'}</td><td class="dim">${c.updated?c.updated.slice(0,10):'—'}</td></tr>`;
+      }).join('');
+      html+=`<div class="data-section"><div class="data-section-title">${gname}</div>
+        <table class="data-table"><thead><tr><th>Commodity</th><th>Price</th><th>Unit</th><th>24h Chg</th><th>CCY</th><th>Date</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+    }
+    html+=`<div class="data-source-footer">Source: Yahoo Finance · Auto-refreshes every 60s</div>`;
+    body.innerHTML=html;
+    commLoaded=true;
+    if(commTimer) clearInterval(commTimer);
+    commTimer=setInterval(()=>{if(currentTab==='commodities') loadCommodities(true);},60000);
+  } catch(e){
+    document.getElementById('commodities-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+    commLoaded=false;
+  }
+}
+
+// ── 4. MACRO ──────────────────────────────────────────
+let macroLoaded=false;
+
+async function loadMacro(){
+  if(macroLoaded) return;
+  const body=document.getElementById('macro-body');
+  if(!body) return;
+  body.innerHTML='<div class="data-loading">⟳ Loading macro indicators (FRED/World Bank)...</div>';
+  try{
+    const r=await fetch(BACKEND_URL+'/macro?series=fed_rate,cpi_us,unemployment,10y_yield,2y_yield,vix,dxy,eur_rate,uk_rate,jp_rate,gdp_us,m2,oil_wti,gold,trade_balance');
+    const data=await r.json();
+    const inds=data.data||{};
+    const src=data.source||'FRED';
+    const note=data.note||'';
+
+    let noteHtml=note?`<div class="data-note">⚠️ ${note}</div>`:'';
+    const cards=Object.entries(inds).map(([k,ind])=>{
+      const val=ind.value!=null?parseFloat(ind.value):null;
+      const prev=ind.previous!=null?parseFloat(ind.previous):null;
+      const valStr=val!=null?val.toLocaleString('en-US',{maximumFractionDigits:3}):'—';
+      let chgHtml='';
+      if(val!=null&&prev!=null){
+        const diff=val-prev;
+        const cls=diff>=0?'pos':'neg';
+        chgHtml=`<div class="macro-card-change ${cls}">${diff>=0?'+':''}${diff.toFixed(3)} vs prev</div>`;
+      }
+      return `<div class="macro-card">
+        <div class="macro-card-label">${ind.label||k}</div>
+        <div class="macro-card-value">${valStr}</div>
+        <div class="macro-card-unit">${ind.unit||''}</div>
+        ${chgHtml}
+        <div class="macro-card-date">As of ${ind.date||'—'}</div>
+        <div class="macro-card-source">${src}</div>
+      </div>`;
+    }).join('');
+
+    body.innerHTML=noteHtml+(cards?`<div class="macro-grid">${cards}</div>`:'<div class="data-loading">No data — set FRED_API_KEY in Railway for full dashboard</div>')+
+      `<div class="data-source-footer">Source: ${src} · Macro data updates hourly</div>`;
+    macroLoaded=true;
+  } catch(e){
+    document.getElementById('macro-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+  }
+}
+
+// ── 5. SENTIMENT ─────────────────────────────────────
+let sentimentLoaded=false;
+
+function fgColor(score){
+  if(score<=25) return '#ff3b5c';
+  if(score<=45) return '#f59e0b';
+  if(score<=55) return '#c8d8e8';
+  if(score<=75) return '#10b981';
+  return '#00d4ff';
+}
+
+async function loadSentiment(){
+  if(sentimentLoaded) return;
+  const body=document.getElementById('sentiment-body');
+  if(!body) return;
+  body.innerHTML='<div class="data-loading">⟳ Loading sentiment data...</div>';
+  try{
+    const r=await fetch(BACKEND_URL+'/sentiment');
+    const data=await r.json();
+    const fg=data.fear_greed;
+    const cot=data.cot;
+
+    // Fear & Greed panel
+    let fgHtml='<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:40px 0;">Fear &amp; Greed data unavailable</div>';
+    if(fg){
+      const score=Math.round(fg.score||0);
+      const col=fgColor(score);
+      const spark=(fg.sparkline||[]).slice(-20);
+      const maxS=Math.max(...spark.map(s=>s.score),1);
+      const sparkBars=spark.map(s=>{
+        const h=Math.round((s.score/maxS)*48)+2;
+        const c=fgColor(s.score);
+        return `<div class="fg-spark-bar" style="height:${h}px;background:${c};opacity:0.7;" title="${s.date}: ${s.score}"></div>`;
+      }).join('');
+      fgHtml=`
+        <div class="fg-section-title">Fear &amp; Greed Index</div>
+        <div class="fg-score-wrap">
+          <div class="fg-score" style="color:${col};">${score}</div>
+          <div class="fg-rating" style="color:${col};">${(fg.rating||'').toUpperCase()}</div>
+        </div>
+        <div class="fg-bar-wrap"><div class="fg-bar-marker" style="left:${score}%;"></div></div>
+        <div class="fg-bar-labels"><span style="color:#ff3b5c">Fear</span><span>Neutral</span><span style="color:#10b981">Greed</span></div>
+        <div class="fg-sparkline-wrap">
+          <div class="fg-sparkline-title">Last 20 readings</div>
+          <div class="fg-spark-bar-wrap">${sparkBars}</div>
+        </div>
+        <div style="font-size:10px;color:#4a6070;margin-top:14px;">CNN Fear &amp; Greed · Updated every 5 min</div>`;
+    }
+
+    // COT panel
+    let cotHtml='<div style="color:var(--text-muted);font-size:13px;">COT data unavailable or loading...</div>';
+    if(cot&&Object.keys(cot).length){
+      const rows=Object.entries(cot).map(([cur,row])=>{
+        const net=row.net;
+        const netStr=net!=null?(net>=0?'+':'')+net.toLocaleString('en-US'):'—';
+        const cls=net!=null?(net>=0?'pos':'neg'):'';
+        const arr=row.trend==='bullish'?'▲':row.trend==='bearish'?'▼':'●';
+        const tCls=row.trend==='bullish'?'pos':row.trend==='bearish'?'neg':'';
+        return `<tr>
+          <td class="sym">${cur}</td>
+          <td class="num">${(row.long||0).toLocaleString('en-US')}</td>
+          <td class="num">${(row.short||0).toLocaleString('en-US')}</td>
+          <td class="num ${cls}">${netStr}</td>
+          <td class="num ${tCls}" style="font-weight:700;">${arr} ${(row.trend||'').toUpperCase()}</td>
+          <td class="dim">${row.date||'—'}</td>
+        </tr>`;
+      }).join('');
+      cotHtml=`
+        <div class="cot-section-title">CFTC COT — Non-Commercial Net Positions</div>
+        <table class="data-table">
+          <thead><tr><th>Currency</th><th>Long</th><th>Short</th><th>Net</th><th>Trend</th><th>Date</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div style="font-size:10px;color:#4a6070;margin-top:8px;">CFTC Commitments of Traders · Published weekly (Friday)</div>`;
+    }
+
+    body.innerHTML=`<div class="sentiment-layout">
+      <div class="fg-panel">${fgHtml}</div>
+      <div class="cot-panel">${cotHtml}</div>
+    </div>`;
+    sentimentLoaded=true;
+  } catch(e){
+    document.getElementById('sentiment-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+  }
+}
+
+// ── 6. EARNINGS ──────────────────────────────────────
+let earningsLoaded=false;
+
+async function loadEarnings(){
+  if(earningsLoaded) return;
+  const body=document.getElementById('earnings-body');
+  if(!body) return;
+  body.innerHTML='<div class="data-loading">⟳ Loading earnings calendar (Alpha Vantage)...</div>';
+  try{
+    const r=await fetch(BACKEND_URL+'/earnings?horizon=3month');
+    const data=await r.json();
+    const earnings=data.earnings||[];
+    const today=new Date().toISOString().slice(0,10);
+
+    // Group by date
+    const byDate={};
+    earnings.forEach(e=>{
+      const d=e.reportDate||'—';
+      if(!byDate[d]) byDate[d]=[];
+      byDate[d].push(e);
+    });
+
+    let html='';
+    let sections=0;
+    for(const [date,items] of Object.entries(byDate)){
+      if(sections>25) break;
+      const isToday=date===today;
+      const rows=items.slice(0,30).map(e=>`<tr>
+        <td class="sym">${e.symbol||'—'}</td>
+        <td style="color:var(--text);">${e.name||'—'}</td>
+        <td class="dim">${e.currency||'USD'}</td>
+        <td class="num">${e.estimate||'—'}</td>
+        <td class="dim">${e.fiscalDateEnding||'—'}</td>
+      </tr>`).join('');
+      html+=`<div class="data-section">
+        <div class="data-section-title" style="${isToday?'color:var(--accent);':''}">
+          ${isToday?'📅 TODAY — ':''}${date}${items.length>30?' ('+items.length+' companies)':''}
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Ticker</th><th>Company</th><th>CCY</th><th>EPS Est.</th><th>Fiscal Year End</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`;
+      sections++;
+    }
+    if(!html) html='<div class="data-loading">No upcoming earnings data available</div>';
+    html+=`<div class="data-source-footer">Source: Alpha Vantage · ${data.count||0} companies · 3-month horizon</div>`;
+    body.innerHTML=html;
+    earningsLoaded=true;
+  } catch(e){
+    document.getElementById('earnings-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+  }
+}
+
+// ── 7. CENTRAL BANKS ─────────────────────────────────
+let cbLoaded=false;
+
+async function loadCentralBanks(){
+  if(cbLoaded) return;
+  const body=document.getElementById('centralbanks-body');
+  if(!body) return;
+  body.innerHTML='<div class="data-loading">⟳ Loading central bank news...</div>';
+  try{
+    const token=localStorage.getItem('tnt_token');
+    const hdrs=token?{'Authorization':'Bearer '+token}:{};
+    const r=await fetch(BACKEND_URL+'/central-banks?limit=100',{headers:hdrs});
+    const data=await r.json();
+    const items=data.items||[];
+    if(!items.length){
+      body.innerHTML='<div class="data-loading">No central bank news found</div>';
+      return;
+    }
+    const rows=items.map(item=>{
+      const impact=(item.impact||'low').toLowerCase();
+      const src=(item.source||'').toUpperCase();
+      let ts='—';
+      try{const d=new Date(item.timestamp);ts=d.toLocaleDateString('en-GB')+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}catch(_){}
+      return `<div class="news-item ${impact}" onclick="window.open('${item.url||'#'}','_blank')">
+        <div style="font-size:9px;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:4px;">${src} · ${ts}</div>
+        <div class="news-headline">${item.headline_en||''}</div>
+      </div>`;
+    }).join('');
+    body.innerHTML=`
+      <div class="feed-header" style="flex-shrink:0;">
+        <div class="feed-title">Central Bank News <span class="feed-title-badge">LIVE</span></div>
+        <div class="feed-count">${items.length} items · Fed · ECB · BOE · BOJ · IMF</div>
+      </div>
+      <div class="feed-inner">${rows}</div>`;
+    cbLoaded=true;
+  } catch(e){
+    document.getElementById('centralbanks-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+  }
+}
 
 function showUpgrade(featureName) {
   const desc = PRO_FEATURES[featureName] || 'This feature is available on the Pro plan.';
@@ -1848,7 +2459,22 @@ initTVTickers();
       <div class="upgrade-benefit">Comprehensive source coverage</div>
       <div class="upgrade-benefit">100% ad-free experience</div>
     </div>
-    <a href="https://www.tradingnewsterminal.com/#pricing" class="upgrade-btn" target="_blank">Upgrade to Pro →</a>
+    <div class="plan-cards">
+      <div class="plan-card">
+        <div class="plan-card-label">Monthly</div>
+        <div class="plan-card-price">€40<span>/mo</span></div>
+        <div class="plan-card-sub">Billed monthly<br>Cancel anytime</div>
+        <button class="plan-card-btn" onclick="goToPro(this,'price_1THo43PgXWxcInoUGZJGT1Ti')">Choose →</button>
+      </div>
+      <div class="plan-card annual">
+        <div class="plan-card-badge">💰 Best Value</div>
+        <div class="plan-card-label">Annual</div>
+        <div class="plan-card-price">€30<span>/mo</span></div>
+        <div class="plan-card-sub">€360/year · <s>€480</s><br>Save €120 (25% off)</div>
+        <button class="plan-card-btn" onclick="goToPro(this,'price_1THo41PgXWxcInoUF3o6fKDh')">Choose →</button>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#4a6070;text-align:center;margin-bottom:12px;">excl. VAT where applicable · Billed in EUR</div>
     <button class="upgrade-btn-later" onclick="hideUpgrade()">Maybe later</button>
   </div>
 </div>

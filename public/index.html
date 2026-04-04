@@ -100,7 +100,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .plan-card-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 
 /* ── Pro locked badge on tab ── */
-.tab-pro-lock{font-size:7px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(167,139,250,0.6);margin-left:4px;vertical-align:middle;}
+.tab-pro-lock{font-size:6.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(167,139,250,0.75);margin-left:5px;padding:1px 3px;border:1px solid rgba(167,139,250,0.3);border-radius:2px;vertical-align:middle;line-height:1;}
 .auth-btn{padding:7px 16px;font-family:var(--font);font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer;transition:all .15s;border-radius:3px;}
 .auth-btn:hover{border-color:var(--accent2);color:var(--accent);}
 .auth-btn.signup{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
@@ -190,19 +190,20 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .tv-toggle-btn .tv-dot{width:5px;height:5px;border-radius:50%;background:var(--high);animation:blink 1.5s ease-in-out infinite;}
 
 /* ── Tabs ── */
-.tab-bar{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;padding:0 8px;overflow-x:auto;scrollbar-width:none;}
+.tab-bar{display:flex;background:linear-gradient(180deg,#0d1f2d 0%,#091520 100%);border-top:3px solid var(--accent);border-bottom:1px solid rgba(0,212,255,0.15);flex-shrink:0;padding:0 6px;overflow-x:auto;scrollbar-width:none;box-shadow:0 6px 24px rgba(0,0,0,0.6);}
 .tab-bar::-webkit-scrollbar{display:none;}
-.tab-btn{padding:0 18px;height:46px;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border:none;background:transparent;color:var(--text-muted);cursor:pointer;transition:all .2s;position:relative;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:0;}
-.tab-btn:hover{color:var(--text-dim);}
-.tab-btn.active{color:var(--accent);}
-.tab-btn.active::after{content:'';position:absolute;bottom:0;left:12%;right:12%;height:2px;background:var(--accent);box-shadow:0 0 8px rgba(0,212,255,0.5);}
+.tab-btn{padding:0 16px;height:50px;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;border:none;border-right:1px solid rgba(255,255,255,0.04);background:transparent;color:#506070;cursor:pointer;transition:all .15s;position:relative;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:0;}
+.tab-btn:first-child{border-left:1px solid rgba(255,255,255,0.04);}
+.tab-btn:hover{color:#9bb8cc;background:rgba(0,212,255,0.05);}
+.tab-btn.active{color:#00d4ff;background:rgba(0,212,255,0.12);border-right-color:rgba(0,212,255,0.15);box-shadow:inset 0 -3px 0 var(--accent);}
+.tab-btn.active::after{content:'';position:absolute;top:3px;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(0,212,255,0.08) 0%,transparent 60%);pointer-events:none;}
 .tab-btn.tab-pulse{animation:tabPulse 1s ease-in-out infinite;}
 @keyframes tabPulse{0%,100%{color:rgba(16,185,129,0.6)}50%{color:var(--low)}}
 .tab-content{flex:1;overflow:hidden;display:flex;flex-direction:column;}
 .tab-content.hidden{display:none;}
 
 /* ── Category bar — multi-select, glow all around ── */
-.category-bar{display:flex;align-items:center;background:var(--bg2);border-bottom:2px solid var(--border);flex-shrink:0;overflow-x:auto;padding:0 12px;scrollbar-width:none;}
+.category-bar{display:flex;align-items:center;background:#080e18;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;padding:0 12px;scrollbar-width:none;}
 .category-bar::-webkit-scrollbar{display:none;}
 .cat-btn{padding:11px 14px;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;border:none;background:transparent;color:#fff;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;position:relative;border-radius:4px;}
 .cat-btn:hover{color:#fff;background:rgba(255,255,255,0.04);}
@@ -455,10 +456,10 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 
 /* Macro cards */
 .macro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;padding:20px 28px;}
-.macro-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px;transition:border-color .15s;}
+.macro-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px;transition:border-color .15s;overflow:hidden;}
 .macro-card:hover{border-color:var(--border2);}
 .macro-card-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
-.macro-card-value{font-size:28px;font-weight:800;color:var(--text);font-family:var(--font-mono);margin-bottom:2px;line-height:1;}
+.macro-card-value{font-size:26px;font-weight:800;color:var(--text);font-family:var(--font-mono);margin-bottom:2px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .macro-card-unit{font-size:10px;color:var(--text-muted);margin-bottom:8px;}
 .macro-card-change{font-size:11px;font-weight:600;font-family:var(--font-mono);margin-bottom:4px;}
 .macro-card-date{font-size:10px;color:var(--text-muted);}
@@ -485,6 +486,60 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .data-loading{display:flex;align-items:center;justify-content:center;flex:1;min-height:200px;font-size:12px;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.08em;}
 .data-source-footer{padding:12px 28px 20px;font-size:10px;color:#4a6070;}
 .data-note{margin:16px 28px;padding:12px 16px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);border-radius:4px;font-size:12px;color:var(--text-muted);line-height:1.6;}
+
+/* ── FX Cards ── */
+.fx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;padding:0 20px 16px;}
+.fx-card{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s;display:flex;flex-direction:column;gap:5px;}
+.fx-card:hover{border-color:var(--accent2);background:rgba(0,212,255,0.04);}
+.fx-card-pair{font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:4px;}
+.fx-card-flags{font-size:13px;letter-spacing:-2px;}
+.fx-card-rate{font-family:var(--font-mono);font-size:17px;font-weight:700;color:#fff;letter-spacing:0.02em;line-height:1;}
+.fx-card-rate span.dim-dec{color:var(--text-muted);font-size:13px;}
+.fx-card-chart{font-size:9px;color:var(--accent);letter-spacing:0.08em;margin-top:2px;}
+.fx-section-header{padding:18px 20px 8px;font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:8px;}
+.fx-section-header::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Chart Modal ── */
+.chart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.chart-overlay.open{display:flex;}
+.chart-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;width:min(1200px,96vw);height:min(720px,90vh);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.7);}
+.chart-modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.chart-modal-title{font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);}
+.chart-modal-sub{font-family:var(--font);font-size:10px;color:var(--text-muted);letter-spacing:0.06em;margin-left:10px;}
+.chart-modal-close{background:none;border:1px solid var(--border);color:var(--text-muted);font-size:14px;cursor:pointer;padding:4px 10px;border-radius:3px;transition:all .15s;font-family:var(--font);}
+.chart-modal-close:hover{color:#fff;border-color:var(--border2);}
+.chart-modal-body{flex:1;overflow:hidden;position:relative;}
+.chart-modal-body iframe,.chart-modal-body .tradingview-widget-container{width:100%;height:100%;}
+
+/* ── Company Detail Modal ── */
+.company-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9100;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.company-overlay.open{display:flex;}
+.company-modal{background:#0d1520;border:1px solid var(--border2);border-radius:6px;width:min(900px,96vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.8);}
+.company-modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;background:linear-gradient(135deg,rgba(0,212,255,0.04),transparent);}
+.company-modal-ticker{font-family:var(--font-mono);font-size:20px;font-weight:800;color:var(--accent);letter-spacing:0.06em;}
+.company-modal-name{font-size:13px;font-weight:600;color:var(--text);margin-left:12px;}
+.company-modal-sector{font-size:10px;color:var(--text-muted);margin-left:12px;letter-spacing:0.06em;}
+.company-modal-close{background:none;border:1px solid var(--border);color:var(--text-muted);font-size:14px;cursor:pointer;padding:4px 10px;border-radius:3px;transition:all .15s;}
+.company-modal-close:hover{color:#fff;border-color:var(--border2);}
+.company-modal-body{overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:20px;}
+.company-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
+.company-stat{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px;text-align:center;}
+.company-stat-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+.company-stat-value{font-size:16px;font-weight:700;font-family:var(--font-mono);color:var(--text);}
+.company-desc{font-size:12px;color:var(--text-muted);line-height:1.7;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px;}
+.company-section-title{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.company-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.company-earnings-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;font-size:12px;margin-bottom:4px;}
+.company-earnings-period{font-family:var(--font-mono);color:var(--text-muted);font-size:11px;}
+.company-earnings-eps{font-family:var(--font-mono);font-weight:700;}
+.company-earnings-surprise{font-size:10px;font-weight:600;padding:2px 7px;border-radius:2px;}
+.surprise-pos{background:rgba(16,185,129,0.12);color:#10b981;}
+.surprise-neg{background:rgba(255,59,92,0.1);color:#ff3b5c;}
+.company-filing{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;margin-bottom:4px;cursor:pointer;transition:border-color .15s;}
+.company-filing:hover{border-color:var(--accent2);}
+.company-filing-form{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent);min-width:52px;}
+.company-filing-desc{font-size:11px;color:var(--text-muted);flex:1;}
+.company-filing-date{font-size:10px;color:#4a6070;font-family:var(--font-mono);}
 </style>
 </head>
 <body>
@@ -536,14 +591,29 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       <div class="sidebar-label" data-i18n="sidebar.watchlist_label">My News — Watchlist</div>
       <div class="my-news-hint" data-i18n="sidebar.watchlist_hint">Select assets to pin to MY NEWS</div>
       <div class="watchlist-grid" style="margin-top:8px;">
-        <button class="watch-btn" data-asset="USD"   onclick="toggleWatch('USD',this)">USD</button>
-        <button class="watch-btn" data-asset="EUR"   onclick="toggleWatch('EUR',this)">EUR</button>
-        <button class="watch-btn" data-asset="GBP"   onclick="toggleWatch('GBP',this)">GBP</button>
-        <button class="watch-btn" data-asset="JPY"   onclick="toggleWatch('JPY',this)">JPY</button>
-        <button class="watch-btn" data-asset="GOLD"  onclick="toggleWatch('GOLD',this)">XAU</button>
-        <button class="watch-btn" data-asset="OIL"   onclick="toggleWatch('OIL',this)">OIL</button>
-        <button class="watch-btn" data-asset="SP500" onclick="toggleWatch('SP500',this)">SPX</button>
-        <button class="watch-btn" data-asset="BTC"   onclick="toggleWatch('BTC',this)">BTC</button>
+        <button class="watch-btn" data-asset="USD"   onclick="toggleWatch('USD',this)" ondblclick="openChart('USD')"   title="Double-click to open chart">USD</button>
+        <button class="watch-btn" data-asset="EUR"   onclick="toggleWatch('EUR',this)" ondblclick="openChart('EUR')"   title="Double-click to open chart">EUR</button>
+        <button class="watch-btn" data-asset="GBP"   onclick="toggleWatch('GBP',this)" ondblclick="openChart('GBP')"   title="Double-click to open chart">GBP</button>
+        <button class="watch-btn" data-asset="JPY"   onclick="toggleWatch('JPY',this)" ondblclick="openChart('JPY')"   title="Double-click to open chart">JPY</button>
+        <button class="watch-btn" data-asset="GOLD"  onclick="toggleWatch('GOLD',this)" ondblclick="openChart('GOLD')"  title="Double-click to open chart">XAU</button>
+        <button class="watch-btn" data-asset="OIL"   onclick="toggleWatch('OIL',this)" ondblclick="openChart('OIL')"   title="Double-click to open chart">OIL</button>
+        <button class="watch-btn" data-asset="SP500" onclick="toggleWatch('SP500',this)" ondblclick="openChart('SP500')" title="Double-click to open chart">SPX</button>
+        <button class="watch-btn" data-asset="BTC"   onclick="toggleWatch('BTC',this)" ondblclick="openChart('BTC')"   title="Double-click to open chart">BTC</button>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label" id="quick-charts-label">Quick Charts</div>
+      <div class="watchlist-grid" style="margin-top:8px;" id="quick-charts-grid">
+        <button class="watch-btn" onclick="openChart('EURUSD')" title="EUR/USD chart">EUR/USD</button>
+        <button class="watch-btn" onclick="openChart('GBPUSD')" title="GBP/USD chart">GBP/USD</button>
+        <button class="watch-btn" onclick="openChart('USDJPY')" title="USD/JPY chart">USD/JPY</button>
+        <button class="watch-btn" onclick="openChart('GOLD')"   title="Gold chart">XAU</button>
+        <button class="watch-btn" onclick="openChart('OIL')"    title="WTI Oil chart">WTI</button>
+        <button class="watch-btn" onclick="openChart('SPX')"    title="S&P 500 chart">SPX</button>
+        <button class="watch-btn" onclick="openChart('BTC')"    title="Bitcoin chart">BTC</button>
+        <button class="watch-btn" onclick="openChart('ETH')"    title="Ethereum chart">ETH</button>
+        <button class="watch-btn" onclick="openChart('DXY')"    title="DXY chart">DXY</button>
+        <button class="watch-btn" onclick="openChart('US10Y')"  title="US 10Y chart">US10Y</button>
       </div>
     </div>
     <div class="pack-info">
@@ -591,7 +661,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
     <div class="tab-bar">
       <button class="tab-btn active" id="tab-news-btn" onclick="switchTab('news')">News Feed</button>
       <button class="tab-btn" id="tab-calendar-btn" onclick="switchTab('calendar')">Calendar</button>
-      <button class="tab-btn" id="tab-tv-btn" onclick="IS_PRO ? switchTab('tv') : showUpgrade('Live Financial TV')">Live TV<span class="tab-pro-lock" id="tv-lock-badge" style="display:none">·PRO</span></button>
+      <button class="tab-btn" id="tab-tv-btn" onclick="IS_PRO ? switchTab('tv') : showUpgrade('Live Financial TV')">Live TV<span class="tab-pro-lock" id="tv-lock-badge">·PRO</span></button>
       <button class="tab-btn" id="tab-fx-btn" onclick="IS_PRO ? switchTab('fx') : showUpgrade('FX Rates')">FX Rates<span class="tab-pro-lock">·PRO</span></button>
       <button class="tab-btn" id="tab-crypto-btn" onclick="IS_PRO ? switchTab('crypto') : showUpgrade('Crypto Markets')">Crypto<span class="tab-pro-lock">·PRO</span></button>
       <button class="tab-btn" id="tab-commodities-btn" onclick="IS_PRO ? switchTab('commodities') : showUpgrade('Commodities')">Commodities<span class="tab-pro-lock">·PRO</span></button>
@@ -881,7 +951,13 @@ let myWatchlist      = JSON.parse(localStorage.getItem('myWatchlist') || '[]');
 const COUNTRY_ASSET  = {US:'USD',EU:'EUR',GB:'GBP',JP:'JPY',CH:'CHF',AU:'AUD',CA:'CAD',NZ:'NZD',CN:'CNY',DE:'EUR',FR:'EUR'};
 const ASSET_COUNTRIES= {USD:['US'],EUR:['EU','DE','FR'],GBP:['GB'],JPY:['JP'],AUD:['AU'],CAD:['CA'],CNY:['CN'],CHF:['CH'],NZD:['NZ']};
 const FLAGS          = {US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CH:'🇨🇭',AU:'🇦🇺',CA:'🇨🇦',NZ:'🇳🇿',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷'};
-const ASSET_FLAG = {USD:'🇺🇸',EUR:'🇪🇺',GBP:'🇬🇧',JPY:'🇯🇵',CHF:'🇨🇭',AUD:'🇦🇺',CAD:'🇨🇦',NZD:'🇳🇿',CNY:'🇨🇳',BTC:'₿',ETH:'Ξ',XRP:'◎',GOLD:'🟡',OIL:'🛢',SPX:'🇺🇸',NDX:'🇺🇸',DAX:'🇩🇪',FTSE:'🇬🇧',NKY:'🇯🇵'};
+const ASSET_FLAG = {
+  USD:'🇺🇸',EUR:'🇪🇺',GBP:'🇬🇧',JPY:'🇯🇵',CHF:'🇨🇭',AUD:'🇦🇺',CAD:'🇨🇦',NZD:'🇳🇿',
+  CNY:'🇨🇳',HKD:'🇭🇰',SGD:'🇸🇬',SEK:'🇸🇪',NOK:'🇳🇴',DKK:'🇩🇰',
+  MXN:'🇲🇽',BRL:'🇧🇷',ZAR:'🇿🇦',TRY:'🇹🇷',INR:'🇮🇳',KRW:'🇰🇷',PLN:'🇵🇱',HUF:'🇭🇺',CZK:'🇨🇿',
+  XAU:'🟡',XAG:'⚪',
+  BTC:'₿',ETH:'Ξ',XRP:'◎',GOLD:'🟡',OIL:'🛢',SPX:'🇺🇸',NDX:'🇺🇸',DAX:'🇩🇪',FTSE:'🇬🇧',NKY:'🇯🇵'
+};
 const ASSET_NAME = {USD:'USA',EUR:'EURO',GBP:'UK',JPY:'JAPAN',CHF:'SWISS',AUD:'AUS',CAD:'CANADA',NZD:'N.ZEALAND',CNY:'CHINA',BTC:'BITCOIN',ETH:'ETHEREUM',XRP:'RIPPLE',GOLD:'GOLD',OIL:'OIL',SPX:'S&P500',NDX:'NASDAQ',DAX:'DAX',FTSE:'FTSE',NKY:'NIKKEI'};
 
 // ─── i18n ────────────────────────────────────────────────────────
@@ -1507,10 +1583,11 @@ function switchTab(tab) {
   if (tab==='fx')           { loadFxRates(); }
   if (tab==='crypto')       { loadCrypto(); }
   if (tab==='commodities')  { loadCommodities(); }
-  if (tab==='macro')        { loadMacro(); }
+  if (tab==='macro')        { loadMacro(false); }
   if (tab==='sentiment')    { loadSentiment(); }
   if (tab==='earnings')     { loadEarnings(); }
   if (tab==='centralbanks') { loadCentralBanks(); }
+  _savePrefs({tab});
 }
 function pulseTab(tabId) {
   const btn = document.getElementById(tabId);
@@ -1539,6 +1616,7 @@ function setLang(l, btn) {
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   applyTranslations(); renderNews(); renderCalendar();
+  _savePrefs({lang: l});
 }
 function setImpact(impact, btn) {
   impactFilter = impact;
@@ -1546,6 +1624,7 @@ function setImpact(impact, btn) {
   btn.classList.add('active');
   displayLimit = PAGE_SIZE;
   updateFeedTitle(); renderNews();
+  _savePrefs({impact});
 }
 // MULTI-SELECT category
 function setCategory(cat, btn) {
@@ -1568,6 +1647,7 @@ function setCategory(cat, btn) {
   }
   displayLimit = PAGE_SIZE;
   updateFeedTitle(); renderNews();
+  _savePrefs({cats: [...selectedCategories]});
 }
 // Calendar asset filter (multi-select)
 function calSetAsset(asset, btn) {
@@ -1974,20 +2054,49 @@ function fmtNum(n,dec=4) {
 // ── 1. FX RATES ───────────────────────────────────────
 let fxLoaded=false, fxRefreshTimer=null;
 
-const FX_PAIRS = [
-  {pair:'EUR/USD',from:'EUR',to:'USD',dec:4},{pair:'GBP/USD',from:'GBP',to:'USD',dec:4},
-  {pair:'USD/JPY',from:'USD',to:'JPY',dec:2},{pair:'USD/CHF',from:'USD',to:'CHF',dec:4},
-  {pair:'AUD/USD',from:'AUD',to:'USD',dec:4},{pair:'USD/CAD',from:'USD',to:'CAD',dec:4},
-  {pair:'NZD/USD',from:'NZD',to:'USD',dec:4},{pair:'EUR/GBP',from:'EUR',to:'GBP',dec:4},
-  {pair:'EUR/JPY',from:'EUR',to:'JPY',dec:2},{pair:'GBP/JPY',from:'GBP',to:'JPY',dec:2},
-  {pair:'EUR/CHF',from:'EUR',to:'CHF',dec:4},{pair:'AUD/JPY',from:'AUD',to:'JPY',dec:2},
-  {pair:'USD/SEK',from:'USD',to:'SEK',dec:4},{pair:'USD/NOK',from:'USD',to:'NOK',dec:4},
-  {pair:'USD/CNY',from:'USD',to:'CNY',dec:4},{pair:'USD/HKD',from:'USD',to:'HKD',dec:4},
-  {pair:'USD/MXN',from:'USD',to:'MXN',dec:4},{pair:'USD/BRL',from:'USD',to:'BRL',dec:4},
-  {pair:'USD/ZAR',from:'USD',to:'ZAR',dec:4},{pair:'USD/TRY',from:'USD',to:'TRY',dec:4},
-  {pair:'USD/INR',from:'USD',to:'INR',dec:2},{pair:'USD/KRW',from:'USD',to:'KRW',dec:0},
+// FX pairs grouped by base currency — order matters (group then pair)
+const FX_GROUPS = [
+  { label:'EUR Pairs', pairs:[
+    {pair:'EUR/USD',from:'EUR',to:'USD',dec:4},{pair:'EUR/GBP',from:'EUR',to:'GBP',dec:4},
+    {pair:'EUR/JPY',from:'EUR',to:'JPY',dec:2},{pair:'EUR/CHF',from:'EUR',to:'CHF',dec:4},
+    {pair:'EUR/CAD',from:'EUR',to:'CAD',dec:4},{pair:'EUR/AUD',from:'EUR',to:'AUD',dec:4},
+    {pair:'EUR/NZD',from:'EUR',to:'NZD',dec:4},{pair:'EUR/SEK',from:'EUR',to:'SEK',dec:4},
+    {pair:'EUR/NOK',from:'EUR',to:'NOK',dec:4},{pair:'EUR/DKK',from:'EUR',to:'DKK',dec:4},
+    {pair:'EUR/HUF',from:'EUR',to:'HUF',dec:2},{pair:'EUR/PLN',from:'EUR',to:'PLN',dec:4},
+    {pair:'EUR/CZK',from:'EUR',to:'CZK',dec:4},
+  ]},
+  { label:'GBP Pairs', pairs:[
+    {pair:'GBP/USD',from:'GBP',to:'USD',dec:4},{pair:'GBP/JPY',from:'GBP',to:'JPY',dec:2},
+    {pair:'GBP/CHF',from:'GBP',to:'CHF',dec:4},{pair:'GBP/CAD',from:'GBP',to:'CAD',dec:4},
+    {pair:'GBP/AUD',from:'GBP',to:'AUD',dec:4},{pair:'GBP/NZD',from:'GBP',to:'NZD',dec:4},
+  ]},
+  { label:'AUD Pairs', pairs:[
+    {pair:'AUD/USD',from:'AUD',to:'USD',dec:4},{pair:'AUD/JPY',from:'AUD',to:'JPY',dec:2},
+    {pair:'AUD/CAD',from:'AUD',to:'CAD',dec:4},{pair:'AUD/NZD',from:'AUD',to:'NZD',dec:4},
+    {pair:'AUD/CHF',from:'AUD',to:'CHF',dec:4},{pair:'AUD/SGD',from:'AUD',to:'SGD',dec:4},
+  ]},
+  { label:'NZD Pairs', pairs:[
+    {pair:'NZD/USD',from:'NZD',to:'USD',dec:4},{pair:'NZD/JPY',from:'NZD',to:'JPY',dec:2},
+    {pair:'NZD/CAD',from:'NZD',to:'CAD',dec:4},{pair:'NZD/CHF',from:'NZD',to:'CHF',dec:4},
+    {pair:'NZD/SGD',from:'NZD',to:'SGD',dec:4},
+  ]},
+  { label:'USD Majors', pairs:[
+    {pair:'USD/JPY',from:'USD',to:'JPY',dec:2},{pair:'USD/CHF',from:'USD',to:'CHF',dec:4},
+    {pair:'USD/CAD',from:'USD',to:'CAD',dec:4},{pair:'USD/SEK',from:'USD',to:'SEK',dec:4},
+    {pair:'USD/NOK',from:'USD',to:'NOK',dec:4},{pair:'USD/DKK',from:'USD',to:'DKK',dec:4},
+    {pair:'USD/SGD',from:'USD',to:'SGD',dec:4},{pair:'USD/HKD',from:'USD',to:'HKD',dec:4},
+    {pair:'USD/CNY',from:'USD',to:'CNY',dec:4},{pair:'CHF/JPY',from:'CHF',to:'JPY',dec:2},
+  ]},
+  { label:'Emerging Markets', pairs:[
+    {pair:'USD/MXN',from:'USD',to:'MXN',dec:4},{pair:'USD/BRL',from:'USD',to:'BRL',dec:4},
+    {pair:'USD/ZAR',from:'USD',to:'ZAR',dec:4},{pair:'USD/TRY',from:'USD',to:'TRY',dec:4},
+    {pair:'USD/INR',from:'USD',to:'INR',dec:2},{pair:'USD/KRW',from:'USD',to:'KRW',dec:0},
+    {pair:'USD/PLN',from:'USD',to:'PLN',dec:4},{pair:'USD/HUF',from:'USD',to:'HUF',dec:2},
+    {pair:'USD/CZK',from:'USD',to:'CZK',dec:4},
+  ]},
 ];
-const FX_METALS=[{pair:'XAU/USD',from:'XAU',to:'USD',dec:2},{pair:'XAG/USD',from:'XAG',to:'USD',dec:4}];
+// Flat list for legacy use
+const FX_PAIRS = FX_GROUPS.flatMap(g=>g.pairs);
 
 function calcRate(rates,from,to){
   if(from==='USD') return rates[to];
@@ -2002,42 +2111,45 @@ async function loadFxRates(force=false){
   if(!body) return;
   if(!fxLoaded) body.innerHTML='<div class="data-loading">⟳ Loading FX rates (ECB)...</div>';
   try{
-    const r=await fetch(BACKEND_URL+'/fx-rates?base=USD&symbols=EUR,GBP,JPY,CHF,AUD,CAD,NZD,SEK,NOK,DKK,HKD,SGD,CNY,BRL,MXN,ZAR,TRY,INR,KRW,XAU,XAG');
+    const r=await fetch(BACKEND_URL+'/fx-rates?base=USD&symbols=EUR,GBP,JPY,CHF,AUD,CAD,NZD,SEK,NOK,DKK,HKD,SGD,CNY,BRL,MXN,ZAR,TRY,INR,KRW,PLN,HUF,CZK');
     const data=await r.json();
     const rates=data.rates||{};
     const date=data.date||'—';
 
-    function pairRows(pairs){
-      return pairs.map(({pair,from,to,dec})=>{
-        const rate=calcRate(rates,from,to);
-        const rateStr=rate?rate.toFixed(dec):'—';
-        const f1=ASSET_FLAG[from]||'';
-        const f2=ASSET_FLAG[to]||'';
-        return `<tr><td class="sym">${f1} ${from}</td><td class="dim">/ ${f2} ${to}</td><td class="num" style="font-size:14px;font-weight:700;">${rateStr}</td><td class="dim">${date}</td></tr>`;
-      }).join('');
+    function fxCard({pair,from,to,dec}){
+      const rate=calcRate(rates,from,to);
+      if(!rate) return '';
+      const rateStr=rate.toFixed(dec);
+      // Bold the significant digits, dim the trailing decimals for long rates
+      let display=rateStr;
+      if(dec>=4){
+        const dot=rateStr.indexOf('.');
+        const bold=rateStr.slice(0,dot+3); // e.g. "1.08"
+        const dim=rateStr.slice(dot+3);    // e.g. "47"
+        display=`${bold}<span class="dim-dec">${dim}</span>`;
+      }
+      const f1=ASSET_FLAG[from]||'';
+      const f2=ASSET_FLAG[to]||'';
+      const chartKey=(from+to).toUpperCase();
+      return `<div class="fx-card" onclick="openChart('${chartKey}')" title="Open ${from}/${to} chart">
+        <div class="fx-card-pair"><span class="fx-card-flags">${f1}${f2}</span>${from}/${to}</div>
+        <div class="fx-card-rate">${display}</div>
+        <div class="fx-card-chart">📈 Tap to chart</div>
+      </div>`;
     }
 
-    const major=FX_PAIRS.filter(p=>['EUR','GBP','AUD','NZD'].includes(p.from)&&p.to==='USD'||p.from==='USD'&&['JPY','CHF','CAD'].includes(p.to));
-    const cross=FX_PAIRS.filter(p=>!major.includes(p)&&!['SEK','NOK','DKK','HKD','SGD','CNY','BRL','MXN','ZAR','TRY','INR','KRW'].some(x=>p.to===x));
-    const em=FX_PAIRS.filter(p=>['SEK','NOK','DKK','HKD','SGD','CNY','BRL','MXN','ZAR','TRY','INR','KRW'].includes(p.to));
+    let html='';
+    for(const {label,pairs} of FX_GROUPS){
+      const cards=pairs.map(fxCard).filter(Boolean).join('');
+      if(!cards) continue;
+      html+=`<div class="fx-section-header">${label}</div><div class="fx-grid">${cards}</div>`;
+    }
+    html+=`<div class="data-source-footer">Source: European Central Bank (ECB) via Frankfurter API · ${date} · ${FX_PAIRS.length} pairs · Auto-refreshes every ${IS_PRO ? '15s ⚡ Pro' : '60s'}</div>`;
 
-    body.innerHTML=`
-      <div class="data-section"><div class="data-section-title">Major Pairs</div>
-        <table class="data-table"><thead><tr><th>Currency</th><th></th><th>Rate</th><th>ECB Date</th></tr></thead>
-        <tbody>${pairRows(major)}</tbody></table></div>
-      <div class="data-section"><div class="data-section-title">Cross Pairs</div>
-        <table class="data-table"><thead><tr><th>Currency</th><th></th><th>Rate</th><th>ECB Date</th></tr></thead>
-        <tbody>${pairRows(cross)}</tbody></table></div>
-      <div class="data-section"><div class="data-section-title">Emerging Markets (USD base)</div>
-        <table class="data-table"><thead><tr><th>Currency</th><th></th><th>Rate</th><th>ECB Date</th></tr></thead>
-        <tbody>${pairRows(em)}</tbody></table></div>
-      <div class="data-section"><div class="data-section-title">Precious Metals (vs USD)</div>
-        <table class="data-table"><thead><tr><th>Metal</th><th></th><th>Price (USD)</th><th>ECB Date</th></tr></thead>
-        <tbody>${pairRows(FX_METALS)}</tbody></table></div>
-      <div class="data-source-footer">Source: European Central Bank (ECB) via Frankfurter API · ${date} · Auto-refreshes every 60s</div>`;
+    body.innerHTML=html;
     fxLoaded=true;
     if(fxRefreshTimer) clearInterval(fxRefreshTimer);
-    fxRefreshTimer=setInterval(()=>{if(currentTab==='fx') loadFxRates(true);},60000);
+    fxRefreshTimer=setInterval(()=>{if(currentTab==='fx') loadFxRates(true);}, IS_PRO ? 15000 : 60000);
   } catch(e){
     document.getElementById('fx-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
     fxLoaded=false;
@@ -2054,7 +2166,7 @@ async function loadCrypto(force=false){
   if(!cryptoLoaded) body.innerHTML='<div class="data-loading">⟳ Loading crypto markets (CoinGecko)...</div>';
   try{
     const [cr,gr]=await Promise.all([
-      fetch(BACKEND_URL+'/crypto?coins=bitcoin,ethereum,ripple,solana,cardano,dogecoin,chainlink,avalanche-2,polkadot,uniswap,litecoin,stellar,monero,tron,shiba-inu'),
+      fetch(BACKEND_URL+'/crypto?coins=bitcoin,ethereum,tether,binancecoin,ripple,solana,usd-coin,staked-ether,dogecoin,cardano,avalanche-2,shiba-inu,tron,chainlink,polkadot,bitcoin-cash,near,litecoin,uniswap,dai,internet-computer,fetch-ai,hedera-hashgraph,stellar,monero,ethereum-classic,okb,aptos,arbitrum,filecoin,vechain,the-open-network,injective-protocol,optimism,cosmos,render-token,kaspa,sei-network,celestia,sui,pepe,worldcoin-wld,stacks,pyth-network,jito,bonk,jupiter-exchange-solana,wormhole,ethena,ondo-finance'),
       fetch(BACKEND_URL+'/crypto/global')
     ]);
     const cd=await cr.json(); const gd=await gr.json();
@@ -2070,25 +2182,32 @@ async function loadCrypto(force=false){
     </div>`;
 
     const cards=coins.map(c=>{
-      const ch=c.price_change_percentage_24h;
+      const ch24=c.price_change_percentage_24h_in_currency??c.price_change_percentage_24h;
+      const ch7d=c.price_change_percentage_7d_in_currency;
+      const ch1h=c.price_change_percentage_1h_in_currency;
       const p=c.current_price;
       const pStr=p>=1000?p.toLocaleString('en-US',{maximumFractionDigits:2}):p>=1?p.toFixed(2):p?p.toFixed(6):'—';
-      return `<div class="crypto-card">
+      const sym=(c.symbol||'').toUpperCase();
+      const chg7Html=ch7d!=null?`<div class="crypto-card-change ${ch7d>=0?'pos':'neg'}" style="font-size:9px;opacity:0.7">${fmtPct(ch7d)} 7d</div>`:'';
+      return `<div class="crypto-card" style="cursor:pointer;" onclick="openChart('${sym}')" title="Open ${sym} chart">
         <div class="crypto-card-top">
-          <img class="crypto-icon" src="${c.image||''}" alt="${c.symbol}" onerror="this.style.display='none'">
-          <div><div class="crypto-card-name">${c.name}</div><div class="crypto-card-sym">${(c.symbol||'').toUpperCase()}</div></div>
+          <img class="crypto-icon" src="${c.image||''}" alt="${sym}" onerror="this.style.display='none'">
+          <div><div class="crypto-card-name">${c.name}</div><div class="crypto-card-sym">${sym}</div></div>
           <div class="crypto-card-rank">#${c.market_cap_rank||'—'}</div>
         </div>
         <div class="crypto-card-price">$${pStr}</div>
-        <div class="crypto-card-change ${(ch||0)>=0?'pos':'neg'}">${fmtPct(ch)} 24h</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          <div class="crypto-card-change ${(ch24||0)>=0?'pos':'neg'}">${fmtPct(ch24)} 24h</div>
+          ${chg7Html}
+        </div>
         <div class="crypto-card-cap">MCap: ${fmtMoney(c.market_cap)}</div>
       </div>`;
     }).join('');
 
-    body.innerHTML=globalBar+`<div class="crypto-grid">${cards}</div><div class="data-source-footer">Source: CoinGecko · No API key required · Auto-refreshes every 60s</div>`;
+    body.innerHTML=globalBar+`<div class="crypto-grid">${cards}</div><div class="data-source-footer">Source: CoinGecko · ${coins.length} coins · No API key required · Auto-refreshes every ${IS_PRO ? '15s ⚡ Pro' : '60s'}</div>`;
     cryptoLoaded=true;
     if(cryptoTimer) clearInterval(cryptoTimer);
-    cryptoTimer=setInterval(()=>{if(currentTab==='crypto') loadCrypto(true);},60000);
+    cryptoTimer=setInterval(()=>{if(currentTab==='crypto') loadCrypto(true);}, IS_PRO ? 15000 : 60000);
   } catch(e){
     document.getElementById('crypto-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
     cryptoLoaded=false;
@@ -2123,17 +2242,19 @@ async function loadCommodities(force=false){
         const chg=c.change_pct;
         const chgStr=chg!=null?(chg>=0?'+':'')+chg.toFixed(2)+'%':'—';
         const cls=chg!=null?(chg>=0?'pos':'neg'):'';
-        return `<tr><td class="sym">${c.label||k}</td><td class="num" style="font-size:14px;font-weight:700;">${pStr}</td><td class="dim">${c.unit||''}</td><td class="num ${cls}">${chgStr}</td><td class="dim">${c.currency||'USD'}</td><td class="dim">${c.updated?c.updated.slice(0,10):'—'}</td></tr>`;
+        const COMM_CHART={'gold':'GOLD','silver':'SILVER','platinum':'PLATINUM','palladium':'TVC:XPDUSD','oil_wti':'OIL','oil_brent':'BRENT','natural_gas':'NATGAS','copper':'COPPER','wheat':'WHEAT','corn':'CORN'};
+        const chartK=COMM_CHART[k]||k.toUpperCase();
+        return `<tr style="cursor:pointer;" onclick="openChart('${chartK}')" title="Open ${c.label||k} chart"><td class="sym">${c.label||k}</td><td class="num" style="font-size:14px;font-weight:700;">${pStr}</td><td class="dim">${c.unit||''}</td><td class="num ${cls}">${chgStr}</td><td class="dim">${c.currency||'USD'}</td><td class="dim" style="color:var(--accent);font-size:9px;letter-spacing:0.06em;">📈 CHART</td></tr>`;
       }).join('');
       html+=`<div class="data-section"><div class="data-section-title">${gname}</div>
         <table class="data-table"><thead><tr><th>Commodity</th><th>Price</th><th>Unit</th><th>24h Chg</th><th>CCY</th><th>Date</th></tr></thead>
         <tbody>${rows}</tbody></table></div>`;
     }
-    html+=`<div class="data-source-footer">Source: Yahoo Finance · Auto-refreshes every 60s</div>`;
+    html+=`<div class="data-source-footer">Source: Yahoo Finance (real-time) · Auto-refreshes every ${IS_PRO ? '15s ⚡ Pro' : '60s'}</div>`;
     body.innerHTML=html;
     commLoaded=true;
     if(commTimer) clearInterval(commTimer);
-    commTimer=setInterval(()=>{if(currentTab==='commodities') loadCommodities(true);},60000);
+    commTimer=setInterval(()=>{if(currentTab==='commodities') loadCommodities(true);}, IS_PRO ? 15000 : 60000);
   } catch(e){
     document.getElementById('commodities-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
     commLoaded=false;
@@ -2141,51 +2262,106 @@ async function loadCommodities(force=false){
 }
 
 // ── 4. MACRO ──────────────────────────────────────────
-let macroLoaded=false;
+let macroLoaded=false, macroTimer=null;
 
-async function loadMacro(){
-  if(macroLoaded) return;
+async function loadMacro(force=false){
+  if(macroLoaded&&!force) return;
   const body=document.getElementById('macro-body');
   if(!body) return;
   body.innerHTML='<div class="data-loading">⟳ Loading macro indicators (FRED/World Bank)...</div>';
   try{
-    const r=await fetch(BACKEND_URL+'/macro?series=fed_rate,cpi_us,unemployment,10y_yield,2y_yield,vix,dxy,eur_rate,uk_rate,jp_rate,gdp_us,m2,oil_wti,gold,trade_balance');
+    const r=await fetch(BACKEND_URL+'/macro?series=fed_rate,cpi_us,cpi_yoy,unemployment,10y_yield,2y_yield,30y_yield,vix,dxy,eur_rate,uk_rate,jp_rate,gdp_us,gdp_eu,gdp_cn,gdp_jp,gdp_uk,m2,oil_wti,gold,trade_balance,pce,retail_sales');
     const data=await r.json();
     const inds=data.data||{};
-    const src=data.source||'FRED';
+    const src=data.source||'—';
     const note=data.note||'';
 
-    let noteHtml=note?`<div class="data-note">⚠️ ${note}</div>`:'';
-    const cards=Object.entries(inds).map(([k,ind])=>{
+    // Smart number formatter — avoids huge raw GDP figures
+    function fmtMacroVal(val, unit) {
+      if(val==null) return '—';
+      const u=(unit||'').toLowerCase();
+      const abs=Math.abs(val);
+      // Large monetary values (GDP, M2 etc.)
+      if(abs>=1e12)  return (val/1e12).toFixed(2)+'T';
+      if(abs>=1e9)   return (val/1e9).toFixed(2)+'B';
+      if(abs>=1e6)   return (val/1e6).toFixed(2)+'M';
+      if(abs>=1e3 && !u.includes('%') && !u.includes('index') && !u.includes('rate'))
+                     return (val/1e3).toFixed(2)+'K';
+      // Percentage / rate / index — show as-is with up to 3 decimals
+      return val.toLocaleString('en-US',{maximumFractionDigits:3});
+    }
+    function fmtMacroDiff(diff, unit) {
+      const u=(unit||'').toLowerCase();
+      const abs=Math.abs(diff);
+      if(!u.includes('%')&&!u.includes('index')&&!u.includes('rate')) {
+        if(abs>=1e12) return (diff/1e12).toFixed(2)+'T';
+        if(abs>=1e9)  return (diff/1e9).toFixed(2)+'B';
+        if(abs>=1e6)  return (diff/1e6).toFixed(2)+'M';
+      }
+      return diff.toFixed(3);
+    }
+
+    // Only show note if it's NOT the FRED setup prompt (that's resolved via Yahoo Finance now)
+    const noteHtml = (note && !note.includes('FRED_API_KEY')) ? `<div class="data-note">⚠️ ${note}</div>` : '';
+
+    // Group order for display
+    const MACRO_GROUPS = [
+      { label:'Market Indicators', keys:['vix','dxy','spx','nasdaq'] },
+      { label:'Interest Rates & Yields', keys:['2y_yield','5y_yield','10y_yield','30y_yield','fed_rate','eur_rate','uk_rate','jp_rate'] },
+      { label:'Commodities', keys:['gold','oil_wti','brent','natgas','copper'] },
+      { label:'Economic Data', keys:['gdp_us','gdp_eu','gdp_cn','gdp_jp','gdp_uk','cpi_us','cpi_eu','cpi_yoy','unemp_us','unemployment','m2','pce','retail_sales','trade_balance'] },
+    ];
+    // Build ordered list: grouped first, then any remaining
+    const orderedKeys = [];
+    MACRO_GROUPS.forEach(g => g.keys.forEach(k => { if(inds[k] && !orderedKeys.includes(k)) orderedKeys.push(k); }));
+    Object.keys(inds).forEach(k => { if(!orderedKeys.includes(k)) orderedKeys.push(k); });
+
+    function macroCard(k) {
+      const ind = inds[k]; if(!ind) return '';
       const val=ind.value!=null?parseFloat(ind.value):null;
       const prev=ind.previous!=null?parseFloat(ind.previous):null;
-      const valStr=val!=null?val.toLocaleString('en-US',{maximumFractionDigits:3}):'—';
+      const valStr=fmtMacroVal(val, ind.unit);
       let chgHtml='';
       if(val!=null&&prev!=null){
         const diff=val-prev;
         const cls=diff>=0?'pos':'neg';
-        chgHtml=`<div class="macro-card-change ${cls}">${diff>=0?'+':''}${diff.toFixed(3)} vs prev</div>`;
+        chgHtml=`<div class="macro-card-change ${cls}">${diff>=0?'+':''}${fmtMacroDiff(diff,ind.unit)} vs prev</div>`;
       }
+      const srcLabel=ind.source||src;
       return `<div class="macro-card">
         <div class="macro-card-label">${ind.label||k}</div>
         <div class="macro-card-value">${valStr}</div>
         <div class="macro-card-unit">${ind.unit||''}</div>
         ${chgHtml}
         <div class="macro-card-date">As of ${ind.date||'—'}</div>
-        <div class="macro-card-source">${src}</div>
+        <div class="macro-card-source">${srcLabel}</div>
       </div>`;
-    }).join('');
+    }
 
-    body.innerHTML=noteHtml+(cards?`<div class="macro-grid">${cards}</div>`:'<div class="data-loading">No data — set FRED_API_KEY in Railway for full dashboard</div>')+
-      `<div class="data-source-footer">Source: ${src} · Macro data updates hourly</div>`;
+    // Render grouped sections
+    let html = noteHtml;
+    let rendered = new Set();
+    MACRO_GROUPS.forEach(g => {
+      const groupCards = g.keys.filter(k=>inds[k]).map(k=>{ rendered.add(k); return macroCard(k); }).join('');
+      if(groupCards) html += `<div class="fx-section-header">${g.label}</div><div class="macro-grid" style="padding:0 20px 8px;">${groupCards}</div>`;
+    });
+    // Any remaining indicators not in groups
+    const remaining = Object.keys(inds).filter(k=>!rendered.has(k)).map(macroCard).join('');
+    if(remaining) html += `<div class="fx-section-header">Other Indicators</div><div class="macro-grid" style="padding:0 20px 8px;">${remaining}</div>`;
+    html += `<div class="data-source-footer">Sources: ${src} · Updates every hour</div>`;
+
+    body.innerHTML = html || '<div class="data-loading">No macro data available</div>';
     macroLoaded=true;
+    if(macroTimer) clearInterval(macroTimer);
+    macroTimer=setInterval(()=>{if(currentTab==='macro') loadMacro(true);}, IS_PRO ? 15000 : 120000);
   } catch(e){
     document.getElementById('macro-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+    macroLoaded=false;
   }
 }
 
 // ── 5. SENTIMENT ─────────────────────────────────────
-let sentimentLoaded=false;
+let sentimentLoaded=false, sentimentTimer=null;
 
 function fgColor(score){
   if(score<=25) return '#ff3b5c';
@@ -2195,8 +2371,8 @@ function fgColor(score){
   return '#00d4ff';
 }
 
-async function loadSentiment(){
-  if(sentimentLoaded) return;
+async function loadSentiment(force=false){
+  if(sentimentLoaded&&!force) return;
   const body=document.getElementById('sentiment-body');
   if(!body) return;
   body.innerHTML='<div class="data-loading">⟳ Loading sentiment data...</div>';
@@ -2234,7 +2410,12 @@ async function loadSentiment(){
     }
 
     // COT panel
-    let cotHtml='<div style="color:var(--text-muted);font-size:13px;">COT data unavailable or loading...</div>';
+    let cotHtml=`<div style="text-align:center;padding:32px 20px;">
+      <div style="font-size:28px;margin-bottom:12px;">📊</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">CFTC COT Data Temporarily Unavailable</div>
+      <div style="font-size:11px;color:#4a6070;line-height:1.7;">The CFTC (Commodity Futures Trading Commission) publishes<br>Commitments of Traders data every <strong style="color:var(--text-muted)">Friday after market close</strong>.<br>The public reporting API may be slow or offline.<br>Check back on Saturday for updated positions.</div>
+      <div style="margin-top:16px;"><a href="https://www.cftc.gov/dea/newcot/deafut.txt" target="_blank" style="font-size:10px;color:var(--accent);text-decoration:none;letter-spacing:0.06em;">↗ VIEW CFTC DATA DIRECTLY</a></div>
+    </div>`;
     if(cot&&Object.keys(cot).length){
       const rows=Object.entries(cot).map(([cur,row])=>{
         const net=row.net;
@@ -2265,8 +2446,11 @@ async function loadSentiment(){
       <div class="cot-panel">${cotHtml}</div>
     </div>`;
     sentimentLoaded=true;
+    if(sentimentTimer) clearInterval(sentimentTimer);
+    sentimentTimer=setInterval(()=>{if(currentTab==='sentiment') loadSentiment(true);}, IS_PRO ? 15000 : 300000);
   } catch(e){
     document.getElementById('sentiment-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+    sentimentLoaded=false;
   }
 }
 
@@ -2297,19 +2481,20 @@ async function loadEarnings(){
     for(const [date,items] of Object.entries(byDate)){
       if(sections>25) break;
       const isToday=date===today;
-      const rows=items.slice(0,30).map(e=>`<tr>
-        <td class="sym">${e.symbol||'—'}</td>
+      const rows=items.slice(0,30).map(e=>`<tr style="cursor:pointer;" onclick="openCompanyDetail('${e.symbol||''}','${(e.name||'').replace(/'/g,'\\\'')}')" title="View ${e.name||e.symbol||''} details">
+        <td class="sym" style="color:var(--accent);">${e.symbol||'—'}</td>
         <td style="color:var(--text);">${e.name||'—'}</td>
         <td class="dim">${e.currency||'USD'}</td>
         <td class="num">${e.estimate||'—'}</td>
         <td class="dim">${e.fiscalDateEnding||'—'}</td>
+        <td class="dim" style="color:var(--accent);font-size:9px;letter-spacing:0.06em;">📊 DETAIL</td>
       </tr>`).join('');
       html+=`<div class="data-section">
         <div class="data-section-title" style="${isToday?'color:var(--accent);':''}">
           ${isToday?'📅 TODAY — ':''}${date}${items.length>30?' ('+items.length+' companies)':''}
         </div>
         <table class="data-table">
-          <thead><tr><th>Ticker</th><th>Company</th><th>CCY</th><th>EPS Est.</th><th>Fiscal Year End</th></tr></thead>
+          <thead><tr><th>Ticker</th><th>Company</th><th>CCY</th><th>EPS Est.</th><th>Fiscal Year End</th><th></th></tr></thead>
           <tbody>${rows}</tbody>
         </table></div>`;
       sections++;
@@ -2324,10 +2509,10 @@ async function loadEarnings(){
 }
 
 // ── 7. CENTRAL BANKS ─────────────────────────────────
-let cbLoaded=false;
+let cbLoaded=false, cbTimer=null;
 
-async function loadCentralBanks(){
-  if(cbLoaded) return;
+async function loadCentralBanks(force=false){
+  if(cbLoaded&&!force) return;
   const body=document.getElementById('centralbanks-body');
   if(!body) return;
   body.innerHTML='<div class="data-loading">⟳ Loading central bank news...</div>';
@@ -2358,8 +2543,125 @@ async function loadCentralBanks(){
       </div>
       <div class="feed-inner">${rows}</div>`;
     cbLoaded=true;
+    if(cbTimer) clearInterval(cbTimer);
+    cbTimer=setInterval(()=>{if(currentTab==='centralbanks') loadCentralBanks(true);}, IS_PRO ? 15000 : 120000);
   } catch(e){
     document.getElementById('centralbanks-body').innerHTML=`<div class="data-loading">Error: ${e.message}</div>`;
+    cbLoaded=false;
+  }
+}
+
+// ─── Company Detail Modal ─────────────────────────────────────────
+function closeCompany(){
+  document.getElementById('company-overlay').classList.remove('open');
+}
+
+async function openCompanyDetail(ticker, name){
+  if(!ticker||ticker==='—') return;
+  const overlay = document.getElementById('company-overlay');
+  const body = document.getElementById('company-modal-body');
+  document.getElementById('company-modal-ticker').textContent = ticker;
+  document.getElementById('company-modal-name').textContent = name||'';
+  document.getElementById('company-modal-sector').textContent = '';
+  body.innerHTML = '<div class="data-loading">⟳ Loading company data...</div>';
+  overlay.classList.add('open');
+
+  try {
+    // Fetch company overview + earnings history + filings in parallel
+    const [ovRes, earnRes, filRes] = await Promise.allSettled([
+      fetch(BACKEND_URL+`/company/${ticker}`).then(r=>r.json()),
+      fetch(BACKEND_URL+`/earnings/ticker/${ticker}`).then(r=>r.json()),
+      fetch(BACKEND_URL+`/filings/search?ticker=${ticker}&count=10`).then(r=>r.json()),
+    ]);
+
+    const ov   = ovRes.status==='fulfilled'   ? ovRes.value   : {};
+    const earn = earnRes.status==='fulfilled'  ? earnRes.value : {};
+    const fil  = filRes.status==='fulfilled'   ? filRes.value  : {};
+
+    // Update header
+    if(ov.name)   document.getElementById('company-modal-name').textContent = ov.name;
+    if(ov.sector) document.getElementById('company-modal-sector').textContent = `· ${ov.sector}${ov.industry?' · '+ov.industry:''}`;
+
+    // Helper
+    const fmt=(v,pre='')=>v&&v!=='None'&&v!=='-'?pre+parseFloat(v).toLocaleString('en-US',{maximumFractionDigits:2}):'—';
+    const fmtLarge=(v)=>{
+      if(!v||v==='None'||v==='-') return '—';
+      const n=parseFloat(v);
+      if(isNaN(n)) return '—';
+      if(n>=1e12) return '$'+(n/1e12).toFixed(2)+'T';
+      if(n>=1e9) return '$'+(n/1e9).toFixed(2)+'B';
+      if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+      return '$'+n.toLocaleString('en-US',{maximumFractionDigits:2});
+    };
+
+    // Key stats grid
+    const stats=[
+      {label:'Price',   val: ov.price   ? `$${parseFloat(ov.price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '—'},
+      {label:'52W High',val: ov.week52High ? `$${parseFloat(ov.week52High).toFixed(2)}` : '—'},
+      {label:'52W Low', val: ov.week52Low  ? `$${parseFloat(ov.week52Low).toFixed(2)}`  : '—'},
+      {label:'Mkt Cap', val: fmtLarge(ov.market_cap)},
+      {label:'P/E Ratio',val: fmt(ov.pe_ratio)},
+      {label:'EPS (TTM)',val: ov.eps ? `$${parseFloat(ov.eps).toFixed(2)}` : '—'},
+      {label:'Div Yield',val: ov.dividend_yield ? (parseFloat(ov.dividend_yield)*100).toFixed(2)+'%' : '—'},
+      {label:'Beta',    val: fmt(ov.beta)},
+      {label:'Revenue', val: fmtLarge(ov.revenue_ttm)},
+      {label:'Net Income',val:fmtLarge(ov.net_income_ttm)},
+      {label:'Exchange',val: ov.exchange||'—'},
+      {label:'Country', val: ov.country||'—'},
+    ];
+    const statHtml=stats.map(s=>`<div class="company-stat"><div class="company-stat-label">${s.label}</div><div class="company-stat-value">${s.val}</div></div>`).join('');
+
+    // Description
+    const descHtml = ov.description && ov.description!=='None'
+      ? `<div class="company-section-title">About</div><div class="company-desc">${ov.description.slice(0,600)}${ov.description.length>600?'…':''}</div>`
+      : '';
+
+    // Quarterly earnings table
+    let qEarnHtml='';
+    const qEarns=(earn.quarterly||[]).slice(0,8);
+    if(qEarns.length){
+      const rows=qEarns.map(q=>{
+        const reported=q.reportedEPS&&q.reportedEPS!=='None'?parseFloat(q.reportedEPS):null;
+        const estimated=q.estimatedEPS&&q.estimatedEPS!=='None'?parseFloat(q.estimatedEPS):null;
+        const surprise=q.surprisePercentage&&q.surprisePercentage!=='None'?parseFloat(q.surprisePercentage):null;
+        const surHtml=surprise!=null?`<span class="company-earnings-surprise ${surprise>=0?'surprise-pos':'surprise-neg'}">${surprise>=0?'+':''}${surprise.toFixed(1)}%</span>`:'';
+        return `<div class="company-earnings-row">
+          <span class="company-earnings-period">${q.fiscalDateEnding||'—'}</span>
+          <span style="font-size:10px;color:var(--text-muted);">Est: <strong>${estimated!=null?'$'+estimated.toFixed(2):'—'}</strong></span>
+          <span class="company-earnings-eps ${reported!=null?(reported>=0?'pos':'neg'):''}">${reported!=null?'$'+reported.toFixed(2):'—'}</span>
+          ${surHtml}
+        </div>`;
+      }).join('');
+      qEarnHtml=`<div class="company-section-title">Quarterly EPS History</div>${rows}`;
+    }
+
+    // Recent filings
+    let filHtml='';
+    const filings=(fil.filings||[]).slice(0,8);
+    if(filings.length){
+      const rows=filings.map(f=>`<div class="company-filing" onclick="window.open('${f.url}','_blank')">
+        <span class="company-filing-form">${f.form}</span>
+        <span class="company-filing-desc">${f.description||f.form}</span>
+        <span class="company-filing-date">${f.date}</span>
+        <span style="font-size:10px;color:var(--accent);">↗</span>
+      </div>`).join('');
+      filHtml=`<div class="company-section-title">Recent SEC Filings</div>${rows}`;
+    }
+
+    // Chart link
+    const chartHtml=`<div style="text-align:center;padding:8px 0;">
+      <button onclick="openChart('${ticker}');closeCompany();" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);color:var(--accent);font-family:var(--font);font-size:12px;font-weight:600;padding:8px 24px;border-radius:3px;cursor:pointer;letter-spacing:0.06em;">📈 Open TradingView Chart</button>
+    </div>`;
+
+    body.innerHTML=`
+      <div class="company-stat-grid">${statHtml}</div>
+      ${descHtml}
+      ${chartHtml}
+      ${qEarnHtml}
+      ${filHtml}
+    `;
+  } catch(e){
+    body.innerHTML=`<div class="data-loading">Error loading company data: ${e.message}</div>`;
   }
 }
 
@@ -2373,6 +2675,69 @@ function hideUpgrade() {
   document.getElementById('upgrade-overlay').classList.remove('show');
 }
 
+// ─── User Preferences (localStorage) ────────────────────────────
+const _PREFS_KEY = 'tnt_v1_prefs';
+function _loadPrefs() {
+  try { return JSON.parse(localStorage.getItem(_PREFS_KEY) || '{}'); } catch { return {}; }
+}
+function _savePrefs(patch) {
+  try { localStorage.setItem(_PREFS_KEY, JSON.stringify({..._loadPrefs(), ...patch})); } catch {}
+}
+
+// Restore all saved preferences on boot
+(function _restorePrefs() {
+  const p = _loadPrefs();
+
+  // 1. Language
+  if (p.lang && p.lang !== 'en') {
+    const btn = document.getElementById('lang-' + p.lang);
+    if (btn) { lang = p.lang; document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+  }
+
+  // 2. Impact filter
+  if (p.impact && p.impact !== 'ALL') {
+    impactFilter = p.impact;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    const allBtns = document.querySelectorAll('.filter-btn');
+    const impactMap = {HIGH:1, MEDIUM:2, LOW:3};
+    const idx = impactMap[p.impact];
+    if (idx !== undefined && allBtns[idx]) allBtns[idx].classList.add('active');
+  }
+
+  // 3. Category selection
+  if (p.cats && Array.isArray(p.cats) && p.cats.length > 0) {
+    selectedCategories = new Set(p.cats);
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+    p.cats.forEach(cat => {
+      const el = document.querySelector(`.cat-btn[data-cat="${cat}"]`);
+      if (el) el.classList.add('active');
+    });
+  }
+
+  // 4. Last active tab (Pro tabs only restored if IS_PRO)
+  if (p.tab && p.tab !== 'news') {
+    const proTabs = ['tv','fx','crypto','commodities','macro','sentiment','earnings','centralbanks'];
+    const isProTab = proTabs.includes(p.tab);
+    if (!isProTab || IS_PRO) {
+      setTimeout(() => switchTab(p.tab), 50);
+    }
+  }
+
+  // 5. Recently viewed charts → replace Quick Charts sidebar
+  if (p.recentCharts && p.recentCharts.length >= 3) {
+    const grid = document.getElementById('quick-charts-grid');
+    const label = document.getElementById('quick-charts-label');
+    if (grid && label) {
+      label.textContent = 'Recent Charts';
+      grid.innerHTML = p.recentCharts.map(c => {
+        const shortLabel = c.label.split('·')[0].trim().replace(' / ','/')
+          .replace(' Index','').replace(' Corp.','').replace(' Inc.','');
+        return `<button class="watch-btn" onclick="_openChartSymbol('${c.symbol}','${c.label.replace(/'/g,"\\'")}')"\n          title="${c.label}">${shortLabel}</button>`;
+      }).join('');
+    }
+  }
+})();
+
 // Apply plan gates on load
 (function applyPlanGates() {
   if (IS_PRO) {
@@ -2381,9 +2746,7 @@ function hideUpgrade() {
     if (packInfo) packInfo.style.display = 'none';
     return;
   }
-  // Show PRO lock badge on TV tab
-  const tvBadge = document.getElementById('tv-lock-badge');
-  if (tvBadge) tvBadge.style.display = '';
+  // TV badge is always visible — no extra logic needed
   // Mark squawk button as Pro-locked (onclick only — updateSquawkBtn handles visuals)
   const sq = document.getElementById('squawkBtn');
   if (sq) {
@@ -2401,6 +2764,188 @@ connectWebSocket();
 loadCalendar(); // load calendar immediately on boot
 setInterval(loadCalendar,60000);
 
+// ─── Chart Modal ────────────────────────────────────────────────
+// Map from asset keyword → { symbol: TradingView proName, label: human label }
+const CHART_MAP = {
+  // FX majors
+  'EURUSD':  {symbol:'FOREXCOM:EURUSD',  label:'EUR / USD'},
+  'GBPUSD':  {symbol:'FOREXCOM:GBPUSD',  label:'GBP / USD'},
+  'USDJPY':  {symbol:'FOREXCOM:USDJPY',  label:'USD / JPY'},
+  'USDCHF':  {symbol:'FOREXCOM:USDCHF',  label:'USD / CHF'},
+  'AUDUSD':  {symbol:'FOREXCOM:AUDUSD',  label:'AUD / USD'},
+  'USDCAD':  {symbol:'FOREXCOM:USDCAD',  label:'USD / CAD'},
+  'NZDUSD':  {symbol:'FOREXCOM:NZDUSD',  label:'NZD / USD'},
+  'EURGBP':  {symbol:'FOREXCOM:EURGBP',  label:'EUR / GBP'},
+  'EURJPY':  {symbol:'FOREXCOM:EURJPY',  label:'EUR / JPY'},
+  'GBPJPY':  {symbol:'FOREXCOM:GBPJPY',  label:'GBP / JPY'},
+  'EURCHF':  {symbol:'FOREXCOM:EURCHF',  label:'EUR / CHF'},
+  'AUDJPY':  {symbol:'FOREXCOM:AUDJPY',  label:'AUD / JPY'},
+  'GBPCHF':  {symbol:'FOREXCOM:GBPCHF',  label:'GBP / CHF'},
+  'USDCNH':  {symbol:'FOREXCOM:USDCNH',  label:'USD / CNH'},
+  'USDMXN':  {symbol:'FOREXCOM:USDMXN',  label:'USD / MXN'},
+  'USDHKD':  {symbol:'OANDA:USDHKD',     label:'USD / HKD'},
+  'USDSGD':  {symbol:'OANDA:USDSGD',     label:'USD / SGD'},
+  'USDNOK':  {symbol:'OANDA:USDNOK',     label:'USD / NOK'},
+  'USDSEK':  {symbol:'OANDA:USDSEK',     label:'USD / SEK'},
+  'USDZAR':  {symbol:'OANDA:USDZAR',     label:'USD / ZAR'},
+  'USDTRY':  {symbol:'OANDA:USDTRY',     label:'USD / TRY'},
+  'DXY':     {symbol:'TVC:DXY',          label:'US Dollar Index'},
+  // Watchlist shorthand → most relevant pair
+  'USD':     {symbol:'TVC:DXY',          label:'US Dollar Index'},
+  'EUR':     {symbol:'FOREXCOM:EURUSD',  label:'EUR / USD'},
+  'GBP':     {symbol:'FOREXCOM:GBPUSD',  label:'GBP / USD'},
+  'JPY':     {symbol:'FOREXCOM:USDJPY',  label:'USD / JPY'},
+  'CHF':     {symbol:'FOREXCOM:USDCHF',  label:'USD / CHF'},
+  'AUD':     {symbol:'FOREXCOM:AUDUSD',  label:'AUD / USD'},
+  'CAD':     {symbol:'FOREXCOM:USDCAD',  label:'USD / CAD'},
+  'NZD':     {symbol:'FOREXCOM:NZDUSD',  label:'NZD / USD'},
+  // Commodities
+  'GOLD':    {symbol:'TVC:GOLD',         label:'Gold · XAU/USD'},
+  'XAUUSD':  {symbol:'TVC:GOLD',         label:'Gold · XAU/USD'},
+  'XAU':     {symbol:'TVC:GOLD',         label:'Gold · XAU/USD'},
+  'SILVER':  {symbol:'TVC:SILVER',       label:'Silver · XAG/USD'},
+  'XAG':     {symbol:'TVC:SILVER',       label:'Silver · XAG/USD'},
+  'OIL':     {symbol:'NYMEX:CL1!',       label:'WTI Crude Oil'},
+  'WTI':     {symbol:'NYMEX:CL1!',       label:'WTI Crude Oil'},
+  'BRENT':   {symbol:'ICEEUR:BRN1!',     label:'Brent Crude Oil'},
+  'NATGAS':  {symbol:'NYMEX:NG1!',       label:'Natural Gas'},
+  'COPPER':  {symbol:'TVC:COPPER',       label:'Copper'},
+  'PLATINUM':{symbol:'TVC:PLATINUM',     label:'Platinum'},
+  'WHEAT':   {symbol:'CBOT:ZW1!',        label:'Wheat'},
+  'CORN':    {symbol:'CBOT:ZC1!',        label:'Corn'},
+  // Indices
+  'SPX':     {symbol:'SP:SPX',           label:'S&P 500'},
+  'SP500':   {symbol:'SP:SPX',           label:'S&P 500'},
+  'SPY':     {symbol:'AMEX:SPY',         label:'S&P 500 ETF'},
+  'NDX':     {symbol:'NASDAQ:NDX',       label:'NASDAQ 100'},
+  'NASDAQ':  {symbol:'NASDAQ:NDX',       label:'NASDAQ 100'},
+  'QQQ':     {symbol:'NASDAQ:QQQ',       label:'NASDAQ 100 ETF'},
+  'DOW':     {symbol:'DJ:DJI',           label:'Dow Jones'},
+  'DJI':     {symbol:'DJ:DJI',           label:'Dow Jones'},
+  'DAX':     {symbol:'FOREXCOM:DE40',    label:'DAX 40'},
+  'FTSE':    {symbol:'SPREADEX:FTSE',    label:'FTSE 100'},
+  'NIKKEI':  {symbol:'TVC:NI225',        label:'Nikkei 225'},
+  'NI225':   {symbol:'TVC:NI225',        label:'Nikkei 225'},
+  'HSI':     {symbol:'TVC:HSI',          label:'Hang Seng'},
+  // Crypto
+  'BTC':     {symbol:'BITSTAMP:BTCUSD',  label:'Bitcoin · BTC/USD'},
+  'BTCUSD':  {symbol:'BITSTAMP:BTCUSD',  label:'Bitcoin · BTC/USD'},
+  'ETH':     {symbol:'BITSTAMP:ETHUSD',  label:'Ethereum · ETH/USD'},
+  'ETHUSD':  {symbol:'BITSTAMP:ETHUSD',  label:'Ethereum · ETH/USD'},
+  'SOL':     {symbol:'CRYPTO:SOLUSD',    label:'Solana · SOL/USD'},
+  'XRP':     {symbol:'CRYPTO:XRPUSD',    label:'XRP/USD'},
+  'BNB':     {symbol:'CRYPTO:BNBUSD',    label:'BNB/USD'},
+  'DOGE':    {symbol:'CRYPTO:DOGEUSD',   label:'Dogecoin · DOGE/USD'},
+  'ADA':     {symbol:'CRYPTO:ADAUSD',    label:'Cardano · ADA/USD'},
+  'AVAX':    {symbol:'CRYPTO:AVAXUSD',   label:'Avalanche · AVAX/USD'},
+  'DOT':     {symbol:'CRYPTO:DOTUSD',    label:'Polkadot · DOT/USD'},
+  'LINK':    {symbol:'CRYPTO:LINKUSD',   label:'Chainlink · LINK/USD'},
+  'LTC':     {symbol:'CRYPTO:LTCUSD',    label:'Litecoin · LTC/USD'},
+  'XLM':     {symbol:'CRYPTO:XLMUSD',    label:'Stellar · XLM/USD'},
+  'MATIC':   {symbol:'CRYPTO:MATICUSD',  label:'Polygon · POL/USD'},
+  'POL':     {symbol:'CRYPTO:MATICUSD',  label:'Polygon · POL/USD'},
+  'UNI':     {symbol:'CRYPTO:UNIUSD',    label:'Uniswap · UNI/USD'},
+  'ATOM':    {symbol:'CRYPTO:ATOMUSD',   label:'Cosmos · ATOM/USD'},
+  'NEAR':    {symbol:'CRYPTO:NEARUSD',   label:'NEAR Protocol'},
+  // Equities
+  'AAPL':    {symbol:'NASDAQ:AAPL',      label:'Apple Inc.'},
+  'NVDA':    {symbol:'NASDAQ:NVDA',      label:'NVIDIA Corp.'},
+  'MSFT':    {symbol:'NASDAQ:MSFT',      label:'Microsoft Corp.'},
+  'AMZN':    {symbol:'NASDAQ:AMZN',      label:'Amazon.com'},
+  'GOOGL':   {symbol:'NASDAQ:GOOGL',     label:'Alphabet Inc.'},
+  'GOOG':    {symbol:'NASDAQ:GOOGL',     label:'Alphabet Inc.'},
+  'TSLA':    {symbol:'NASDAQ:TSLA',      label:'Tesla Inc.'},
+  'JPM':     {symbol:'NYSE:JPM',         label:'JPMorgan Chase'},
+  'GS':      {symbol:'NYSE:GS',          label:'Goldman Sachs'},
+  'META':    {symbol:'NASDAQ:META',      label:'Meta Platforms'},
+  'NFLX':    {symbol:'NASDAQ:NFLX',      label:'Netflix'},
+  // Bonds
+  'US10Y':   {symbol:'TVC:US10Y',        label:'US 10-Year Yield'},
+  'US2Y':    {symbol:'TVC:US02Y',        label:'US 2-Year Yield'},
+  'BUND':    {symbol:'TVC:DE10Y',        label:'German Bund 10Y'},
+  'JGB':     {symbol:'TVC:JP10Y',        label:'Japan JGB 10Y'},
+};
+
+function openChart(assetKey) {
+  const key = (assetKey || '').toUpperCase().replace(/[\/\s-]/g,'');
+  const entry = CHART_MAP[key];
+  if (!entry) {
+    // Fallback: try as a raw symbol search
+    _openChartSymbol(key, key);
+    return;
+  }
+  _openChartSymbol(entry.symbol, entry.label);
+}
+
+function _openChartSymbol(tvSymbol, label) {
+  // Save last opened chart to preferences
+  _savePrefs({lastChart: {symbol: tvSymbol, label}});
+  // Add to recently viewed list (max 8)
+  try {
+    const p = _loadPrefs();
+    const recent = p.recentCharts || [];
+    const entry = {symbol: tvSymbol, label};
+    const filtered = recent.filter(c=>c.symbol!==tvSymbol);
+    _savePrefs({recentCharts: [entry, ...filtered].slice(0,8)});
+  } catch {}
+
+  const overlay = document.getElementById('chart-overlay');
+  const body    = document.getElementById('chart-modal-body');
+  const title   = document.getElementById('chart-modal-title');
+  const sub     = document.getElementById('chart-modal-sub');
+  // Set header
+  const parts = label.split('·');
+  title.textContent = parts[0].trim();
+  sub.textContent   = parts[1] ? '· ' + parts[1].trim() : '';
+  // Clear previous widget
+  body.innerHTML = '';
+  // Create TradingView Advanced Chart widget
+  const container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'width:100%;height:100%;';
+  const inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:calc(100% - 32px);width:100%;';
+  container.appendChild(inner);
+  const script = document.createElement('script');
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  script.async = true;
+  script.innerHTML = JSON.stringify({
+    autosize: true,
+    symbol: tvSymbol,
+    interval: 'D',
+    timezone: 'Etc/UTC',
+    theme: 'dark',
+    style: '1',
+    locale: 'en',
+    backgroundColor: '#0a0f1a',
+    gridColor: 'rgba(255,255,255,0.03)',
+    hide_top_toolbar: false,
+    hide_legend: false,
+    allow_symbol_change: true,
+    save_image: false,
+    calendar: false,
+    hide_volume: false,
+    support_host: 'https://www.tradingview.com'
+  });
+  container.appendChild(script);
+  body.appendChild(container);
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeChart() {
+  const overlay = document.getElementById('chart-overlay');
+  overlay.classList.remove('open');
+  document.getElementById('chart-modal-body').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeChart();
+});
+
 // ─── TradingView Ticker Init ──────────────────────────────────────
 function initTVTickers() {
   function makeScript(containerId, symbols, height) {
@@ -2416,33 +2961,88 @@ function initTVTickers() {
     container.appendChild(script);
   }
   makeScript('tv-ticker1', [
+    // Major FX
     {proName:'TVC:DXY',title:'DXY'},{proName:'FOREXCOM:EURUSD',title:'EUR/USD'},
     {proName:'FOREXCOM:GBPUSD',title:'GBP/USD'},{proName:'FOREXCOM:USDJPY',title:'USD/JPY'},
     {proName:'FOREXCOM:USDCHF',title:'USD/CHF'},{proName:'FOREXCOM:AUDUSD',title:'AUD/USD'},
     {proName:'FOREXCOM:USDCAD',title:'USD/CAD'},{proName:'FOREXCOM:NZDUSD',title:'NZD/USD'},
+    // Cross pairs
     {proName:'FOREXCOM:EURGBP',title:'EUR/GBP'},{proName:'FOREXCOM:EURJPY',title:'EUR/JPY'},
     {proName:'FOREXCOM:GBPJPY',title:'GBP/JPY'},{proName:'FOREXCOM:EURCHF',title:'EUR/CHF'},
+    {proName:'FOREXCOM:AUDJPY',title:'AUD/JPY'},{proName:'FOREXCOM:GBPCHF',title:'GBP/CHF'},
+    {proName:'FOREXCOM:AUDCAD',title:'AUD/CAD'},{proName:'FOREXCOM:AUDNZD',title:'AUD/NZD'},
+    {proName:'FOREXCOM:EURCAD',title:'EUR/CAD'},{proName:'FOREXCOM:EURAUD',title:'EUR/AUD'},
+    {proName:'FOREXCOM:GBPAUD',title:'GBP/AUD'},{proName:'FOREXCOM:CHFJPY',title:'CHF/JPY'},
+    // EM & exotics
     {proName:'FOREXCOM:USDCNH',title:'USD/CNH'},{proName:'FOREXCOM:USDMXN',title:'USD/MXN'},
+    {proName:'OANDA:USDHKD',title:'USD/HKD'},{proName:'OANDA:USDSGD',title:'USD/SGD'},
+    {proName:'OANDA:USDNOK',title:'USD/NOK'},{proName:'OANDA:USDSEK',title:'USD/SEK'},
+    {proName:'OANDA:USDZAR',title:'USD/ZAR'},{proName:'OANDA:USDTRY',title:'USD/TRY'},
+    {proName:'OANDA:USDPLN',title:'USD/PLN'},{proName:'OANDA:USDHUF',title:'USD/HUF'},
+    // Indices
     {proName:'SP:SPX',title:'S&P 500'},{proName:'NASDAQ:NDX',title:'NASDAQ'},
     {proName:'DJ:DJI',title:'DOW'},{proName:'FOREXCOM:DE40',title:'DAX'},
     {proName:'SPREADEX:FTSE',title:'FTSE 100'},{proName:'TVC:NI225',title:'NIKKEI'},
-    {proName:'TVC:HSI',title:'HANG SENG'}
+    {proName:'TVC:HSI',title:'HANG SENG'},{proName:'FOREXCOM:FR40',title:'CAC 40'},
+    {proName:'FOREXCOM:ES35',title:'IBEX 35'},{proName:'INDEX:ASX200',title:'ASX 200'}
   ]);
   makeScript('tv-ticker2', [
+    // Crypto — major
     {proName:'BITSTAMP:BTCUSD',title:'BTC'},{proName:'BITSTAMP:ETHUSD',title:'ETH'},
     {proName:'CRYPTO:SOLUSD',title:'SOL'},{proName:'CRYPTO:XRPUSD',title:'XRP'},
+    {proName:'CRYPTO:BNBUSD',title:'BNB'},{proName:'CRYPTO:DOGEUSD',title:'DOGE'},
+    {proName:'CRYPTO:ADAUSD',title:'ADA'},{proName:'CRYPTO:AVAXUSD',title:'AVAX'},
+    {proName:'CRYPTO:DOTUSD',title:'DOT'},{proName:'CRYPTO:LINKUSD',title:'LINK'},
+    {proName:'CRYPTO:LTCUSD',title:'LTC'},{proName:'CRYPTO:XLMUSD',title:'XLM'},
+    {proName:'CRYPTO:ATOMUSD',title:'ATOM'},{proName:'CRYPTO:UNIUSD',title:'UNI'},
+    {proName:'CRYPTO:MATICUSD',title:'POL'},{proName:'CRYPTO:NEARUSD',title:'NEAR'},
+    // Equities
     {proName:'NASDAQ:AAPL',title:'AAPL'},{proName:'NASDAQ:NVDA',title:'NVDA'},
     {proName:'NASDAQ:MSFT',title:'MSFT'},{proName:'NASDAQ:AMZN',title:'AMZN'},
     {proName:'NASDAQ:GOOGL',title:'GOOGL'},{proName:'NYSE:TSLA',title:'TSLA'},
     {proName:'NYSE:JPM',title:'JPM'},{proName:'NYSE:GS',title:'GS'},
+    // Commodities & Bonds
     {proName:'TVC:GOLD',title:'GOLD'},{proName:'TVC:SILVER',title:'SILVER'},
     {proName:'NYMEX:CL1!',title:'WTI OIL'},{proName:'NYMEX:NG1!',title:'NAT GAS'},
+    {proName:'CBOT:ZW1!',title:'WHEAT'},{proName:'CBOT:ZC1!',title:'CORN'},
+    {proName:'TVC:COPPER',title:'COPPER'},{proName:'TVC:PLATINUM',title:'PLATINUM'},
     {proName:'TVC:US10Y',title:'US 10Y'},{proName:'TVC:US02Y',title:'US 2Y'},
     {proName:'TVC:DE10Y',title:'BUND 10Y'},{proName:'TVC:JP10Y',title:'JGB 10Y'}
   ]);
 }
 initTVTickers();
 </script>
+
+<!-- ── Company Detail Modal ── -->
+<div class="company-overlay" id="company-overlay" onclick="if(event.target===this)closeCompany()">
+  <div class="company-modal">
+    <div class="company-modal-header">
+      <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:2px;">
+        <span class="company-modal-ticker" id="company-modal-ticker">—</span>
+        <span class="company-modal-name" id="company-modal-name"></span>
+        <span class="company-modal-sector" id="company-modal-sector"></span>
+      </div>
+      <button class="company-modal-close" onclick="closeCompany()">✕ Close</button>
+    </div>
+    <div class="company-modal-body" id="company-modal-body">
+      <div class="data-loading">⟳ Loading company data...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Chart Modal ── -->
+<div class="chart-overlay" id="chart-overlay" onclick="if(event.target===this)closeChart()">
+  <div class="chart-modal">
+    <div class="chart-modal-header">
+      <div style="display:flex;align-items:baseline;gap:0;">
+        <span class="chart-modal-title" id="chart-modal-title">EURUSD</span>
+        <span class="chart-modal-sub" id="chart-modal-sub">FX · EUR/USD</span>
+      </div>
+      <button class="chart-modal-close" onclick="closeChart()">✕ Close</button>
+    </div>
+    <div class="chart-modal-body" id="chart-modal-body"></div>
+  </div>
+</div>
 
 <!-- ── Upgrade Modal ── -->
 <div class="upgrade-overlay" id="upgrade-overlay" onclick="if(event.target===this)hideUpgrade()">

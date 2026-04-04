@@ -465,22 +465,16 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   <main class="feed">
 
     <!-- Ticker 1: Forex + DXY + Indices -->
-    <div class="ticker-bar">
+    <div class="ticker-bar" id="ticker1">
       <div class="tradingview-widget-container" style="height:46px;overflow:hidden;">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        {"symbols":[{"proName":"TVC:DXY","title":"DXY"},{"proName":"FOREXCOM:EURUSD","title":"EUR/USD"},{"proName":"FOREXCOM:GBPUSD","title":"GBP/USD"},{"proName":"FOREXCOM:USDJPY","title":"USD/JPY"},{"proName":"FOREXCOM:USDCHF","title":"USD/CHF"},{"proName":"FOREXCOM:AUDUSD","title":"AUD/USD"},{"proName":"FOREXCOM:USDCAD","title":"USD/CAD"},{"proName":"FOREXCOM:NZDUSD","title":"NZD/USD"},{"proName":"FOREXCOM:EURGBP","title":"EUR/GBP"},{"proName":"FOREXCOM:EURJPY","title":"EUR/JPY"},{"proName":"FOREXCOM:GBPJPY","title":"GBP/JPY"},{"proName":"FOREXCOM:EURCHF","title":"EUR/CHF"},{"proName":"FOREXCOM:USDCNH","title":"USD/CNH"},{"proName":"FOREXCOM:USDBRL","title":"USD/BRL"},{"proName":"FOREXCOM:USDMXN","title":"USD/MXN"},{"proName":"FOREXCOM:USDSEK","title":"USD/SEK"},{"proName":"FOREXCOM:USDNOK","title":"USD/NOK"},{"proName":"SP:SPX","title":"S&P 500"},{"proName":"NASDAQ:NDX","title":"NASDAQ"},{"proName":"DJ:DJI","title":"DOW"},{"proName":"FOREXCOM:DE40","title":"DAX"},{"proName":"SPREADEX:FTSE","title":"FTSE 100"},{"proName":"TVC:NI225","title":"NIKKEI"},{"proName":"TVC:HSI","title":"HANG SENG"},{"proName":"SSE:000001","title":"SHANGHAI"}],"showSymbolLogo":false,"colorTheme":"dark","isTransparent":true,"displayMode":"adaptive","locale":"en"}
-        </script>
+        <div class="tradingview-widget-container__widget" id="tv-ticker1"></div>
       </div>
     </div>
 
     <!-- Ticker 2: Crypto + Stocks + Commodities + Bonds -->
-    <div class="ticker-bar ticker-bar-2">
+    <div class="ticker-bar ticker-bar-2" id="ticker2">
       <div class="tradingview-widget-container" style="height:42px;overflow:hidden;">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        {"symbols":[{"proName":"BITSTAMP:BTCUSD","title":"BTC"},{"proName":"BITSTAMP:ETHUSD","title":"ETH"},{"proName":"CRYPTO:SOLUSD","title":"SOL"},{"proName":"CRYPTO:XRPUSD","title":"XRP"},{"proName":"CRYPTO:BNBUSD","title":"BNB"},{"proName":"CRYPTO:ADAUSD","title":"ADA"},{"proName":"CRYPTO:DOGEUSD","title":"DOGE"},{"proName":"NASDAQ:AAPL","title":"AAPL"},{"proName":"NASDAQ:NVDA","title":"NVDA"},{"proName":"NASDAQ:MSFT","title":"MSFT"},{"proName":"NASDAQ:AMZN","title":"AMZN"},{"proName":"NASDAQ:GOOGL","title":"GOOGL"},{"proName":"NASDAQ:META","title":"META"},{"proName":"NYSE:TSLA","title":"TSLA"},{"proName":"NYSE:JPM","title":"JPM"},{"proName":"NYSE:GS","title":"GS"},{"proName":"TVC:GOLD","title":"GOLD"},{"proName":"TVC:SILVER","title":"SILVER"},{"proName":"NYMEX:CL1!","title":"WTI OIL"},{"proName":"NYMEX:NG1!","title":"NAT GAS"},{"proName":"COMEX:HG1!","title":"COPPER"},{"proName":"TVC:US10Y","title":"US 10Y"},{"proName":"TVC:US02Y","title":"US 2Y"},{"proName":"TVC:DE10Y","title":"BUND 10Y"},{"proName":"TVC:JP10Y","title":"JGB 10Y"}],"showSymbolLogo":false,"colorTheme":"dark","isTransparent":true,"displayMode":"adaptive","locale":"en"}
-        </script>
+        <div class="tradingview-widget-container__widget" id="tv-ticker2"></div>
       </div>
     </div>
 
@@ -1186,14 +1180,23 @@ function handleNewsData(data) {
 // ─── Startup HTTP fetch (WS fallback) ────────────────────────────
 // Fetch news via HTTP immediately so data appears even if WS is slow/down
 (async function startupFetch() {
-  try {
-    const tok = localStorage.getItem('tnt_token');
-    const headers = tok ? { 'Authorization': 'Bearer ' + tok } : {};
-    const r = await fetch(BACKEND_URL + '/news?limit=100', { headers });
-    const data = await r.json();
-    if (Array.isArray(data) && data.length) handleNewsData(data);
-  } catch(e) {}
-}());
+  const tok = localStorage.getItem('tnt_token');
+  const headers = tok ? { 'Authorization': 'Bearer ' + tok } : {};
+  // Try up to 3 times with 4s gap (handles Railway cold-start delay)
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 4000));
+      const r = await fetch(BACKEND_URL + '/news?limit=100', { headers });
+      if (!r.ok) continue;
+      const data = await r.json();
+      if (Array.isArray(data) && data.length) { handleNewsData(data); return; }
+    } catch(e) {}
+  }
+  // After all retries failed, update status to show there's a connection problem
+  const countEl = document.getElementById('feedCount');
+  if (countEl && allNews.length === 0) countEl.textContent = 'Connection error — retrying…';
+  setTimeout(startupFetch, 15000); // retry again in 15s
+})();
 
 // ─── Notification badge ───────────────────────────────────────────
 function updateNotificationBadge() {
@@ -1313,10 +1316,10 @@ function switchTab(tab) {
   const btn = document.getElementById('tab-'+tab+'-btn');
   btn.classList.add('active');
   btn.classList.remove('tab-pulse'); // stop pulse when user enters the tab
-  if (tab==='calendar' && calEvents.length===0) loadCalendar();
+  if (tab==='calendar') { renderCalendar(); if(calEvents.length===0) loadCalendar(); }
   if (tab==='tv') {
     const frame = document.getElementById('tvPlayerFrame');
-    if (frame && !frame.src) switchChannel(currentChannel, null);
+    if (frame && !frame.getAttribute('src')) switchChannel(currentChannel, null);
   }
 }
 function pulseTab(tabId) {
@@ -1695,7 +1698,7 @@ function injectCalRelease(e) {
 }
 async function loadCalendar() {
   try {
-    const res=await fetch(BACKEND_URL+'/calendar?days=7');
+    const res=await fetch(BACKEND_URL+'/calendar?days=14');
     const data=await res.json();
     const prevReleased=new Set(calEvents.filter(e=>e.actual!==null&&e.actual!==undefined).map(e=>e.id));
     calEvents=data.events||[];
@@ -1717,8 +1720,6 @@ setInterval(()=>{
     cdEl.textContent=countdown(el.getAttribute('data-date'))||'';
   });
 },1000);
-setInterval(loadCalendar,60000);
-
 // ─── Plan gating ─────────────────────────────────────────────────
 const PRO_FEATURES = {
   'Live Financial TV':   'Watch Bloomberg TV, CNBC, Al Jazeera and 4 more live financial channels inside the terminal.',
@@ -1758,7 +1759,50 @@ function hideUpgrade() {
 // ─── Init ────────────────────────────────────────────────────────
 applyTranslations();
 connectWebSocket();
-setTimeout(loadCalendar,3000);
+loadCalendar(); // load calendar immediately on boot
+setInterval(loadCalendar,60000);
+
+// ─── TradingView Ticker Init ──────────────────────────────────────
+function initTVTickers() {
+  function makeScript(containerId, symbols, height) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      symbols, showSymbolLogo: false, colorTheme: 'dark',
+      isTransparent: true, displayMode: 'adaptive', locale: 'en'
+    });
+    container.appendChild(script);
+  }
+  makeScript('tv-ticker1', [
+    {proName:'TVC:DXY',title:'DXY'},{proName:'FOREXCOM:EURUSD',title:'EUR/USD'},
+    {proName:'FOREXCOM:GBPUSD',title:'GBP/USD'},{proName:'FOREXCOM:USDJPY',title:'USD/JPY'},
+    {proName:'FOREXCOM:USDCHF',title:'USD/CHF'},{proName:'FOREXCOM:AUDUSD',title:'AUD/USD'},
+    {proName:'FOREXCOM:USDCAD',title:'USD/CAD'},{proName:'FOREXCOM:NZDUSD',title:'NZD/USD'},
+    {proName:'FOREXCOM:EURGBP',title:'EUR/GBP'},{proName:'FOREXCOM:EURJPY',title:'EUR/JPY'},
+    {proName:'FOREXCOM:GBPJPY',title:'GBP/JPY'},{proName:'FOREXCOM:EURCHF',title:'EUR/CHF'},
+    {proName:'FOREXCOM:USDCNH',title:'USD/CNH'},{proName:'FOREXCOM:USDMXN',title:'USD/MXN'},
+    {proName:'SP:SPX',title:'S&P 500'},{proName:'NASDAQ:NDX',title:'NASDAQ'},
+    {proName:'DJ:DJI',title:'DOW'},{proName:'FOREXCOM:DE40',title:'DAX'},
+    {proName:'SPREADEX:FTSE',title:'FTSE 100'},{proName:'TVC:NI225',title:'NIKKEI'},
+    {proName:'TVC:HSI',title:'HANG SENG'}
+  ]);
+  makeScript('tv-ticker2', [
+    {proName:'BITSTAMP:BTCUSD',title:'BTC'},{proName:'BITSTAMP:ETHUSD',title:'ETH'},
+    {proName:'CRYPTO:SOLUSD',title:'SOL'},{proName:'CRYPTO:XRPUSD',title:'XRP'},
+    {proName:'NASDAQ:AAPL',title:'AAPL'},{proName:'NASDAQ:NVDA',title:'NVDA'},
+    {proName:'NASDAQ:MSFT',title:'MSFT'},{proName:'NASDAQ:AMZN',title:'AMZN'},
+    {proName:'NASDAQ:GOOGL',title:'GOOGL'},{proName:'NYSE:TSLA',title:'TSLA'},
+    {proName:'NYSE:JPM',title:'JPM'},{proName:'NYSE:GS',title:'GS'},
+    {proName:'TVC:GOLD',title:'GOLD'},{proName:'TVC:SILVER',title:'SILVER'},
+    {proName:'NYMEX:CL1!',title:'WTI OIL'},{proName:'NYMEX:NG1!',title:'NAT GAS'},
+    {proName:'TVC:US10Y',title:'US 10Y'},{proName:'TVC:US02Y',title:'US 2Y'},
+    {proName:'TVC:DE10Y',title:'BUND 10Y'},{proName:'TVC:JP10Y',title:'JGB 10Y'}
+  ]);
+}
+initTVTickers();
 </script>
 
 <!-- ── Upgrade Modal ── -->

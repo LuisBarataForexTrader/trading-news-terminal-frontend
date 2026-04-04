@@ -285,13 +285,22 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .scroll-sentinel{height:1px;}
 
 /* ── Delay banner ── */
-.delay-banner{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:20px;border-left:4px solid var(--medium);border-top:1px solid rgba(245,158,11,0.35);border-bottom:2px solid rgba(245,158,11,0.45);background:rgba(245,158,11,0.1);padding:38px 24px;flex-shrink:0;min-height:190px;}
-.delay-banner-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--medium);margin-bottom:5px;}
-.delay-banner-title{font-size:15px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
-.delay-banner-sub{font-size:12px;font-weight:400;color:rgba(255,255,255,0.85);line-height:1.55;}
-.delay-banner-sub strong{color:#fff;font-weight:700;}
-.delay-banner-btn{flex-shrink:0;padding:10px 22px;background:var(--medium);color:#000;font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;border-radius:3px;white-space:nowrap;}
+.delay-banner{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(245,158,11,0.07);border-bottom:2px solid rgba(245,158,11,0.3);padding:9px 20px;flex-shrink:0;}
+.delay-banner-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.delay-banner-icon{font-size:14px;flex-shrink:0;}
+.delay-banner-text{font-size:11px;color:rgba(255,255,255,0.85);line-height:1.5;overflow:hidden;}
+.delay-banner-text strong{color:#fff;font-weight:700;}
+.delay-banner-btn{flex-shrink:0;padding:6px 16px;background:var(--medium);color:#000;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;border-radius:3px;white-space:nowrap;}
 .delay-banner-btn:hover{background:#fbbf24;}
+/* ── Inline feed ad ── */
+.feed-ad-card{padding:11px 20px;background:rgba(167,139,250,0.04);border-top:1px solid rgba(167,139,250,0.12);border-bottom:1px solid rgba(167,139,250,0.12);border-left:3px solid rgba(167,139,250,0.45);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:14px;}
+.feed-ad-card:hover{background:rgba(167,139,250,0.09);}
+.feed-ad-badge{font-size:8px;font-weight:700;letter-spacing:0.15em;color:rgba(167,139,250,0.65);text-transform:uppercase;border:1px solid rgba(167,139,250,0.25);padding:2px 5px;border-radius:2px;flex-shrink:0;}
+.feed-ad-body{flex:1;}
+.feed-ad-headline{font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:2px;}
+.feed-ad-sub{font-size:10px;color:var(--text-muted);}
+.feed-ad-cta{flex-shrink:0;padding:5px 12px;border:1px solid rgba(167,139,250,0.35);color:#a78bfa;background:transparent;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:0.06em;border-radius:3px;cursor:pointer;text-transform:uppercase;transition:all .15s;}
+.feed-ad-card:hover .feed-ad-cta{background:rgba(167,139,250,0.12);}
 
 /* ── Empty ── */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--text-muted);gap:12px;}
@@ -456,7 +465,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       </div>
       <div class="pack-cta">
         <div class="pack-cta-text" data-i18n-html="pack.cta_text">You're on the <strong>Basic Plan</strong>.<br>Upgrade to <strong>Pro</strong> for real-time coverage.</div>
-        <button class="pack-upgrade" onclick="showToast(t('toast.pro'))" data-i18n="pack.upgrade_btn">⚡ Upgrade to Pro →</button>
+        <button class="pack-upgrade" onclick="window.open('https://www.tradingnewsterminal.com/#pricing','_blank')" data-i18n="pack.upgrade_btn">⚡ Upgrade to Pro →</button>
       </div>
     </div>
   </aside>
@@ -728,9 +737,9 @@ const STRINGS = {
     'cal.impact_label':'Impact:','cal.asset_label':'Assets:',
     'cal.high':'● High','cal.medium':'● Medium','cal.low':'● Low',
     'cal.all_assets':'All','cal.loading':'Loading calendar...','cal.no_events':'No events',
-    'delay.notice':'Notice','delay.title':'⚠ This Feed is Delayed',
-    'delay.sub':"You're on the <strong>Basic Plan</strong>.<br>News below may be delayed. Upgrade to <strong>Pro</strong> for zero-delay real-time coverage.",
-    'delay.btn':'⚡ Go Real-Time — Upgrade to Pro',
+    'delay.notice':'Notice','delay.title':'2-min news delay',
+    'delay.sub':"You're on the <strong>Basic Plan</strong>. Pro users receive every headline in real time with zero delay, no ads, and live squawk.",
+    'delay.btn':'⚡ Upgrade to Pro',
     'status.status':'Status','status.connection':'Connection','status.updated':'Updated','status.items':'Items',
     'status.connecting':'Connecting...',
     'empty.connecting':'Connecting','empty.connecting_sub':'Establishing real-time connection...',
@@ -774,9 +783,9 @@ const STRINGS = {
     'cal.impact_label':'Impacto:','cal.asset_label':'Ativos:',
     'cal.high':'● Alto','cal.medium':'● Médio','cal.low':'● Baixo',
     'cal.all_assets':'Todos','cal.loading':'A carregar...','cal.no_events':'Sem eventos',
-    'delay.notice':'Aviso','delay.title':'⚠ Este Feed Tem Atraso',
-    'delay.sub':"Estás no <strong>Plano Básico</strong>.<br>As notícias abaixo podem ter atraso. Muda para <strong>Pro</strong> para cobertura em tempo real.",
-    'delay.btn':'⚡ Tempo Real — Mudar para Pro',
+    'delay.notice':'Aviso','delay.title':'Atraso de 2 min',
+    'delay.sub':"Estás no <strong>Plano Básico</strong>. Utilizadores Pro recebem todas as notícias em tempo real, sem atraso, sem anúncios e com squawk.",
+    'delay.btn':'⚡ Upgrade para Pro',
     'status.status':'Estado','status.connection':'Ligação','status.updated':'Atualizado','status.items':'Itens',
     'status.connecting':'A conectar...',
     'empty.connecting':'A conectar','empty.connecting_sub':'A estabelecer ligação em tempo real...',
@@ -1505,8 +1514,10 @@ function renderNews() {
   if (bannerWrap) {
     if (!IS_PRO) {
       bannerWrap.innerHTML = `<div class="delay-banner">
-        <div><div class="delay-banner-eyebrow">${t('delay.notice')}</div><div class="delay-banner-title">${t('delay.title')}</div></div>
-        <div class="delay-banner-sub">${t('delay.sub')}</div>
+        <div class="delay-banner-left">
+          <span class="delay-banner-icon">⏱</span>
+          <span class="delay-banner-text"><strong>${t('delay.title')}</strong> — ${t('delay.sub')}</span>
+        </div>
         <button class="delay-banner-btn" onclick="showUpgrade('Real-time News')">${t('delay.btn')}</button>
       </div>`;
     } else {
@@ -1587,7 +1598,18 @@ function renderNews() {
       <div class="news-impact"><span class="impact-badge ${badgeCls}">${badgeLbl}</span></div>
     </div>`;
 
-    return card;
+    // Inject inline ad card every 15 items for Basic users
+    const adHtml = (!IS_PRO && idx > 0 && idx % 15 === 0)
+      ? `<div class="feed-ad-card" onclick="showUpgrade('Ad-Free Experience')">
+           <span class="feed-ad-badge">Sponsored</span>
+           <div class="feed-ad-body">
+             <div class="feed-ad-headline">Remove ads &amp; get real-time breaking news</div>
+             <div class="feed-ad-sub">Trading News Terminal Pro — real-time feed · live squawk · 7 TV channels · zero ads</div>
+           </div>
+           <button class="feed-ad-cta" onclick="event.stopPropagation();showUpgrade('Ad-Free Experience')">Upgrade →</button>
+         </div>`
+      : '';
+    return adHtml + card;
   }).join('');
 
   const moreCount = total - displayLimit;
@@ -1723,9 +1745,11 @@ setInterval(()=>{
 },1000);
 // ─── Plan gating ─────────────────────────────────────────────────
 const PRO_FEATURES = {
-  'Live Financial TV':   'Watch Bloomberg TV, CNBC, Al Jazeera and 4 more live financial channels inside the terminal.',
-  'Live Squawk':         'Hands-free voice reading of every breaking headline as it arrives — instantly, with no delay.',
-  'Real-Time News Feed': 'Get news the instant it breaks. Basic plan has a delay. Pro delivers every headline in real time.',
+  'Live Financial TV':   'Watch Bloomberg TV, CNBC, Al Jazeera and more live financial channels directly inside the terminal.',
+  'Live Squawk':         'Hands-free voice reading of every breaking headline the instant it arrives — with zero delay.',
+  'Real-Time News Feed': 'Pro delivers every headline in real time. Basic plan receives news with a 2-minute delay.',
+  'Real-time News':      'Pro delivers every headline in real time. Basic plan receives news with a 2-minute delay.',
+  'Ad-Free Experience':  'Pro removes all ads and upgrade prompts from the terminal. Pure market intelligence, zero distractions.',
 };
 
 function showUpgrade(featureName) {

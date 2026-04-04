@@ -3206,6 +3206,18 @@ async function loadScreener(type, force) {
     const r = await fetch(url, {headers:{'Authorization':'Bearer '+token}});
     if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
     const json = await r.json();
+
+    // Backend still warming up → show friendly message and auto-retry
+    if (json.loading || ((!json.data || json.data.length === 0) && !json.updated)) {
+      content.innerHTML = `<div class="sc-loading">
+        <div class="sc-spinner"></div>
+        <span style="color:#445;">Preparing ${type} data…</span>
+        <span style="font-size:10px;color:#334;">This takes ~30s on first load. Retrying automatically…</span>
+      </div>`;
+      setTimeout(() => loadScreener(type, true), 5000);
+      return;
+    }
+
     _scData = json.data || [];
     _scLoaded[type] = true;
     // Strength meter (Forex only)

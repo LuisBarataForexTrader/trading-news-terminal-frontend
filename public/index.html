@@ -710,6 +710,10 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .sc-stab{padding:7px 18px;border:none;background:transparent;color:#556;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
 .sc-stab.active{color:var(--accent);border-bottom-color:var(--accent);}
 .sc-stab:hover:not(.active){color:#aaa;}
+.sc-view-tabs{display:flex;gap:2px;padding:6px 12px 0;background:var(--bg2);border-bottom:none;flex-shrink:0;}
+.sc-vtab{background:transparent;border:1px solid transparent;border-bottom:none;color:#556;font-size:11px;padding:4px 12px;cursor:pointer;border-radius:4px 4px 0 0;transition:all .15s;letter-spacing:.2px;}
+.sc-vtab:hover{color:#aaa;background:rgba(255,255,255,0.04);}
+.sc-vtab.active{color:#00d4aa;border-color:var(--border);border-bottom-color:var(--bg2);background:var(--bg2);font-weight:600;}
 .sc-filters{display:flex;flex-wrap:wrap;gap:6px;padding:7px 12px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;align-items:center;}
 .sc-fg{display:flex;align-items:center;gap:4px;}
 .sc-fl{font-size:9px;color:#445;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
@@ -897,10 +901,10 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 
     <div class="sidebar-section">
       <div class="sidebar-label" data-i18n="sidebar.impact">Impact</div>
-      <button class="filter-btn active" onclick="setImpact('ALL',this)"><div class="filter-dot dot-all"></div><span data-i18n="sidebar.all_news">All News</span><span class="filter-count" id="count-all">0</span></button>
-      <button class="filter-btn" onclick="setImpact('HIGH',this)"><div class="filter-dot dot-high"></div><span data-i18n="sidebar.high_impact">High Impact</span><span class="filter-count" id="count-high">0</span></button>
-      <button class="filter-btn" onclick="setImpact('MEDIUM',this)"><div class="filter-dot dot-medium"></div><span data-i18n="sidebar.medium">Medium</span><span class="filter-count" id="count-medium">0</span></button>
-      <button class="filter-btn" onclick="setImpact('LOW',this)"><div class="filter-dot dot-low"></div><span data-i18n="sidebar.low">Low</span><span class="filter-count" id="count-low">0</span></button>
+      <button class="filter-btn active" data-impact="ALL" onclick="setImpact('ALL',this)"><div class="filter-dot dot-all"></div><span data-i18n="sidebar.all_news">All News</span><span class="filter-count" id="count-all">0</span></button>
+      <button class="filter-btn" data-impact="HIGH" onclick="setImpact('HIGH',this)"><div class="filter-dot dot-high"></div><span data-i18n="sidebar.high_impact">High Impact</span><span class="filter-count" id="count-high">0</span></button>
+      <button class="filter-btn" data-impact="MEDIUM" onclick="setImpact('MEDIUM',this)"><div class="filter-dot dot-medium"></div><span data-i18n="sidebar.medium">Medium</span><span class="filter-count" id="count-medium">0</span></button>
+      <button class="filter-btn" data-impact="LOW" onclick="setImpact('LOW',this)"><div class="filter-dot dot-low"></div><span data-i18n="sidebar.low">Low</span><span class="filter-count" id="count-low">0</span></button>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">★ My News Feed</div>
@@ -908,13 +912,6 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       <button class="mynews-config-btn" onclick="openMyNewsConfig()">
         ⚙ Configure Feed
         <span class="mynews-badge" id="mynewsBadge">0</span>
-      </button>
-    </div>
-    <div class="sidebar-section" id="squawkSidebarSection">
-      <div class="sidebar-label">🔊 Squawk</div>
-      <div class="mynews-summary" id="squawkSidebarStatus">Off</div>
-      <button class="mynews-config-btn" id="squawkSidebarBtn" onclick="openSquawkFromSidebar(this)">
-        ⚙ Configure Squawk
       </button>
     </div>
     <div class="pack-info">
@@ -1231,7 +1228,7 @@ const PAGE_SIZE     = 30;
 
 // ─── State ──────────────────────────────────────────────────────
 let lang             = 'en';
-let impactFilter     = 'ALL';
+let impactFilters    = new Set(['ALL']); // multi-select: 'ALL'|'HIGH'|'MEDIUM'|'LOW'
 let selectedCategories = new Set(); // empty = ALL
 let calAssetFilter   = new Set();   // empty = ALL assets
 let calImpactFilter  = new Set([1, 0]);
@@ -1508,7 +1505,7 @@ function newsMatchesCategory(n, cat) {
     if (hasAsset) {
       if (n._calRelease) {
         const calAsset = COUNTRY_ASSET[n._calCountry];
-        const impactOk = impactFilter === 'ALL' || n.impact === impactFilter;
+        const impactOk = impactFilters.has('ALL') || impactFilters.has(n.impact);
         if (calAsset && myWatchlist.includes(calAsset) && impactOk) return true;
       }
       const a = (n.assets||'').split(',').map(x=>x.trim());
@@ -1796,27 +1793,18 @@ function toggleSquawk() {
 
 function updateSquawkBtn() {
   const btn = document.getElementById('squawkBtn');
-  const sideStatus = document.getElementById('squawkSidebarStatus');
-  const sideSection = document.getElementById('squawkSidebarSection');
   if (!btn) return;
   if (!IS_PRO) {
     btn.innerHTML = '🔒 Squawk <span style="font-size:8px;color:#a78bfa;border:1px solid rgba(167,139,250,0.4);padding:1px 4px;border-radius:2px;margin-left:4px;">PRO</span>';
     btn.className = 'squawk-btn';
-    if (sideSection) sideSection.style.display = 'none';
     return;
   }
-  if (sideSection) sideSection.style.display = '';
   if (!squawkEnabled) {
     btn.textContent = t('squawk.off'); btn.className = 'squawk-btn';
-    if (sideStatus) sideStatus.textContent = 'Off';
   } else if (squawkSpeaking) {
     btn.textContent = t('squawk.speaking'); btn.className = 'squawk-btn active speaking';
-    if (sideStatus) sideStatus.textContent = '🔊 Speaking…';
   } else {
     btn.textContent = t('squawk.on'); btn.className = 'squawk-btn active';
-    const filterLabel = squawkFilters.has('ALL') ? 'All news'
-      : [...squawkFilters].map(f => f === 'HIGH' ? 'High' : f === 'MEDIUM' ? 'Medium' : 'My News').join(' + ');
-    if (sideStatus) sideStatus.textContent = '🟢 On — ' + filterLabel;
   }
 }
 
@@ -2230,8 +2218,15 @@ function getFeedTitle() {
     const keyMap = {MY_NEWS:'feed.title.my_news',FOREX:'feed.title.forex',CRYPTO:'feed.title.crypto',MACRO:'feed.title.macro',BONDS:'feed.title.bonds',EQUITIES:'feed.title.equities',INDEXES:'feed.title.indexes',COMMODITIES:'feed.title.commodities',MARKET_MOVING:'feed.title.market_moving'};
     return t(keyMap[cat]||'feed.title.all');
   }
-  const impKey = {HIGH:'feed.title.high',MEDIUM:'feed.title.medium',LOW:'feed.title.low'}[impactFilter];
-  return t(impKey||'feed.title.all');
+  if (!impactFilters.has('ALL')) {
+    const activeImpacts = [...impactFilters];
+    if (activeImpacts.length === 1) {
+      const impKey = {HIGH:'feed.title.high',MEDIUM:'feed.title.medium',LOW:'feed.title.low'}[activeImpacts[0]];
+      if (impKey) return t(impKey);
+    }
+    return activeImpacts.map(i => i.charAt(0) + i.slice(1).toLowerCase()).join(' + ') + ' Impact';
+  }
+  return t('feed.title.all');
 }
 function updateFeedTitle() {
   const node = document.getElementById('feedTitle');
@@ -2246,12 +2241,31 @@ function setLang(l, btn) {
   _savePrefs({lang: l});
 }
 function setImpact(impact, btn) {
-  impactFilter = impact;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  if (impact === 'ALL') {
+    // Clear all, activate ALL
+    impactFilters = new Set(['ALL']);
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  } else {
+    // Toggle this impact; remove ALL when selecting a specific filter
+    impactFilters.delete('ALL');
+    document.querySelector('.filter-btn[data-impact="ALL"]')?.classList.remove('active');
+    if (impactFilters.has(impact)) {
+      impactFilters.delete(impact);
+      btn.classList.remove('active');
+    } else {
+      impactFilters.add(impact);
+      btn.classList.add('active');
+    }
+    // If nothing selected, fall back to ALL
+    if (impactFilters.size === 0) {
+      impactFilters.add('ALL');
+      document.querySelector('.filter-btn[data-impact="ALL"]')?.classList.add('active');
+    }
+  }
   displayLimit = PAGE_SIZE;
   updateFeedTitle(); renderNews();
-  _savePrefs({impact});
+  _savePrefs({impactFilters: [...impactFilters]});
 }
 // MULTI-SELECT category
 function setCategory(cat, btn) {
@@ -2360,7 +2374,7 @@ function renderNews() {
 
   let filtered = combined;
   // Impact filter (sidebar) — always applied
-  if (impactFilter !== 'ALL') filtered = filtered.filter(n=>n.impact===impactFilter);
+  if (!impactFilters.has('ALL')) filtered = filtered.filter(n=>impactFilters.has(n.impact));
   // Category filter (multi-select) — 0 selected = ALL
   if (selectedCategories.size > 0) filtered = filtered.filter(n=>newsMatchesSelected(n));
   // Search filter
@@ -3381,14 +3395,20 @@ function _savePrefs(patch) {
     if (btn) { lang = p.lang; document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
   }
 
-  // 2. Impact filter
-  if (p.impact && p.impact !== 'ALL') {
-    impactFilter = p.impact;
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    const allBtns = document.querySelectorAll('.filter-btn');
-    const impactMap = {HIGH:1, MEDIUM:2, LOW:3};
-    const idx = impactMap[p.impact];
-    if (idx !== undefined && allBtns[idx]) allBtns[idx].classList.add('active');
+  // 2. Impact filter (multi-select)
+  if (p.impactFilters && Array.isArray(p.impactFilters) && p.impactFilters.length) {
+    impactFilters = new Set(p.impactFilters);
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    impactFilters.forEach(impact => {
+      const btn = document.querySelector(`.filter-btn[data-impact="${impact}"]`);
+      if (btn) btn.classList.add('active');
+    });
+  } else if (p.impact && p.impact !== 'ALL') {
+    // legacy single-value migration
+    impactFilters = new Set([p.impact]);
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector(`.filter-btn[data-impact="${p.impact}"]`);
+    if (btn) btn.classList.add('active');
   }
 
   // 3. Category selection
@@ -3709,6 +3729,7 @@ let _scSort = {col: null, dir: 'desc'};
 let _scLoaded = {stocks:false, forex:false, crypto:false, commodities:false, multi:false};
 let _scTimer  = null;
 let _scInited = false;
+let _scStocksView = 'overview'; // 'overview' | 'performance' | 'valuation' | 'dividends'
 
 function _initScreener() {
   if (!_scInited) {
@@ -3733,6 +3754,18 @@ function switchScreener(type) {
     _renderScTable(type, _scData);
   } else {
     loadScreener(type, false);
+  }
+}
+
+function switchStocksView(view) {
+  _scStocksView = view;
+  // Re-render view tabs
+  document.querySelectorAll('.sc-vtab').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.sc-vtab[onclick*="'${view}'"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+  // Re-render table from cached data (no API call needed)
+  if (_scCache['stocks'] && _scCache['stocks'].length > 0) {
+    _renderScTable('stocks', _scData.length > 0 ? _scData : _scCache['stocks']);
   }
 }
 
@@ -3795,6 +3828,10 @@ function _buildScParams(type) {
     add('sector','sector'); add('cap_tier','cap'); add('min_change','minchg');
     add('max_change','maxchg'); add('min_rsi','minrsi'); add('max_rsi','maxrsi');
     add('min_pe','minpe'); add('max_pe','maxpe'); add('signal','signal');
+    add('min_beta','minbeta'); add('max_beta','maxbeta');
+    add('min_div_yield','mindiv'); add('max_div_yield','maxdiv');
+    add('min_roe','minroe'); add('max_roe','maxroe');
+    add('max_analyst','maxanalyst');
   } else if (type === 'forex') {
     add('group','grp'); add('signal','signal');
   } else if (type === 'crypto') {
@@ -3811,7 +3848,17 @@ function _buildScParams(type) {
 function _renderScFilters(type) {
   const wrap = document.getElementById('sc-filters-wrap');
   if (!wrap) return;
-  let h = '<div class="sc-filters">';
+  let h = '';
+  if (type === 'stocks') {
+    // View tabs row
+    h += `<div class="sc-view-tabs">
+      <button class="sc-vtab${_scStocksView==='overview'?' active':''}" onclick="switchStocksView('overview')">Overview</button>
+      <button class="sc-vtab${_scStocksView==='performance'?' active':''}" onclick="switchStocksView('performance')">Performance</button>
+      <button class="sc-vtab${_scStocksView==='valuation'?' active':''}" onclick="switchStocksView('valuation')">Valuation</button>
+      <button class="sc-vtab${_scStocksView==='dividends'?' active':''}" onclick="switchStocksView('dividends')">Dividends</button>
+    </div>`;
+  }
+  h += '<div class="sc-filters">';
   if (type === 'stocks') {
     h += `<div class="sc-fg"><span class="sc-fl">Sector</span>
       <select class="sc-sel" id="sc-f-sector"><option value="">All</option>
@@ -3833,6 +3880,19 @@ function _renderScFilters(type) {
       <div class="sc-fg"><span class="sc-fl">P/E</span>
       <input class="sc-inp" id="sc-f-minpe" placeholder="min" type="number">
       <input class="sc-inp" id="sc-f-maxpe" placeholder="max" type="number"></div>
+      <div class="sc-fg"><span class="sc-fl">Beta</span>
+      <input class="sc-inp" id="sc-f-minbeta" placeholder="min" type="number" step="0.1">
+      <input class="sc-inp" id="sc-f-maxbeta" placeholder="max" type="number" step="0.1"></div>
+      <div class="sc-fg"><span class="sc-fl">Div%</span>
+      <input class="sc-inp" id="sc-f-mindiv" placeholder="min" type="number" step="0.1">
+      <input class="sc-inp" id="sc-f-maxdiv" placeholder="max" type="number" step="0.1"></div>
+      <div class="sc-fg"><span class="sc-fl">ROE%</span>
+      <input class="sc-inp" id="sc-f-minroe" placeholder="min" type="number" step="1">
+      <input class="sc-inp" id="sc-f-maxroe" placeholder="max" type="number" step="1"></div>
+      <div class="sc-fg"><span class="sc-fl">Analyst</span>
+      <select class="sc-sel" id="sc-f-maxanalyst"><option value="">All</option>
+      <option value="1.5">Strong Buy</option><option value="2.5">Buy+</option>
+      <option value="3">Hold+</option><option value="4">Sell+</option></select></div>
       <div class="sc-fg"><span class="sc-fl">Signal</span>
       <select class="sc-sel" id="sc-f-signal"><option value="">All</option>
       <option>Oversold</option><option>Bullish</option><option>Neutral</option>
@@ -3936,10 +3996,28 @@ function _renderScTable(type, data) {
   }
   let h = '<div class="sc-table-wrap"><table class="sc-table"><thead><tr>';
   if (type === 'stocks') {
-    h += _scTh('symbol','Symbol') + _scTh('name','Company') + _scTh('sector','Sector') +
-         _scTh('price','Price') + _scTh('change_pct','Chg%') + _scTh('volume','Volume') +
-         _scTh('market_cap','Mkt Cap') + _scTh('pe','P/E') + _scTh('beta','Beta') +
-         _scTh('div_yield','Div%') + _scTh('week52_pct','52W') + _scTh('rsi','RSI') + _scTh('signal','Signal');
+    if (_scStocksView === 'performance') {
+      h += _scTh('symbol','Symbol') + _scTh('name','Company') + _scTh('sector','Sector') +
+           _scTh('price','Price') + _scTh('change_pct','1D%') + _scTh('perf_1w','1W%') +
+           _scTh('perf_1m','1M%') + _scTh('perf_3m','3M%') + _scTh('week52_pct','52W') +
+           _scTh('rsi','RSI') + _scTh('signal','Signal');
+    } else if (_scStocksView === 'valuation') {
+      h += _scTh('symbol','Symbol') + _scTh('name','Company') + _scTh('sector','Sector') +
+           _scTh('price','Price') + _scTh('pe','P/E') + _scTh('pb_ratio','P/B') +
+           _scTh('peg_ratio','PEG') + _scTh('eps','EPS') + _scTh('eps_growth','EPS Grw%') +
+           _scTh('revenue_growth','Rev Grw%') + _scTh('profit_margin','Margin%') +
+           _scTh('roe','ROE%') + _scTh('analyst_rating','Analyst');
+    } else if (_scStocksView === 'dividends') {
+      h += _scTh('symbol','Symbol') + _scTh('name','Company') + _scTh('sector','Sector') +
+           _scTh('price','Price') + _scTh('div_yield','Div%') + _scTh('pe','P/E') +
+           _scTh('beta','Beta') + _scTh('market_cap','Mkt Cap') + _scTh('week52_pct','52W') +
+           _scTh('rsi','RSI') + _scTh('signal','Signal');
+    } else { // overview
+      h += _scTh('symbol','Symbol') + _scTh('name','Company') + _scTh('sector','Sector') +
+           _scTh('price','Price') + _scTh('change_pct','Chg%') + _scTh('volume','Volume') +
+           _scTh('market_cap','Mkt Cap') + _scTh('pe','P/E') + _scTh('beta','Beta') +
+           _scTh('div_yield','Div%') + _scTh('week52_pct','52W') + _scTh('rsi','RSI') + _scTh('signal','Signal');
+    }
   } else if (type === 'forex') {
     h += _scTh('pair','Pair') + _scTh('group','Group') + _scTh('price','Price') +
          _scTh('change_1d','1D%') + _scTh('change_1w','1W%') + _scTh('change_1m','1M%') +
@@ -3962,19 +4040,54 @@ function _renderScTable(type, data) {
   for (const d of data) {
     h += '<tr>';
     if (type === 'stocks') {
-      h += `<td><span class="sc-sym">${d.symbol}</span></td>
+      const _sym = `<td><span class="sc-sym">${d.symbol}</span></td>
             <td><span class="sc-name" title="${d.name}">${d.name}</span></td>
             <td><span class="sc-tag">${d.sector||'—'}</span></td>
-            <td class="sc-price">$${_fmtN(d.price)}</td>
-            <td>${_scChg(d.change_pct)}</td>
-            <td>${_scVol(d.volume,d.avg_volume,d.vol_ratio)}</td>
-            <td>${_scMcap(d.market_cap,d.cap_tier)}</td>
-            <td class="sc-flat">${d.pe!=null?d.pe:'—'}</td>
-            <td class="sc-flat">${d.beta!=null?d.beta:'—'}</td>
-            <td class="sc-flat">${d.div_yield!=null?d.div_yield+'%':'—'}</td>
-            <td>${_scRange(d.week52_pct)}</td>
-            <td>${_scRsi(d.rsi)}</td>
-            <td>${_scSig(d.signal)}</td>`;
+            <td class="sc-price">$${_fmtN(d.price)}</td>`;
+      const _analyst = d.analyst_rating != null ? (() => {
+        const v = d.analyst_rating;
+        const label = v<=1.5?'Strong Buy':v<=2.5?'Buy':v<=3.5?'Hold':v<=4.5?'Sell':'Strong Sell';
+        const col = v<=2?'#00d4aa':v<=3?'#6fe0c0':v<=3.5?'#888':v<=4.5?'#ff9944':'#ff4d6a';
+        return `<span style="color:${col};font-size:10px;">${label}</span>`;
+      })() : '—';
+      if (_scStocksView === 'performance') {
+        h += _sym +
+             `<td>${_scChg(d.change_pct)}</td>
+              <td>${d.perf_1w!=null?_scChg(d.perf_1w):'<span style="color:#334;font-size:9px;">loading…</span>'}</td>
+              <td>${d.perf_1m!=null?_scChg(d.perf_1m):'<span style="color:#334;font-size:9px;">loading…</span>'}</td>
+              <td>${d.perf_3m!=null?_scChg(d.perf_3m):'<span style="color:#334;font-size:9px;">loading…</span>'}</td>
+              <td>${_scRange(d.week52_pct)}</td>
+              <td>${_scRsi(d.rsi)}</td><td>${_scSig(d.signal)}</td>`;
+      } else if (_scStocksView === 'valuation') {
+        h += _sym +
+             `<td class="sc-flat">${d.pe!=null?d.pe:'—'}</td>
+              <td class="sc-flat">${d.pb_ratio!=null?d.pb_ratio:'—'}</td>
+              <td class="sc-flat">${d.peg_ratio!=null?d.peg_ratio:'—'}</td>
+              <td class="sc-flat">${d.eps!=null?d.eps:'—'}</td>
+              <td class="sc-flat">${d.eps_growth!=null?_scChg(d.eps_growth):'—'}</td>
+              <td class="sc-flat">${d.revenue_growth!=null?_scChg(d.revenue_growth):'—'}</td>
+              <td class="sc-flat">${d.profit_margin!=null?d.profit_margin+'%':'—'}</td>
+              <td class="sc-flat">${d.roe!=null?d.roe+'%':'—'}</td>
+              <td class="sc-flat">${_analyst}</td>`;
+      } else if (_scStocksView === 'dividends') {
+        h += _sym +
+             `<td class="sc-flat">${d.div_yield!=null?'<b style="color:#00d4aa;">'+d.div_yield+'%</b>':'—'}</td>
+              <td class="sc-flat">${d.pe!=null?d.pe:'—'}</td>
+              <td class="sc-flat">${d.beta!=null?d.beta:'—'}</td>
+              <td>${_scMcap(d.market_cap,d.cap_tier)}</td>
+              <td>${_scRange(d.week52_pct)}</td>
+              <td>${_scRsi(d.rsi)}</td><td>${_scSig(d.signal)}</td>`;
+      } else { // overview
+        h += _sym +
+             `<td>${_scChg(d.change_pct)}</td>
+              <td>${_scVol(d.volume,d.avg_volume,d.vol_ratio)}</td>
+              <td>${_scMcap(d.market_cap,d.cap_tier)}</td>
+              <td class="sc-flat">${d.pe!=null?d.pe:'—'}</td>
+              <td class="sc-flat">${d.beta!=null?d.beta:'—'}</td>
+              <td class="sc-flat">${d.div_yield!=null?d.div_yield+'%':'—'}</td>
+              <td>${_scRange(d.week52_pct)}</td>
+              <td>${_scRsi(d.rsi)}</td><td>${_scSig(d.signal)}</td>`;
+      }
     } else if (type === 'forex') {
       const dec = d.price < 10 ? 5 : 3;
       h += `<td><span class="sc-sym">${d.pair}</span></td>

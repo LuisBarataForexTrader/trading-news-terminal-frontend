@@ -3813,6 +3813,26 @@ async function loadScreener(type, force) {
     _scTimer = setInterval(() => {
       if (currentTab === 'screener' && _scType === type) loadScreener(type, true);
     }, ttl * 1000);
+    // If stocks perf data not yet enriched by backend, poll every 20s until it arrives
+    if (type === 'stocks' && _scData.length > 0 && _scData[0].perf_1w == null) {
+      let _perfPoll = 0;
+      const _pollPerf = setInterval(async () => {
+        _perfPoll++;
+        if (_perfPoll > 9 || _scType !== 'stocks') { clearInterval(_pollPerf); return; } // give up after ~3min
+        try {
+          const pr = await fetch(BACKEND_URL + '/screener/stocks?limit=200&sort_by=market_cap', {headers: _authHeader()});
+          if (!pr.ok) return;
+          const pj = await pr.json();
+          const fresh = pj.data || [];
+          if (fresh.length > 0 && fresh[0].perf_1w != null) {
+            clearInterval(_pollPerf);
+            _scData = fresh; _scCache['stocks'] = fresh;
+            _renderScTable('stocks', _scData);
+            if (mt && pj.updated) mt.textContent = 'Updated ' + _fmtScTs(pj.updated);
+          }
+        } catch {}
+      }, 20000);
+    }
   } catch(e) {
     content.innerHTML = `<div class="sc-loading" style="color:#ff4d6a;">⚠ Failed to load screener.<br><small style="color:#8a9bb0;">${e.message}</small></div>`;
   }

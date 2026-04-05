@@ -3814,35 +3814,53 @@ function openChart(assetKey) {
   _openChartSymbol(entry.symbol, entry.label);
 }
 
+// ─── Commodity yfinance-ticker → TradingView symbol (exact, no ambiguity) ───
+const _COMM_TV = {
+  'GC=F': {symbol:'TVC:GOLD',       label:'Gold · XAU/USD'},
+  'SI=F': {symbol:'TVC:SILVER',     label:'Silver · XAG/USD'},
+  'HG=F': {symbol:'TVC:COPPER',     label:'Copper'},
+  'PL=F': {symbol:'TVC:PLATINUM',   label:'Platinum'},
+  'PA=F': {symbol:'TVC:PALLADIUM',  label:'Palladium'},
+  'CL=F': {symbol:'NYMEX:CL1!',     label:'WTI Crude Oil'},
+  'BZ=F': {symbol:'ICEEUR:BRN1!',   label:'Brent Crude Oil'},
+  'NG=F': {symbol:'NYMEX:NG1!',     label:'Natural Gas'},
+  'ZC=F': {symbol:'CBOT:ZC1!',      label:'Corn'},
+  'ZW=F': {symbol:'CBOT:ZW1!',      label:'Wheat'},
+  'ZS=F': {symbol:'CBOT:ZS1!',      label:'Soybeans'},
+  'CC=F': {symbol:'ICEUS:CC1!',     label:'Cocoa'},
+  'KC=F': {symbol:'ICEUS:KC1!',     label:'Coffee'},
+  'CT=F': {symbol:'ICEUS:CT1!',     label:'Cotton'},
+};
+
 // ─── Screener → Chart ──────────────────────────────────────────
 function _scOpenChart(type, sym, name) {
-  sym  = (sym  || '').toUpperCase();
-  name = (name || sym);
+  sym  = sym  || '';
+  name = name || sym;
   if (type === 'forex') {
-    // "EUR/USD" → "EURUSD"
-    openChart(sym.replace('/',''));
+    openChart(sym.replace('/','').replace('-','').toUpperCase());
     return;
   }
   if (type === 'crypto') {
-    // BTC → try CHART_MAP["BTC"] first, then BTCUSD
-    const direct = CHART_MAP[sym];
+    const direct = CHART_MAP[sym.toUpperCase()];
     if (direct) { _openChartSymbol(direct.symbol, direct.label); return; }
-    openChart(sym + 'USD');
+    openChart(sym.toUpperCase() + 'USD');
     return;
   }
   if (type === 'commodities') {
-    // Try name-based lookup (GOLD, WTI, NATGAS…)
-    const nameKey = name.toUpperCase().replace(/\s+/g,'').replace(/[^A-Z0-9]/g,'');
-    const cEntry = CHART_MAP[nameKey] || CHART_MAP[sym.replace('=F','').replace('1!','')];
+    // Exact yfinance-ticker lookup — fully avoids stock symbol collisions
+    const cEntry = _COMM_TV[sym];
     if (cEntry) { _openChartSymbol(cEntry.symbol, cEntry.label); return; }
-    openChart(nameKey);
+    // Fallback: name-based (GOLD, SILVER, etc.)
+    const nameKey = name.toUpperCase().replace(/\s+/g,'').replace(/[^A-Z0-9]/g,'');
+    const nEntry  = CHART_MAP[nameKey];
+    if (nEntry) { _openChartSymbol(nEntry.symbol, nEntry.label); return; }
+    _openChartSymbol(nameKey, name);
     return;
   }
-  // stocks / multi: use CHART_MAP or let TradingView auto-resolve by ticker
-  const entry = CHART_MAP[sym];
+  // stocks / multi
+  const entry = CHART_MAP[sym.toUpperCase()];
   if (entry) { _openChartSymbol(entry.symbol, entry.label); return; }
-  // Fallback: pass ticker directly — TV resolves NASDAQ/NYSE automatically
-  _openChartSymbol(sym, name + ' · ' + sym);
+  _openChartSymbol(sym.toUpperCase(), name + ' · ' + sym.toUpperCase());
 }
 
 function _openChartSymbol(tvSymbol, label) {

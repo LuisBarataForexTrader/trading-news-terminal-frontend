@@ -1262,6 +1262,8 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
     const settingsBtn = document.getElementById('settingsBtn');
     if (label && (user.name || user.email)) label.textContent = user.name || user.email;
     if (btn) btn.style.display = '';
+    // Store login time for plan-change detection
+    if (!localStorage.getItem('tnt_login_at')) localStorage.setItem('tnt_login_at', new Date().toISOString());
     if (avatarBtn) {
       avatarBtn.style.display = '';
       if (user.avatar && user.avatar.startsWith('data:image/')) {
@@ -1278,8 +1280,38 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
 function doLogout() {
   localStorage.removeItem('tnt_token');
   localStorage.removeItem('tnt_user');
+  localStorage.removeItem('tnt_login_at');
   window.location.replace(LOGIN_URL + '?logout=1');
 }
+
+// ─── Plan change monitor ─────────────────────────────────────────
+// Polls /auth/me every 5 minutes to detect plan changes (trial activate/expire)
+async function _checkPlanChanged() {
+  try {
+    const token = localStorage.getItem('tnt_token');
+    if (!token) return;
+    const r = await fetch(BACKEND_URL + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!r.ok) return;
+    const data = await r.json();
+    const loginAt = localStorage.getItem('tnt_login_at') || new Date(0).toISOString();
+    // If plan changed after our login time → force re-login
+    if (data.plan_changed_at && data.plan_changed_at > loginAt) {
+      const cachedPlan = (()=>{ try{return JSON.parse(localStorage.getItem('tnt_user')||'{}').plan||'free';}catch(e){return 'free';} })();
+      if (data.plan !== cachedPlan) {
+        showToast('🔄 O teu plano foi atualizado. A recarregar sessão…');
+        setTimeout(() => {
+          localStorage.removeItem('tnt_token');
+          localStorage.removeItem('tnt_user');
+          localStorage.removeItem('tnt_login_at');
+          window.location.replace(LOGIN_URL);
+        }, 2500);
+      }
+    }
+  } catch(e) { /* non-critical */ }
+}
+// Check on load (after 10s to let app settle) and every 5 minutes
+setTimeout(_checkPlanChanged, 10000);
+setInterval(_checkPlanChanged, 5 * 60 * 1000);
 
 // ─── Settings Modal ─────────────────────────────────────────────
 async function openSettings() {

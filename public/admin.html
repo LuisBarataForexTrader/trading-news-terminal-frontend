@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"></script>
@@ -605,7 +605,7 @@ select.ctrl-sel:focus{border-color:var(--accent)}
           <!-- QR step -->
           <div id="sec-2fa-qr-wrap" style="display:none;margin-top:14px">
             <div class="qr-wrap">
-              <canvas id="sec-qr-canvas"></canvas>
+              <div id="sec-qr-canvas" style="display:inline-block;background:#fff;padding:8px;border-radius:4px"></div>
               <div class="qr-secret" id="sec-qr-secret"></div>
             </div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Scan with Google Authenticator or Authy, then enter the 6-digit code below to confirm.</div>
@@ -794,8 +794,9 @@ async function sec2faSetup() {
     document.getElementById('sec-qr-secret').textContent = 'Manual key: ' + data.secret;
     document.getElementById('sec-2fa-verify-input').value = '';
     // Render QR code
-    const canvas = document.getElementById('sec-qr-canvas');
-    QRCode.toCanvas(canvas, data.uri, { width: 180, color: { dark:'#000000', light:'#ffffff' } });
+    const qrDiv = document.getElementById('sec-qr-canvas');
+    qrDiv.innerHTML = '';
+    new QRCode(qrDiv, { text: data.uri, width: 180, height: 180, colorDark: '#000000', colorLight: '#ffffff' });
     msgEl.className = 'sec-msg'; msgEl.textContent = '';
   } catch(e) {
     msgEl.textContent = 'Failed to generate 2FA setup.'; msgEl.className = 'sec-msg err';

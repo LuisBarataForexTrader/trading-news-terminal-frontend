@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"></script>
@@ -32,11 +33,48 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .login-logo{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
 .login-title{font-size:20px;font-weight:700;color:var(--text)}
 .login-sub{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+.login-box label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:-8px}
 .login-box input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:4px;font-family:var(--font-mono);font-size:13px;outline:none;transition:border-color .15s;width:100%}
 .login-box input:focus{border-color:var(--accent)}
-.login-box button{background:var(--accent);color:#000;border:none;padding:11px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-top:4px}
-.login-box button:hover{box-shadow:0 0 20px rgba(0,212,255,.3)}
+.login-box .login-btn{background:var(--accent);color:#000;border:none;padding:11px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-top:4px;width:100%}
+.login-box .login-btn:hover{box-shadow:0 0 20px rgba(0,212,255,.3)}
+.login-box .login-btn:disabled{opacity:.5;cursor:not-allowed}
 #login-err{color:var(--red);font-size:11px;text-align:center;display:none}
+#totp-step{display:none}
+.totp-hint{font-size:10px;color:var(--text-muted);text-align:center}
+
+/* ─── Security Modal ─────────────────────────────────────────── */
+.sec-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center;padding:20px}
+.sec-overlay.open{display:flex}
+.sec-modal{background:#0f1217;border:1px solid var(--border2);border-radius:6px;width:100%;max-width:440px;position:relative;max-height:90vh;display:flex;flex-direction:column}
+.sec-modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:6px 6px 0 0}
+.sec-modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sec-modal-title{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.sec-modal-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;line-height:1}
+.sec-modal-body{padding:22px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:24px}
+.sec-section-lbl{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.sec-field{margin-bottom:12px}
+.sec-label{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.sec-input{width:100%;padding:9px 12px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--font-mono);font-size:12px;border-radius:3px;outline:none;transition:border-color .15s}
+.sec-input:focus{border-color:var(--accent)}
+.sec-btn{padding:9px 18px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;border-radius:3px;transition:all .15s}
+.sec-btn.primary{background:var(--accent);color:#000}
+.sec-btn.primary:hover{background:var(--accent2)}
+.sec-btn.danger{background:transparent;border:1px solid var(--red);color:var(--red)}
+.sec-btn.danger:hover{background:rgba(255,59,92,.1)}
+.sec-btn:disabled{opacity:.5;cursor:not-allowed}
+.sec-msg{font-size:11px;margin-top:8px;padding:7px 10px;border-radius:3px;display:none}
+.sec-msg.ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--green);display:block}
+.sec-msg.err{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.3);color:var(--red);display:block}
+.totp-status{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;margin-bottom:14px}
+.totp-status-badge{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px}
+.totp-status-badge.on{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.totp-status-badge.off{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.2);color:var(--red)}
+.qr-wrap{text-align:center;padding:16px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;margin-bottom:12px}
+.qr-wrap canvas{border-radius:4px}
+.qr-secret{font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-top:8px;word-break:break-all}
+.header-security-btn{padding:5px 12px;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.06em;border:1px solid var(--border2);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .15s;border-radius:3px}
+.header-security-btn:hover{border-color:var(--accent);color:var(--accent)}
 
 /* ─── App shell ──────────────────────────────────────────────── */
 #app{display:none;height:100vh;flex-direction:column}
@@ -224,9 +262,19 @@ select.ctrl-sel:focus{border-color:var(--accent)}
     <div class="login-logo">⬡ TNT Admin</div>
     <div class="login-title">Admin Dashboard</div>
     <div class="login-sub">Trading News Terminal</div>
-    <input type="password" id="token-input" placeholder="Enter admin token" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button onclick="doLogin()">Sign In</button>
-    <div id="login-err">Invalid or expired token</div>
+    <!-- Step 1: Password -->
+    <div id="pwd-step">
+      <label>Password</label>
+      <input type="password" id="pwd-input" placeholder="Admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <!-- Step 2: TOTP (shown only if 2FA enabled) -->
+    <div id="totp-step">
+      <label>2FA Code</label>
+      <input type="text" id="totp-input" placeholder="6-digit code" autocomplete="one-time-code" inputmode="numeric" maxlength="6" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <div class="totp-hint">Enter the code from your authenticator app</div>
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+    <div id="login-err">Invalid password or 2FA code</div>
   </div>
 </div>
 
@@ -239,6 +287,7 @@ select.ctrl-sel:focus{border-color:var(--accent)}
     <div class="header-title" id="header-section">Overview</div>
     <div class="header-spacer"></div>
     <div class="header-badge" id="hdr-time">—</div>
+    <button class="header-security-btn" onclick="openSecModal()">🔐 Security</button>
     <button class="header-signout" onclick="logout()">Sign Out</button>
   </div>
 
@@ -515,6 +564,73 @@ select.ctrl-sel:focus{border-color:var(--accent)}
   </div><!-- /body -->
 </div><!-- /app -->
 
+<!-- ── Security Modal ─────────────────────────────────────────── -->
+<div class="sec-overlay" id="sec-overlay" onclick="if(event.target===this)closeSecModal()">
+  <div class="sec-modal">
+    <div class="sec-modal-hdr">
+      <div class="sec-modal-title">🔐 Security Settings</div>
+      <button class="sec-modal-close" onclick="closeSecModal()">✕</button>
+    </div>
+    <div class="sec-modal-body">
+
+      <!-- Change Password -->
+      <div>
+        <div class="sec-section-lbl">Change Password</div>
+        <div class="sec-field">
+          <label class="sec-label">Current Password</label>
+          <input class="sec-input" type="password" id="sec-cur-pwd" placeholder="Current password" autocomplete="current-password">
+        </div>
+        <div class="sec-field">
+          <label class="sec-label">New Password</label>
+          <input class="sec-input" type="password" id="sec-new-pwd" placeholder="Min. 8 characters" autocomplete="new-password">
+        </div>
+        <div class="sec-field" id="sec-pwd-totp-wrap" style="display:none">
+          <label class="sec-label">2FA Code</label>
+          <input class="sec-input" type="text" id="sec-pwd-totp" placeholder="6-digit code" inputmode="numeric" maxlength="6">
+        </div>
+        <button class="sec-btn primary" id="sec-pwd-btn" onclick="secChangePassword()">Update Password</button>
+        <div class="sec-msg" id="sec-pwd-msg"></div>
+      </div>
+
+      <!-- 2FA -->
+      <div>
+        <div class="sec-section-lbl">Two-Factor Authentication (TOTP)</div>
+        <div class="totp-status">
+          <span id="sec-2fa-status-label" style="font-size:12px;color:var(--text-muted)">Status</span>
+          <span class="totp-status-badge off" id="sec-2fa-badge">OFF</span>
+        </div>
+        <!-- Setup flow (shown when 2FA is OFF) -->
+        <div id="sec-2fa-setup-wrap">
+          <button class="sec-btn primary" id="sec-2fa-setup-btn" onclick="sec2faSetup()">Set Up 2FA</button>
+          <!-- QR step -->
+          <div id="sec-2fa-qr-wrap" style="display:none;margin-top:14px">
+            <div class="qr-wrap">
+              <canvas id="sec-qr-canvas"></canvas>
+              <div class="qr-secret" id="sec-qr-secret"></div>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Scan with Google Authenticator or Authy, then enter the 6-digit code below to confirm.</div>
+            <div class="sec-field">
+              <label class="sec-label">Verification Code</label>
+              <input class="sec-input" type="text" id="sec-2fa-verify-input" placeholder="6-digit code" inputmode="numeric" maxlength="6">
+            </div>
+            <button class="sec-btn primary" id="sec-2fa-enable-btn" onclick="sec2faEnable()">Enable 2FA</button>
+          </div>
+        </div>
+        <!-- Disable flow (shown when 2FA is ON) -->
+        <div id="sec-2fa-disable-wrap" style="display:none">
+          <div class="sec-field">
+            <label class="sec-label">2FA Code to Disable</label>
+            <input class="sec-input" type="text" id="sec-2fa-disable-input" placeholder="6-digit code" inputmode="numeric" maxlength="6">
+          </div>
+          <button class="sec-btn danger" id="sec-2fa-disable-btn" onclick="sec2faDisable()">Disable 2FA</button>
+        </div>
+        <div class="sec-msg" id="sec-2fa-msg"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- Modal -->
 <div id="modal-overlay" onclick="if(event.target===this)closeModal()">
   <div id="modal">
@@ -545,33 +661,177 @@ function _tick() {
 setInterval(_tick,1000); _tick();
 
 // ── Auth ──────────────────────────────────────────────────────
-function doLogin() {
-  const v = document.getElementById('token-input').value.trim();
-  if (!v) return;
-  _token = v;
-  localStorage.setItem('tnt_admin_token', v);
-  verifyToken();
+let _totpRequired = false;
+
+async function doLogin() {
+  const pwd = document.getElementById('pwd-input').value.trim();
+  const totp = document.getElementById('totp-input').value.trim();
+  if (!pwd) return;
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  document.getElementById('login-err').style.display = 'none';
+  try {
+    const body = { password: pwd };
+    if (_totpRequired && totp) body.totp_code = totp;
+    const r = await fetch(BACKEND + '/admin/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+    if (!r.ok) {
+      if (data.detail === 'TOTP_REQUIRED') {
+        _totpRequired = true;
+        document.getElementById('totp-step').style.display = '';
+        document.getElementById('totp-input').focus();
+        btn.disabled = false; btn.textContent = 'Sign In';
+        return;
+      }
+      showLoginErr(data.detail);
+      return;
+    }
+    // Store JWT with expiry
+    const exp = Date.now() + data.expires_in * 1000;
+    localStorage.setItem('tnt_admin_token', data.token);
+    localStorage.setItem('tnt_admin_token_exp', exp.toString());
+    _token = data.token;
+    _enterApp();
+  } catch(e) {
+    showLoginErr('Connection error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+function _enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('app').style.flexDirection = 'column';
+  init();
 }
 async function verifyToken() {
+  // Check expiry first
+  const exp = parseInt(localStorage.getItem('tnt_admin_token_exp') || '0');
+  if (exp && Date.now() > exp) {
+    showLoginErr('Session expired — please sign in again');
+    return;
+  }
   try {
     const r = await api('/admin/stats/overview');
     if (r.total_users !== undefined) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      document.getElementById('app').style.flexDirection = 'column';
-      init();
+      _enterApp();
     } else { showLoginErr(); }
   } catch { showLoginErr(); }
 }
-function showLoginErr() {
+function showLoginErr(msg) {
   const el = document.getElementById('login-err');
+  el.textContent = msg || 'Invalid password or 2FA code';
   el.style.display = 'block';
   _token = '';
   localStorage.removeItem('tnt_admin_token');
+  localStorage.removeItem('tnt_admin_token_exp');
 }
 function logout() {
   localStorage.removeItem('tnt_admin_token');
+  localStorage.removeItem('tnt_admin_token_exp');
   location.reload();
+}
+
+// ── Security Modal ─────────────────────────────────────────────
+async function openSecModal() {
+  // Reset messages
+  ['sec-pwd-msg','sec-2fa-msg'].forEach(id => { const el=document.getElementById(id); el.className='sec-msg'; el.textContent=''; });
+  document.getElementById('sec-cur-pwd').value = '';
+  document.getElementById('sec-new-pwd').value = '';
+  document.getElementById('sec-2fa-qr-wrap').style.display = 'none';
+  // Load 2FA status
+  try {
+    const st = await api('/admin/auth/status');
+    _render2faStatus(st.totp_enabled);
+    // Show totp field in change-pwd if 2FA enabled
+    document.getElementById('sec-pwd-totp-wrap').style.display = st.totp_enabled ? '' : 'none';
+  } catch(e) {}
+  document.getElementById('sec-overlay').classList.add('open');
+}
+function closeSecModal() { document.getElementById('sec-overlay').classList.remove('open'); }
+function _render2faStatus(enabled) {
+  const badge = document.getElementById('sec-2fa-badge');
+  badge.textContent = enabled ? 'ON' : 'OFF';
+  badge.className = 'totp-status-badge ' + (enabled ? 'on' : 'off');
+  document.getElementById('sec-2fa-status-label').textContent = enabled ? '2FA is active' : '2FA is disabled';
+  document.getElementById('sec-2fa-setup-wrap').style.display = enabled ? 'none' : '';
+  document.getElementById('sec-2fa-disable-wrap').style.display = enabled ? '' : 'none';
+}
+async function secChangePassword() {
+  const btn = document.getElementById('sec-pwd-btn');
+  const msgEl = document.getElementById('sec-pwd-msg');
+  msgEl.className = 'sec-msg'; msgEl.textContent = '';
+  const cur = document.getElementById('sec-cur-pwd').value;
+  const nw  = document.getElementById('sec-new-pwd').value;
+  const totp = document.getElementById('sec-pwd-totp').value;
+  if (!cur || !nw) { msgEl.textContent='Fill in both password fields.'; msgEl.className='sec-msg err'; return; }
+  if (nw.length < 8) { msgEl.textContent='New password must be at least 8 characters.'; msgEl.className='sec-msg err'; return; }
+  btn.disabled = true; btn.textContent = 'Updating…';
+  try {
+    const body = { current_password: cur, new_password: nw };
+    if (totp) body.totp_code = totp;
+    await api('/admin/auth/change-password', { method:'POST', body: JSON.stringify(body) });
+    msgEl.textContent = 'Password updated!'; msgEl.className = 'sec-msg ok';
+    document.getElementById('sec-cur-pwd').value = '';
+    document.getElementById('sec-new-pwd').value = '';
+    document.getElementById('sec-pwd-totp').value = '';
+  } catch(e) {
+    const msg = e.message === '400' ? 'Current password is incorrect or invalid 2FA code.' : 'Error updating password.';
+    msgEl.textContent = msg; msgEl.className = 'sec-msg err';
+  } finally { btn.disabled = false; btn.textContent = 'Update Password'; }
+}
+async function sec2faSetup() {
+  const btn = document.getElementById('sec-2fa-setup-btn');
+  const msgEl = document.getElementById('sec-2fa-msg');
+  btn.disabled = true; btn.textContent = 'Generating…';
+  try {
+    const data = await api('/admin/auth/2fa/setup');
+    document.getElementById('sec-2fa-qr-wrap').style.display = '';
+    document.getElementById('sec-qr-secret').textContent = 'Manual key: ' + data.secret;
+    document.getElementById('sec-2fa-verify-input').value = '';
+    // Render QR code
+    const canvas = document.getElementById('sec-qr-canvas');
+    QRCode.toCanvas(canvas, data.uri, { width: 180, color: { dark:'#000000', light:'#ffffff' } });
+    msgEl.className = 'sec-msg'; msgEl.textContent = '';
+  } catch(e) {
+    msgEl.textContent = 'Failed to generate 2FA setup.'; msgEl.className = 'sec-msg err';
+  } finally { btn.disabled = false; btn.textContent = 'Set Up 2FA'; }
+}
+async function sec2faEnable() {
+  const btn = document.getElementById('sec-2fa-enable-btn');
+  const msgEl = document.getElementById('sec-2fa-msg');
+  const code = document.getElementById('sec-2fa-verify-input').value.trim();
+  if (!code) { msgEl.textContent='Enter the 6-digit code from your app.'; msgEl.className='sec-msg err'; return; }
+  btn.disabled = true; btn.textContent = 'Enabling…';
+  try {
+    await api('/admin/auth/2fa/enable', { method:'POST', body: JSON.stringify({ totp_code: code }) });
+    msgEl.textContent = '2FA enabled! Next login will require your authenticator code.'; msgEl.className = 'sec-msg ok';
+    _render2faStatus(true);
+    document.getElementById('sec-2fa-qr-wrap').style.display = 'none';
+    document.getElementById('sec-pwd-totp-wrap').style.display = '';
+  } catch(e) {
+    msgEl.textContent = 'Invalid code — try again.'; msgEl.className = 'sec-msg err';
+  } finally { btn.disabled = false; btn.textContent = 'Enable 2FA'; }
+}
+async function sec2faDisable() {
+  const btn = document.getElementById('sec-2fa-disable-btn');
+  const msgEl = document.getElementById('sec-2fa-msg');
+  const code = document.getElementById('sec-2fa-disable-input').value.trim();
+  if (!code) { msgEl.textContent='Enter the 6-digit code from your app.'; msgEl.className='sec-msg err'; return; }
+  btn.disabled = true; btn.textContent = 'Disabling…';
+  try {
+    await api('/admin/auth/2fa/disable', { method:'POST', body: JSON.stringify({ totp_code: code }) });
+    msgEl.textContent = '2FA disabled.'; msgEl.className = 'sec-msg ok';
+    _render2faStatus(false);
+    document.getElementById('sec-2fa-disable-input').value = '';
+    document.getElementById('sec-pwd-totp-wrap').style.display = 'none';
+  } catch(e) {
+    msgEl.textContent = 'Invalid code — try again.'; msgEl.className = 'sec-msg err';
+  } finally { btn.disabled = false; btn.textContent = 'Disable 2FA'; }
 }
 
 // ── API ────────────────────────────────────────────────────────
@@ -580,7 +840,11 @@ async function api(path, opts={}) {
     ...opts,
     headers: { 'x-admin-token': _token, 'Content-Type': 'application/json', ...(opts.headers||{}) }
   });
-  if (!r.ok) throw new Error(r.status);
+  if (!r.ok) {
+    let detail = r.status.toString();
+    try { const d = await r.json(); detail = d.detail || detail; } catch(e){}
+    throw new Error(detail);
+  }
   return r.json();
 }
 

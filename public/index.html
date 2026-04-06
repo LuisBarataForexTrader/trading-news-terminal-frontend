@@ -1285,7 +1285,7 @@ function doLogout() {
 }
 
 // ─── Plan change monitor ─────────────────────────────────────────
-// Polls /auth/me every 30s to detect plan changes (trial activate/expire)
+// Polls /auth/me every 30s — if backend plan differs from cache, update and reload
 async function _checkPlanChanged() {
   try {
     const token = localStorage.getItem('tnt_token');
@@ -1293,27 +1293,15 @@ async function _checkPlanChanged() {
     const r = await fetch(BACKEND_URL + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
     if (!r.ok) return;
     const data = await r.json();
-    const cachedPlan = (()=>{ try{return JSON.parse(localStorage.getItem('tnt_user')||'{}').plan||'free';}catch(e){return 'free';} })();
-    // Compare plans directly — if backend plan differs from cached, update and reload
-    if (data.plan && data.plan !== cachedPlan) {
-      // Verify plan_changed_at is after our login time (parse both as UTC)
-      const loginAt = new Date(localStorage.getItem('tnt_login_at') || 0);
-      // Python isoformat has no Z — append Z so JS parses as UTC
-      const changedAt = data.plan_changed_at
-        ? new Date(data.plan_changed_at.replace(' ', 'T').replace(/(\.\d+)?$/, (m) => m + 'Z').replace('ZZ','Z'))
-        : new Date(0);
-      if (changedAt > loginAt) {
-        // Update cached user with new plan
-        try {
-          const cached = JSON.parse(localStorage.getItem('tnt_user') || '{}');
-          cached.plan = data.plan;
-          localStorage.setItem('tnt_user', JSON.stringify(cached));
-        } catch(e) {}
-        // Update login_at so we don't trigger again
-        localStorage.setItem('tnt_login_at', new Date().toISOString());
-        showToast('🔄 O teu plano foi atualizado. A recarregar…');
-        setTimeout(() => window.location.reload(), 2000);
-      }
+    if (!data.plan) return;
+    let cached;
+    try { cached = JSON.parse(localStorage.getItem('tnt_user') || '{}'); } catch(e) { cached = {}; }
+    const cachedPlan = cached.plan || 'free';
+    if (data.plan !== cachedPlan) {
+      cached.plan = data.plan;
+      localStorage.setItem('tnt_user', JSON.stringify(cached));
+      showToast('🔄 O teu plano foi atualizado. A recarregar…');
+      setTimeout(() => window.location.reload(), 2000);
     }
   } catch(e) { /* non-critical */ }
 }

@@ -1309,9 +1309,13 @@ async function _checkPlanChanged() {
     }
   } catch(e) { /* non-critical */ }
 }
-// Check on load (after 10s to let app settle) and every 5 minutes
+// Check on load (after 10s to let app settle) and every 30 seconds
 setTimeout(_checkPlanChanged, 10000);
-setInterval(_checkPlanChanged, 5 * 60 * 1000);
+setInterval(_checkPlanChanged, 30000);
+// Also check immediately when user returns to the tab
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') _checkPlanChanged();
+});
 
 // ─── Settings Modal ─────────────────────────────────────────────
 async function openSettings() {

@@ -1428,7 +1428,10 @@ function translatePT(text) {
 const CATEGORY_KEYWORDS = {
   FOREX: {
     assets:['USD','EUR','GBP','JPY','AUD','CAD','CHF','NZD','CNY'],
-    keywords:['forex','currency','exchange rate','dollar','euro','pound','yen','franc','fx','cable','fiber','aussie','loonie','kiwi','usdx','dxy','greenback'],
+    // Removed dangerous substring matches:
+    // "franc" → matches "France","franchise" | "cable" → "cable TV" | "fiber" → "fiber optic"
+    // "aussie" broad | "yen" narrow enough to keep
+    keywords:['forex','fx market','currency pair','exchange rate','dollar','euro','pound sterling','yen','swiss franc','usd/','eur/','gbp/','jpy/','dxy','greenback','aussie dollar','loonie','kiwi dollar'],
     calCountries:['US','EU','GB','JP','AU','CA','CH','NZ','CN','DE','FR'], // all major FX countries
   },
   CRYPTO: {

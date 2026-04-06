@@ -1230,7 +1230,7 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
     (async function handlePaymentSuccess() {
       const tok = localStorage.getItem('tnt_token');
       if (!tok) return;
-      const BURL = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+      const BURL = 'https://trading-news-terminal-backend-production.up.railway.app';
       const refreshPlan = async () => {
         const r = await fetch(BURL + '/auth/me', { headers: { 'Authorization': 'Bearer ' + tok } });
         if (!r.ok) return null;
@@ -1284,7 +1284,7 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
       _badge.textContent = user.plan === 'trial' ? 'TRIAL' : 'PRO';
     }
     // Sync plan from backend immediately on load
-    const _BE = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+    const _BE = 'https://trading-news-terminal-backend-production.up.railway.app';
     (async () => {
       try {
         const _r = await fetch(_BE + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
@@ -1309,7 +1309,7 @@ function doLogout() {
 
 // ─── Plan change monitor ─────────────────────────────────────────
 // Polls /auth/me every 30s — if backend plan differs from cache, update and reload
-const _BE_URL = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+const _BE_URL = 'https://trading-news-terminal-backend-production.up.railway.app';
 async function _checkPlanChanged() {
   try {
     const token = localStorage.getItem('tnt_token');
@@ -1510,7 +1510,7 @@ async function openBillingPortal() {
 }
 
 // ─── Config ─────────────────────────────────────────────────────
-const BACKEND_URL   = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+const BACKEND_URL   = 'https://trading-news-terminal-backend-production.up.railway.app';
 const UPGRADE_URL   = 'https://www.tradingnewsterminal.com/#pricing';
 // Plan is set from cached user data; authoritative check happens server-side
 const _cachedUser   = (() => { try { return JSON.parse(localStorage.getItem('tnt_user')||'{}'); } catch(e){ return {}; } })();

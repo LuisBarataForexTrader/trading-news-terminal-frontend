@@ -768,7 +768,9 @@ function filterFeeds() {
   const st = document.getElementById('feeds-status-filter').value;
   const filtered = _allFeeds.filter(f => {
     const matchQ  = !q  || f.url.toLowerCase().includes(q) || (f.source||'').toLowerCase().includes(q) || _feedCategory(f.url).toLowerCase().includes(q);
-    const matchSt = !st || (f.status||'unknown') === st;
+    // 'error' filter matches both 'error' and 'timeout' (KPI counts both as errors)
+    const fSt = f.status || 'unknown';
+    const matchSt = !st || fSt === st || (st === 'error' && fSt === 'timeout');
     return matchQ && matchSt;
   });
   renderFeeds(filtered);

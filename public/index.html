@@ -1534,7 +1534,7 @@ let knownUrls        = new Set();
 // so recent events always show after refresh
 let knownCalIds = new Set();
 function saveCalIds() { /* no-op: in-session only */ }
-let squawkEnabled    = false;
+let squawkEnabled    = localStorage.getItem('squawkEnabled') === 'true';
 let squawkQueue      = [];
 let squawkSpeaking   = false;
 let squawkRate       = parseFloat(localStorage.getItem('squawkRate') || '1.0');
@@ -2213,6 +2213,7 @@ function drainSquawkQueue() {
 function toggleSquawk() {
   if (!IS_PRO) { showUpgrade('Live Squawk'); return; }
   squawkEnabled = !squawkEnabled;
+  localStorage.setItem('squawkEnabled', squawkEnabled);
   if (!squawkEnabled) {
     speechSynthesis.cancel(); squawkQueue = []; squawkSpeaking = false;
     _setSquawkTabBlink(false);
@@ -3907,6 +3908,7 @@ function _savePrefs(patch) {
 })();
 
 // ─── Init ────────────────────────────────────────────────────────
+updateSquawkBtn();
 applyTranslations();
 // Re-render after translations are applied (bootFromCache runs before applyTranslations,
 // so this ensures counts/feed are correct after translation strings are ready)

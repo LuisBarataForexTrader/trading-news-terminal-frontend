@@ -1221,6 +1221,7 @@ function userRow(u) {
     <td><span class="num">${seen}</span></td>
     <td style="white-space:nowrap">
       <button class="act-btn" onclick="openTrialModal(${u.id},'${email}')">Trial</button>
+      ${plan === 'trial' ? `<button class="act-btn" style="background:rgba(245,158,11,.15);color:var(--amber);border-color:rgba(245,158,11,.3)" onclick="cancelTrial(${u.id},'${email}')">✕ Trial</button>` : ''}
       <button class="act-btn danger" onclick="deleteUser(${u.id},'${email}')">✕</button>
     </td>
   </tr>`;
@@ -1529,6 +1530,13 @@ async function verifyUser(id, email) {
     await api(`/admin/users/${id}/verify`,{method:'POST'});
     showToast('User verified','ok'); searchUsers();
   } catch { showToast('Error','error'); }
+}
+async function cancelTrial(id, email) {
+  if (!confirm(`Cancel trial for ${email}?\nThe user will be reverted to their previous plan immediately.`)) return;
+  try {
+    const r = await api(`/admin/users/${id}/trial`,{method:'DELETE'});
+    showToast(`Trial cancelled — reverted to ${r.reverted_to}`, 'ok'); searchUsers();
+  } catch(e) { showToast(e.message||'Error cancelling trial','error'); }
 }
 async function deleteUser(id, email) {
   if (!confirm(`Delete ${email}?\nThis cannot be undone.`)) return;

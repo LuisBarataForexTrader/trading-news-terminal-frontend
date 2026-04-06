@@ -644,6 +644,24 @@ select.ctrl-sel:focus{border-color:var(--accent)}
   </div>
 </div>
 
+<!-- Delete confirmation modal -->
+<div id="del-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px)" onclick="if(event.target===this)closeDelModal()">
+  <div style="background:#0f1419;border:1px solid rgba(255,59,92,.3);border-radius:6px;padding:28px;width:380px;max-width:92vw">
+    <div style="font-size:13px;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">⚠ Apagar utilizador</div>
+    <div id="del-msg" style="font-size:13px;color:var(--text-dim);margin-bottom:18px;line-height:1.5"></div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">Escreve o email para confirmar:</div>
+    <input id="del-confirm-input" type="text" placeholder="email do utilizador"
+      style="width:100%;padding:9px 11px;background:#141820;border:1px solid var(--border2);border-radius:3px;color:var(--text);font-size:12px;font-family:var(--font-mono);box-sizing:border-box;margin-bottom:16px"
+      oninput="const _b=document.getElementById('del-btn');const _ok=this.value.trim()===_delEmail;_b.disabled=!_ok;_b.style.opacity=_ok?'.85':'.5'"/>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="closeDelModal()" style="padding:8px 18px;background:transparent;border:1px solid var(--border2);color:var(--text-dim);border-radius:3px;cursor:pointer;font-size:12px">Cancelar</button>
+      <button id="del-btn" disabled onclick="confirmDeleteUser()"
+        style="padding:8px 18px;background:var(--red);border:none;color:#fff;border-radius:3px;cursor:pointer;font-size:12px;font-weight:700;opacity:.5;transition:opacity .2s"
+        onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='.85'">Apagar definitivamente</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1538,12 +1556,30 @@ async function cancelTrial(id, email) {
     showToast(`Trial cancelled — reverted to ${r.reverted_to}`, 'ok'); searchUsers();
   } catch(e) { showToast(e.message||'Error cancelling trial','error'); }
 }
-async function deleteUser(id, email) {
-  if (!confirm(`Delete ${email}?\nThis cannot be undone.`)) return;
+
+let _delUserId = null, _delEmail = '';
+function deleteUser(id, email) {
+  _delUserId = id; _delEmail = email;
+  document.getElementById('del-msg').textContent = `Estás prestes a apagar "${email}" permanentemente. Esta ação não pode ser desfeita.`;
+  document.getElementById('del-confirm-input').value = '';
+  document.getElementById('del-btn').disabled = true;
+  document.getElementById('del-btn').style.opacity = '.5';
+  document.getElementById('del-overlay').style.display = 'flex';
+  setTimeout(()=>document.getElementById('del-confirm-input').focus(), 100);
+}
+function closeDelModal() {
+  document.getElementById('del-overlay').style.display = 'none';
+  _delUserId = null; _delEmail = '';
+}
+async function confirmDeleteUser() {
+  if (!_delUserId) return;
+  const btn = document.getElementById('del-btn');
+  btn.disabled = true; btn.textContent = 'A apagar…';
   try {
-    await api(`/admin/users/${id}`,{method:'DELETE'});
-    showToast('User deleted'); searchUsers();
-  } catch { showToast('Delete failed','error'); }
+    await api(`/admin/users/${_delUserId}`,{method:'DELETE'});
+    closeDelModal();
+    showToast('Utilizador apagado'); searchUsers();
+  } catch { btn.disabled=false; btn.textContent='Apagar definitivamente'; showToast('Erro ao apagar','error'); }
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); _modalAction=null; }
 async function saveModal() {

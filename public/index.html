@@ -2379,7 +2379,7 @@ function connectWebSocket() {
     setInterval(() => { if (ws && ws.readyState===1) ws.send('ping'); }, 30000);
   };
   ws.onmessage = e => {
-    try { const msg = JSON.parse(e.data); if (msg.type==='init'||msg.type==='update') handleNewsData(msg.data); } catch(err){}
+    try { const msg = JSON.parse(e.data); if (msg.type==='init'||msg.type==='update') handleNewsData(msg.data, msg.type==='init'); } catch(err){}
   };
   ws.onclose = () => {
     document.getElementById('wsStatus').textContent = 'WS OFF';
@@ -2421,7 +2421,7 @@ function mergeNewsArrays(existing, incoming) {
 }
 
 // ─── News data handler ────────────────────────────────────────────
-function handleNewsData(data) {
+function handleNewsData(data, isInit) {
   const fiveMinAgo = Date.now() - 5*60*1000;
   let hasRecentNew = false;
   let genuineNewCount = 0;
@@ -2435,12 +2435,13 @@ function handleNewsData(data) {
         recentNewUrls.add(n.url);
         genuineNewCount++;
         hasRecentNew = true;
-        squawkItems.push(n);
+        // Only queue for squawk if this is a live update, not initial load
+        if (!isInit) squawkItems.push(n);
         setTimeout(() => recentNewUrls.delete(n.url), 10*60*1000);
       }
     }
   });
-  // Squawk new headlines — always English, apply squawk filter
+  // Squawk new headlines — only from live updates, never from init/reload
   squawkItems.reverse().forEach(n => squawkSpeak(n.headline_en, n.url, n));
 
   // Sound: always fire for any new item < 5min old, throttled to max 1 per 60s
@@ -2501,7 +2502,7 @@ function handleNewsData(data) {
       const r = await fetch(BACKEND_URL + '/news?limit=500', { headers });
       if (!r.ok) continue;
       const data = await r.json();
-      if (Array.isArray(data) && data.length) { handleNewsData(data); return; }
+      if (Array.isArray(data) && data.length) { handleNewsData(data, true); return; }
     } catch(e) {}
   }
   // After all retries failed, update status to show there's a connection problem

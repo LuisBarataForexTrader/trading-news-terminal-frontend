@@ -437,26 +437,56 @@ select.ctrl-sel:focus{border-color:var(--accent)}
       <div id="sec-feeds" class="section">
         <div class="sec-hdr">
           <h2>News Sources</h2><div class="sec-hdr-line"></div>
-          <div class="controls"><button class="refresh-btn" onclick="loadFeeds()">↻ Refresh</button></div>
+          <div class="controls">
+            <button class="refresh-btn" onclick="loadFeeds()">↻ List</button>
+            <button class="refresh-btn" id="health-btn" onclick="runHealthCheck()" style="background:rgba(0,212,255,0.08);border-color:var(--accent);color:var(--accent)">⚡ Run Health Check</button>
+          </div>
         </div>
-        <div id="feeds-kpis" class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px"></div>
+
+        <!-- Health progress bar (hidden until check starts) -->
+        <div id="health-progress-wrap" style="display:none;margin-bottom:20px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)">Running Health Check…</span>
+            <span id="health-progress-label" style="font-size:11px;font-family:var(--font-mono);color:var(--text-muted)">Checking feeds…</span>
+          </div>
+          <div style="background:var(--bg3);border-radius:3px;height:6px;overflow:hidden">
+            <div id="health-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#7dd3fc);transition:width .4s ease;border-radius:3px"></div>
+          </div>
+          <div id="health-progress-sub" style="font-size:10px;color:var(--text-muted);margin-top:8px">This takes 15–30 seconds. Feeds are checked in parallel.</div>
+        </div>
+
+        <div id="feeds-kpis" class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px"></div>
+
         <div class="table-wrap">
           <div class="table-toolbar">
-            <input type="text" id="feeds-search" placeholder="Filter by source or URL…" oninput="filterFeeds()" />
+            <input type="text" id="feeds-search" placeholder="Filter by source, URL or status…" oninput="filterFeeds()" />
+            <select id="feeds-status-filter" onchange="filterFeeds()" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:3px;font-family:var(--font);font-size:12px;cursor:pointer">
+              <option value="">All statuses</option>
+              <option value="ok">✓ OK</option>
+              <option value="empty">⚠ Empty</option>
+              <option value="error">✕ Error</option>
+              <option value="timeout">⏱ Timeout</option>
+              <option value="unknown">— Not checked</option>
+            </select>
             <span id="feeds-count" class="table-count"></span>
           </div>
-          <table class="data-table" id="feeds-table">
+          <table class="data-table">
             <thead><tr>
               <th>#</th>
+              <th>Status</th>
               <th>Source</th>
               <th>URL</th>
               <th>Category</th>
+              <th style="text-align:right">Latency</th>
+              <th style="text-align:right">Entries</th>
+              <th style="text-align:right">In DB</th>
             </tr></thead>
             <tbody id="feeds-tbody">
-              <tr><td colspan="4" style="text-align:center;padding:30px"><span class="spinner"></span></td></tr>
+              <tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px">Click <strong style="color:var(--accent)">↻ List</strong> to load sources, or <strong style="color:var(--accent)">⚡ Run Health Check</strong> to test all feeds.</td></tr>
             </tbody>
           </table>
         </div>
+        <div id="health-last-run" style="font-size:10px;color:var(--text-muted);margin-top:10px;text-align:right"></div>
       </div>
 
       <!-- ── Customers Map ── -->
@@ -573,8 +603,10 @@ function nav(s) {
 }
 function init() { loadOverview(); }
 
-// ── Feeds helpers ──────────────────────────────────────────────
+// ── Feeds & Health Check ───────────────────────────────────────
 let _allFeeds = [];
+let _healthRunning = false;
+
 function _feedCategory(url) {
   const u = url.toLowerCase();
   if (/crypto|bitcoin|coin|block|decrypt|btc/.test(u)) return 'Crypto';
@@ -589,54 +621,155 @@ function _feedCategory(url) {
   if (/youtube\.com/.test(u)) return 'YouTube';
   if (/investing\.com/.test(u)) return 'Investing.com';
   if (/yahoo|nasdaq|briefing|fool|thestreet/.test(u)) return 'Markets';
-  if (/china|nikkei|scmp|xinhua|dw\.com|rte\.ie|aawsat|tass|anadolu|irna|mehr|tasnim/.test(u)) return 'International';
+  if (/nikkei|scmp|xinhua|dw\.com|rte\.ie|aawsat|tass|anadolu|irna|mehr|tasnim/.test(u)) return 'International';
   if (/kitco|oilprice|etf\.com|trading.economics/.test(u)) return 'Commodities';
-  if (/globe|pr\.newswire|business.wire/.test(u)) return 'Press Releases';
   return 'General';
 }
+
+const CAT_COLORS = {
+  'Crypto':'#a78bfa','Forex':'#38bdf8','Energy':'#fb923c','Central Banks':'#4ade80',
+  'Premium Wire':'#facc15','News':'#60a5fa','Stock Analysis':'#f472b6',
+  'Press Releases':'#94a3b8','FX Analysis':'#34d399','YouTube':'#f87171',
+  'Investing.com':'#e879f9','Markets':'#fbbf24','International':'#67e8f9',
+  'Commodities':'#a3e635','General':'#64748b'
+};
+
+const STATUS_META = {
+  ok:      { icon:'✓', color:'#4ade80', label:'OK' },
+  empty:   { icon:'⚠', color:'#f59e0b', label:'Empty' },
+  error:   { icon:'✕', color:'#f87171', label:'Error' },
+  timeout: { icon:'⏱', color:'#fb923c', label:'Timeout' },
+  unknown: { icon:'—', color:'#607080', label:'—' },
+};
+
+function _statusBadge(status) {
+  const m = STATUS_META[status] || STATUS_META.unknown;
+  return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:3px;background:${m.color}18;color:${m.color};border:1px solid ${m.color}44">${m.icon} ${m.label}</span>`;
+}
+
+function _updateFeedsKPIs(feeds) {
+  const total   = feeds.length;
+  const ok      = feeds.filter(f=>f.status==='ok').length;
+  const empty   = feeds.filter(f=>f.status==='empty').length;
+  const errors  = feeds.filter(f=>f.status==='error'||f.status==='timeout').length;
+  const notRun  = feeds.filter(f=>!f.status||f.status==='unknown').length;
+  const totalDB = feeds.reduce((s,f)=>(s+(f.db_count||0)),0);
+  document.getElementById('feeds-kpis').innerHTML =
+    `<div class="kpi-card"><div class="kpi-label">Total Sources</div><div class="kpi-value">${total}</div></div>` +
+    `<div class="kpi-card"><div class="kpi-label" style="color:#4ade80">✓ OK</div><div class="kpi-value" style="color:#4ade80">${ok||'—'}</div></div>` +
+    `<div class="kpi-card"><div class="kpi-label" style="color:#f59e0b">⚠ Empty</div><div class="kpi-value" style="color:#f59e0b">${empty||'—'}</div></div>` +
+    `<div class="kpi-card"><div class="kpi-label" style="color:#f87171">✕ Errors</div><div class="kpi-value" style="color:#f87171">${errors||'—'}</div></div>` +
+    `<div class="kpi-card"><div class="kpi-label">Articles in DB</div><div class="kpi-value">${totalDB>0?totalDB.toLocaleString():'—'}</div></div>`;
+}
+
 async function loadFeeds() {
   _allFeeds = [];
-  document.getElementById('feeds-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px"><span class="spinner"></span></td></tr>';
+  document.getElementById('feeds-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px"><span class="spinner"></span></td></tr>';
   document.getElementById('feeds-kpis').innerHTML = '';
   try {
     const data = await api('/admin/feeds');
     _allFeeds = data.feeds || [];
-    // KPI cards
-    const cats = {};
-    _allFeeds.forEach(f => { const c = _feedCategory(f.url); cats[c] = (cats[c]||0)+1; });
-    const topCats = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    document.getElementById('feeds-kpis').innerHTML =
-      `<div class="kpi-card"><div class="kpi-label">Total Sources</div><div class="kpi-value">${data.total}</div></div>` +
-      `<div class="kpi-card"><div class="kpi-label">Categories</div><div class="kpi-value">${Object.keys(cats).length}</div></div>` +
-      topCats.map(([c,n])=>`<div class="kpi-card"><div class="kpi-label">${c}</div><div class="kpi-value">${n}</div></div>`).join('');
+    _updateFeedsKPIs(_allFeeds);
     renderFeeds(_allFeeds);
   } catch(e) {
-    document.getElementById('feeds-tbody').innerHTML = `<tr><td colspan="4" style="text-align:center;padding:30px;color:#f87171">Error loading feeds</td></tr>`;
+    document.getElementById('feeds-tbody').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:#f87171">Error loading feeds</td></tr>`;
   }
 }
+
+async function runHealthCheck() {
+  if (_healthRunning) return;
+  _healthRunning = true;
+  const btn = document.getElementById('health-btn');
+  btn.textContent = '⏳ Checking…';
+  btn.disabled = true;
+
+  // Show progress bar
+  const wrap = document.getElementById('health-progress-wrap');
+  const bar  = document.getElementById('health-progress-bar');
+  const lbl  = document.getElementById('health-progress-label');
+  wrap.style.display = 'block';
+  bar.style.width = '0%';
+  lbl.textContent = 'Sending request to server…';
+
+  // Animate progress bar while waiting (indeterminate)
+  let fakePct = 0;
+  const fakeTimer = setInterval(()=>{
+    fakePct = Math.min(fakePct + (Math.random()*1.5), 90);
+    bar.style.width = fakePct + '%';
+    lbl.textContent = `Checking feeds… ~${Math.round(fakePct)}% estimated`;
+  }, 600);
+
+  try {
+    const data = await fetch(BACKEND + '/admin/feeds/health', {
+      method: 'POST',
+      headers: { 'x-admin-token': _token, 'Content-Type': 'application/json' }
+    }).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); });
+
+    clearInterval(fakeTimer);
+    bar.style.width = '100%';
+    lbl.textContent = `Done — ${data.ok} OK, ${data.empty} empty, ${data.errors} errors`;
+
+    // Merge health data into _allFeeds
+    const byUrl = {};
+    (data.results||[]).forEach(r => { byUrl[r.url] = r; });
+    _allFeeds = _allFeeds.map(f => ({...f, ...(byUrl[f.url]||{})}));
+
+    // If list was empty (first run), populate from results
+    if (_allFeeds.length === 0) _allFeeds = data.results || [];
+
+    _updateFeedsKPIs(_allFeeds);
+    renderFeeds(_allFeeds);
+
+    const ts = new Date().toUTCString();
+    document.getElementById('health-last-run').textContent = `Last check: ${ts}`;
+
+    setTimeout(()=>{ wrap.style.display='none'; }, 4000);
+  } catch(e) {
+    clearInterval(fakeTimer);
+    bar.style.width = '100%';
+    bar.style.background = '#f87171';
+    lbl.textContent = 'Health check failed — ' + e.message;
+  } finally {
+    _healthRunning = false;
+    btn.textContent = '⚡ Run Health Check';
+    btn.disabled = false;
+  }
+}
+
 function renderFeeds(feeds) {
   document.getElementById('feeds-count').textContent = feeds.length + ' feeds';
   document.getElementById('feeds-tbody').innerHTML = feeds.map((f,i)=>{
-    const cat = _feedCategory(f.url);
-    const catColor = {
-      'Crypto':'#a78bfa','Forex':'#38bdf8','Energy':'#fb923c','Central Banks':'#4ade80',
-      'Premium Wire':'#facc15','News':'#60a5fa','Stock Analysis':'#f472b6',
-      'Press Releases':'#94a3b8','FX Analysis':'#34d399','YouTube':'#f87171',
-      'Investing.com':'#e879f9','Markets':'#fbbf24','International':'#67e8f9',
-      'Commodities':'#a3e635','General':'#64748b'
-    }[cat]||'#64748b';
-    const short = f.url.replace(/^https?:\/\/(www\.)?/,'').split('/')[0];
-    return `<tr>
+    const cat      = _feedCategory(f.url);
+    const catColor = CAT_COLORS[cat] || '#64748b';
+    const status   = f.status || 'unknown';
+    const host     = f.url.replace(/^https?:\/\/(www\.)?/,'').split('/')[0];
+    const path     = f.url.replace(/^https?:\/\/(www\.)?[^/]+/,'');
+    const latency  = f.latency_ms != null ? `${f.latency_ms}ms` : '—';
+    const latColor = f.latency_ms == null ? '#607080' : f.latency_ms < 1000 ? '#4ade80' : f.latency_ms < 3000 ? '#f59e0b' : '#f87171';
+    const entries  = f.entries != null ? f.entries : '—';
+    const dbCount  = f.db_count != null ? f.db_count.toLocaleString() : '—';
+    const errTip   = f.error ? ` title="${f.error.replace(/"/g,'&quot;')}"` : '';
+    return `<tr${errTip}>
       <td style="color:#607080;font-size:10px">${i+1}</td>
-      <td style="font-weight:600;color:var(--accent)">${f.source}</td>
-      <td style="font-size:11px;color:var(--text-dim);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${f.url}"><span style="color:#607080">${short}</span>${f.url.replace(/^https?:\/\/(www\.)?[^/]+/,'')}</td>
-      <td><span style="font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:3px;background:${catColor}22;color:${catColor};border:1px solid ${catColor}44">${cat}</span></td>
+      <td>${_statusBadge(status)}</td>
+      <td style="font-weight:600;color:var(--accent);white-space:nowrap">${f.source||host}</td>
+      <td style="font-size:11px;color:var(--text-dim);max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${f.url}"><span style="color:#607080">${host}</span>${path}</td>
+      <td><span style="font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:3px;background:${catColor}18;color:${catColor};border:1px solid ${catColor}33">${cat}</span></td>
+      <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:${latColor}">${latency}</td>
+      <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">${entries}</td>
+      <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:${f.db_count>0?'var(--accent)':'#607080'}">${dbCount}</td>
     </tr>`;
-  }).join('');
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No results</td></tr>';
 }
+
 function filterFeeds() {
-  const q = document.getElementById('feeds-search').value.toLowerCase();
-  const filtered = _allFeeds.filter(f => f.url.toLowerCase().includes(q) || f.source.toLowerCase().includes(q) || _feedCategory(f.url).toLowerCase().includes(q));
+  const q  = document.getElementById('feeds-search').value.toLowerCase();
+  const st = document.getElementById('feeds-status-filter').value;
+  const filtered = _allFeeds.filter(f => {
+    const matchQ  = !q  || f.url.toLowerCase().includes(q) || (f.source||'').toLowerCase().includes(q) || _feedCategory(f.url).toLowerCase().includes(q);
+    const matchSt = !st || (f.status||'unknown') === st;
+    return matchQ && matchSt;
+  });
   renderFeeds(filtered);
 }
 

@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin · Trading News Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;--bg2:#0f1217;--bg3:#141820;
+  --border:#1e2530;--border2:#2a3444;
+  --text:#ffffff;--text-dim:#d0dde8;--text-muted:#a0b4c4;
+  --accent:#00d4ff;--accent2:#0099cc;
+  --red:#ff3b5c;--amber:#f59e0b;--green:#10b981;--purple:#a78bfa;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono','Courier New',monospace;
+  --sidebar-w:210px;--header-h:56px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;-webkit-font-smoothing:antialiased}
+
+/* ─── Login ──────────────────────────────────────────────────── */
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:12px;background:var(--bg)}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:36px 40px;width:360px;display:flex;flex-direction:column;gap:14px}
+.login-logo{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.login-title{font-size:20px;font-weight:700;color:var(--text)}
+.login-sub{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+.login-box input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:4px;font-family:var(--font-mono);font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.login-box input:focus{border-color:var(--accent)}
+.login-box button{background:var(--accent);color:#000;border:none;padding:11px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-top:4px}
+.login-box button:hover{box-shadow:0 0 20px rgba(0,212,255,.3)}
+#login-err{color:var(--red);font-size:11px;text-align:center;display:none}
+
+/* ─── App shell ──────────────────────────────────────────────── */
+#app{display:none;height:100vh;flex-direction:column}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+.header{height:var(--header-h);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;position:relative;z-index:10}
+.header-logo{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px}
+.header-logo::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 2s infinite}
+.header-sep{width:1px;height:24px;background:var(--border2)}
+.header-title{font-size:12px;font-weight:600;color:var(--text-dim);letter-spacing:.05em}
+.header-spacer{flex:1}
+.header-badge{font-size:10px;font-family:var(--font-mono);color:var(--text-muted);background:var(--bg3);border:1px solid var(--border2);padding:3px 10px;border-radius:3px}
+.header-signout{font-size:11px;font-weight:500;color:var(--text-muted);background:transparent;border:1px solid var(--border);padding:5px 14px;border-radius:3px;cursor:pointer;font-family:var(--font);transition:all .15s;letter-spacing:.05em}
+.header-signout:hover{border-color:var(--red);color:var(--red)}
+
+/* ─── Body layout ────────────────────────────────────────────── */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ─── Sidebar ────────────────────────────────────────────────── */
+.sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-section{padding:16px 0 8px}
+.sb-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);padding:0 16px 8px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;color:var(--text-dim);font-size:12px;font-weight:500;transition:all .12s;position:relative;user-select:none}
+.sb-item:hover{color:var(--text);background:var(--bg3)}
+.sb-item.active{color:var(--accent);background:rgba(0,212,255,.06)}
+.sb-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);box-shadow:0 0 8px rgba(0,212,255,.5)}
+.sb-icon{width:14px;font-size:12px;opacity:.7;flex-shrink:0}
+.sb-item.active .sb-icon{opacity:1}
+
+/* ─── Main content ───────────────────────────────────────────── */
+#main{flex:1;overflow-y:auto;padding:0}
+.section{display:none;padding:24px}
+.section.active{display:block}
+
+/* ─── Section header ─────────────────────────────────────────── */
+.sec-hdr{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.sec-hdr h2{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.sec-hdr-line{flex:1;height:1px;background:var(--border)}
+.sec-hdr .controls{display:flex;gap:6px;align-items:center}
+.period-btn{font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:1px solid var(--border2);color:var(--text-muted);padding:5px 12px;border-radius:3px;cursor:pointer;transition:all .12s}
+.period-btn:hover{color:var(--text);border-color:var(--border2)}
+.period-btn.active{color:var(--accent);border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.07);box-shadow:0 0 12px rgba(0,212,255,.15)}
+select.ctrl-sel{font-family:var(--font);font-size:11px;font-weight:500;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);padding:5px 10px;border-radius:3px;outline:none;cursor:pointer}
+select.ctrl-sel:focus{border-color:var(--accent)}
+.refresh-btn{font-family:var(--font);font-size:11px;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:5px 12px;border-radius:3px;cursor:pointer;transition:all .12s}
+.refresh-btn:hover{border-color:var(--accent2);color:var(--accent)}
+
+/* ─── KPI grid ───────────────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:20px}
+.kpi-card{background:var(--bg2);padding:18px 16px;transition:background .12s;position:relative;overflow:hidden}
+.kpi-card:hover{background:var(--bg3)}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;transition:background .12s}
+.kpi-card:hover::after{background:var(--border2)}
+.kpi-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.kpi-value{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--text);letter-spacing:-.5px;line-height:1}
+.kpi-value.c-accent{color:var(--accent)}
+.kpi-value.c-green{color:var(--green)}
+.kpi-value.c-amber{color:var(--amber)}
+.kpi-value.c-red{color:var(--red)}
+.kpi-value.c-purple{color:var(--purple)}
+.kpi-sub{font-size:10px;color:var(--text-muted);margin-top:5px;font-family:var(--font-mono)}
+
+/* ─── Chart boxes ────────────────────────────────────────────── */
+.chart-row{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:20px}
+.chart-row.cols-2{grid-template-columns:1fr 1fr}
+.chart-row.cols-1{grid-template-columns:1fr}
+.chart-box{background:var(--bg2);padding:18px}
+.chart-box-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.chart-box-title{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.chart-canvas-wrap{position:relative}
+.chart-canvas-wrap canvas{max-height:200px}
+.chart-canvas-wrap.tall canvas{max-height:300px}
+
+/* ─── Table ──────────────────────────────────────────────────── */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:20px}
+.table-toolbar{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap}
+.table-toolbar input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px 12px;border-radius:3px;font-family:var(--font);font-size:12px;outline:none;flex:1;min-width:200px;transition:border-color .15s}
+.table-toolbar input:focus{border-color:var(--accent)}
+.table-toolbar input::placeholder{color:var(--text-muted)}
+.table-count{font-size:10px;font-family:var(--font-mono);color:var(--text-muted);margin-left:auto;white-space:nowrap}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{padding:8px 14px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap}
+.data-table td{padding:9px 14px;font-size:12px;color:var(--text-dim);border-bottom:1px solid rgba(30,37,48,.6);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--bg3)}
+.num{font-family:var(--font-mono);color:var(--text)}
+
+/* ─── Badges ─────────────────────────────────────────────────── */
+.badge{display:inline-block;padding:2px 8px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-mono)}
+.badge-pro{background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+.badge-free{background:rgba(160,180,196,.08);color:var(--text-muted);border:1px solid rgba(160,180,196,.15)}
+.badge-basic{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.badge-trial{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.badge-warn{background:rgba(255,59,92,.08);color:var(--red);border:1px solid rgba(255,59,92,.15)}
+
+/* ─── Action buttons ─────────────────────────────────────────── */
+.act-btn{font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.05em;background:transparent;border:1px solid var(--border2);color:var(--text-muted);padding:3px 10px;border-radius:2px;cursor:pointer;transition:all .1s;white-space:nowrap}
+.act-btn:hover{border-color:var(--accent2);color:var(--accent)}
+.act-btn.danger:hover{border-color:var(--red);color:var(--red)}
+
+/* ─── Funnel ─────────────────────────────────────────────────── */
+.funnel-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:32px 40px;margin-bottom:20px}
+/* vertical flow */
+.fn-flow{display:flex;flex-direction:column;align-items:center;gap:0}
+.fn-stage{width:100%;max-width:680px;position:relative}
+/* trapezoid block */
+.fn-block{border-radius:4px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:filter .15s;position:relative;overflow:hidden}
+.fn-block::before{content:'';position:absolute;inset:0;opacity:.06;background:currentColor}
+.fn-block:hover{filter:brightness(1.08)}
+.fn-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.fn-count{font-family:var(--font-mono);font-size:28px;font-weight:600;line-height:1;letter-spacing:-1px}
+.fn-pct{font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.5);text-align:right}
+.fn-pct strong{display:block;font-size:20px;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:-.5px}
+/* connector arrow */
+.fn-arrow{display:flex;flex-direction:column;align-items:center;padding:4px 0;gap:2px}
+.fn-arrow-line{width:1px;height:20px;background:var(--border2)}
+.fn-arrow-drop{font-size:10px;font-family:var(--font-mono);color:var(--red);background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.2);border-radius:2px;padding:2px 8px;white-space:nowrap}
+.fn-arrow-caret{color:var(--border2);font-size:12px;line-height:1}
+/* bottom split */
+.fn-split{display:flex;width:100%;max-width:680px;gap:1px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:0}
+.fn-split-item{flex:1;padding:16px 14px;background:var(--bg2);display:flex;flex-direction:column;gap:6px;align-items:center;transition:background .15s}
+.fn-split-item:hover{background:var(--bg3)}
+.fn-split-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.fn-split-count{font-family:var(--font-mono);font-size:22px;font-weight:600;letter-spacing:-.5px}
+.fn-split-pct{font-family:var(--font-mono);font-size:10px;color:var(--text-muted)}
+/* connector line from bottom of fn-flow to fn-split */
+.fn-split-connector{width:100%;max-width:680px;display:flex;justify-content:space-around;padding:4px 0}
+.fn-split-connector-line{width:1px;height:16px;background:var(--border2)}
+/* abandoned bar */
+.fn-abandoned{margin-top:20px;padding-top:20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.fn-ab-label{font-size:10px;color:var(--text-muted);flex-shrink:0}
+.fn-ab-bar-wrap{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.fn-ab-bar{height:100%;background:var(--red);border-radius:3px;transition:width .6s ease;opacity:.7}
+.fn-ab-num{font-family:var(--font-mono);font-size:12px;color:var(--amber);flex-shrink:0}
+
+/* ─── Modal ──────────────────────────────────────────────────── */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#modal-overlay.open{display:flex}
+#modal{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:24px;width:360px;box-shadow:0 24px 80px rgba(0,0,0,.7)}
+#modal-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;letter-spacing:.03em}
+#modal label{display:block;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;margin-top:14px}
+#modal label:first-of-type{margin-top:0}
+#modal select,#modal input[type=number]{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:3px;font-family:var(--font);font-size:13px;outline:none;transition:border-color .15s}
+#modal select:focus,#modal input:focus{border-color:var(--accent)}
+.modal-btns{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.modal-btns button{font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:8px 20px;border-radius:3px;cursor:pointer;border:1px solid;transition:all .15s}
+.btn-save{background:var(--accent);color:#000;border-color:var(--accent) !important}
+.btn-save:hover{box-shadow:0 0 16px rgba(0,212,255,.35)}
+.btn-cancel{background:transparent;border-color:var(--border2) !important;color:var(--text-muted)}
+.btn-cancel:hover{border-color:var(--red) !important;color:var(--red)}
+
+/* ─── Toast ──────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:10px 18px;border-radius:4px;font-size:12px;font-weight:500;z-index:2000;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.ok{border-color:rgba(16,185,129,.4);color:var(--green)}
+#toast.error{border-color:rgba(255,59,92,.4);color:var(--red)}
+
+/* ─── Map & Country list ─────────────────────────────────────── */
+.country-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.country-row{background:var(--bg2);display:flex;align-items:center;gap:10px;padding:9px 14px;transition:background .1s}
+.country-row:hover{background:var(--bg3)}
+.country-rank{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);width:20px;text-align:right;flex-shrink:0}
+.country-flag{font-size:16px;flex-shrink:0;width:22px;text-align:center}
+.country-name{font-size:12px;color:var(--text-dim);flex:1}
+.country-bar-wrap{width:80px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;flex-shrink:0}
+.country-bar{height:100%;border-radius:2px;background:var(--accent);transition:width .6s ease}
+.country-count{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text);width:28px;text-align:right;flex-shrink:0}
+.map-canvas-wrap{position:relative;background:var(--bg2);border-radius:4px;overflow:hidden;min-height:420px}
+.jvectormap-container{background:transparent !important}
+.jvectormap-tip{background:#0f1217 !important;border:1px solid #2a3444 !important;color:#d0dde8 !important;font-family:'Inter',sans-serif !important;font-size:12px !important;padding:6px 10px !important;border-radius:4px !important}
+
+/* ─── Misc ───────────────────────────────────────────────────── */
+.empty-state{text-align:center;padding:32px;color:var(--text-muted);font-size:12px}
+.spinner{display:inline-block;width:13px;height:13px;border:1.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.divider{height:1px;background:var(--border);margin:0}
+</style>
+</head>
+<body>
+
+<!-- ── Login ─────────────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">⬡ TNT Admin</div>
+    <div class="login-title">Admin Dashboard</div>
+    <div class="login-sub">Trading News Terminal</div>
+    <input type="password" id="token-input" placeholder="Enter admin token" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button onclick="doLogin()">Sign In</button>
+    <div id="login-err">Invalid or expired token</div>
+  </div>
+</div>
+
+<!-- ── App ───────────────────────────────────────────────────── -->
+<div id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-logo">⬡ TNT ADMIN</div>
+    <div class="header-sep"></div>
+    <div class="header-title" id="header-section">Overview</div>
+    <div class="header-spacer"></div>
+    <div class="header-badge" id="hdr-time">—</div>
+    <button class="header-signout" onclick="logout()">Sign Out</button>
+  </div>
+
+  <div class="body">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Analytics</div>
+        <div class="sb-item active" onclick="nav('overview')"   id="nav-overview">  <span class="sb-icon">◈</span> Overview</div>
+        <div class="sb-item"        onclick="nav('revenue')"    id="nav-revenue">   <span class="sb-icon">$</span> Revenue</div>
+        <div class="sb-item"        onclick="nav('traffic')"    id="nav-traffic">   <span class="sb-icon">↗</span> Traffic</div>
+        <div class="sb-item"        onclick="nav('comparison')" id="nav-comparison"><span class="sb-icon">⇄</span> Year Compare</div>
+      </div>
+      <div class="divider"></div>
+      <div class="sb-section">
+        <div class="sb-label">Users</div>
+        <div class="sb-item" onclick="nav('users')"     id="nav-users">    <span class="sb-icon">≡</span> All Users</div>
+        <div class="sb-item" onclick="nav('funnel')"    id="nav-funnel">   <span class="sb-icon">↓</span> Funnel</div>
+        <div class="sb-item" onclick="nav('customers')" id="nav-customers"><span class="sb-icon">◎</span> Customers Map</div>
+      </div>
+      <div class="divider"></div>
+      <div class="sb-section">
+        <div class="sb-label">System</div>
+        <div class="sb-item" onclick="nav('feeds')" id="nav-feeds"><span class="sb-icon">⊕</span> News Sources</div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div id="main">
+
+      <!-- ── Overview ── -->
+      <div id="sec-overview" class="section active">
+        <div class="sec-hdr">
+          <h2>Overview</h2><div class="sec-hdr-line"></div>
+          <div class="controls"><button class="refresh-btn" onclick="loadOverview()">↻ Refresh</button></div>
+        </div>
+        <div id="kpi-area" class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Loading</div><div class="kpi-value"><span class="spinner"></span></div></div>
+        </div>
+        <div class="chart-row cols-2">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Plan Distribution</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-plans"></canvas></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Revenue — Last 6 Months</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-rev-overview"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-row cols-2">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">New Signups — Last 6 Months</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-signups-overview"></canvas></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Traffic — Last 30 Days</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-traffic-overview"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Revenue ── -->
+      <div id="sec-revenue" class="section">
+        <div class="sec-hdr">
+          <h2>Revenue</h2><div class="sec-hdr-line"></div>
+          <div class="controls">
+            <select id="rev-year" class="ctrl-sel" onchange="loadRevenue()">
+              <option>2026</option><option>2025</option><option>2024</option>
+            </select>
+            <button class="period-btn active" id="rev-monthly"  onclick="setRevPeriod('monthly')">Monthly</button>
+            <button class="period-btn"        id="rev-weekly"   onclick="setRevPeriod('weekly')">Weekly</button>
+            <button class="period-btn"        id="rev-annual"   onclick="setRevPeriod('annual')">Annual</button>
+            <button class="period-btn"        id="rev-daily"    onclick="setRevPeriod('daily')">Daily</button>
+          </div>
+        </div>
+        <div class="chart-row cols-1">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title" id="rev-chart-title">Monthly Revenue</span></div>
+            <div class="chart-canvas-wrap tall"><canvas id="chart-revenue"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-row cols-2">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Transaction Count</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-txn-count"></canvas></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Monthly vs Annual</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-rev-period"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Users ── -->
+      <div id="sec-users" class="section">
+        <div class="sec-hdr">
+          <h2>Users</h2><div class="sec-hdr-line"></div>
+          <div class="controls">
+            <button class="period-btn active" onclick="openCreateUserModal()" style="color:var(--accent);border-color:rgba(0,212,255,.4)">+ Create User</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <input type="text" id="user-search" placeholder="Search by email or name…" oninput="searchUsers()"/>
+            <select class="ctrl-sel" id="plan-filter" onchange="searchUsers()">
+              <option value="">All Plans</option>
+              <option value="free">Free</option>
+              <option value="basic">Basic</option>
+              <option value="pro">Pro</option>
+              <option value="trial">Trial</option>
+            </select>
+            <span id="users-count" class="table-count"></span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table" id="users-table">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Email</th><th>Name</th><th>Country</th><th>Plan</th>
+                  <th>Active</th><th>Trial Ends</th><th>Created</th><th>Last Seen</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <tr><td colspan="10" class="empty-state"><span class="spinner"></span> Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Traffic ── -->
+      <div id="sec-traffic" class="section">
+        <div class="sec-hdr">
+          <h2>Traffic</h2><div class="sec-hdr-line"></div>
+          <div class="controls">
+            <button class="period-btn active" id="trfc-monthly" onclick="setTrafficPeriod('monthly')">Monthly</button>
+            <button class="period-btn"        id="trfc-daily"   onclick="setTrafficPeriod('daily')">Daily (30d)</button>
+          </div>
+        </div>
+        <div class="chart-row cols-1">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title" id="traffic-title">Site Visits — Monthly</span></div>
+            <div class="chart-canvas-wrap tall"><canvas id="chart-traffic"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Funnel ── -->
+      <div id="sec-funnel" class="section">
+        <div class="sec-hdr">
+          <h2>Signup Funnel</h2><div class="sec-hdr-line"></div>
+          <div class="controls"><button class="refresh-btn" onclick="loadFunnel()">↻ Refresh</button></div>
+        </div>
+        <div class="funnel-wrap" id="funnel-wrap">
+          <div class="empty-state"><span class="spinner"></span> Loading…</div>
+        </div>
+        <div class="sec-hdr" style="margin-top:8px">
+          <h2>Abandoned Signups</h2><div class="sec-hdr-line"></div>
+        </div>
+        <div class="table-wrap">
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead><tr><th>ID</th><th>Email</th><th>Name</th><th>Step</th><th>Registered</th><th>Actions</th></tr></thead>
+              <tbody id="funnel-tbody"><tr><td colspan="6" class="empty-state">–</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Comparison ── -->
+      <div id="sec-comparison" class="section">
+        <div class="sec-hdr">
+          <h2>Year-over-Year</h2><div class="sec-hdr-line"></div>
+          <div class="controls">
+            <select id="cmp-y1" class="ctrl-sel" onchange="loadComparison()">
+              <option>2024</option><option selected>2025</option>
+            </select>
+            <span style="font-size:11px;color:var(--text-muted)">vs</span>
+            <select id="cmp-y2" class="ctrl-sel" onchange="loadComparison()">
+              <option>2025</option><option selected>2026</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-row cols-2">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">New Users</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-cmp-users"></canvas></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Revenue</span></div>
+            <div class="chart-canvas-wrap"><canvas id="chart-cmp-revenue"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── News Sources / Feeds ── -->
+      <div id="sec-feeds" class="section">
+        <div class="sec-hdr">
+          <h2>News Sources</h2><div class="sec-hdr-line"></div>
+          <div class="controls"><button class="refresh-btn" onclick="loadFeeds()">↻ Refresh</button></div>
+        </div>
+        <div id="feeds-kpis" class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px"></div>
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <input type="text" id="feeds-search" placeholder="Filter by source or URL…" oninput="filterFeeds()" />
+            <span id="feeds-count" class="table-count"></span>
+          </div>
+          <table class="data-table" id="feeds-table">
+            <thead><tr>
+              <th>#</th>
+              <th>Source</th>
+              <th>URL</th>
+              <th>Category</th>
+            </tr></thead>
+            <tbody id="feeds-tbody">
+              <tr><td colspan="4" style="text-align:center;padding:30px"><span class="spinner"></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Customers Map ── -->
+      <div id="sec-customers" class="section">
+        <div class="sec-hdr">
+          <h2>Customers Map</h2><div class="sec-hdr-line"></div>
+          <div class="controls"><button class="refresh-btn" onclick="loadCustomers()">↻ Refresh</button></div>
+        </div>
+        <div class="chart-row cols-1">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Global Customer Distribution</span></div>
+            <div class="map-canvas-wrap"><div id="chart-worldmap" style="width:100%;height:420px"></div></div>
+          </div>
+        </div>
+        <div class="sec-hdr" style="margin-top:4px">
+          <h2>By Country</h2><div class="sec-hdr-line"></div>
+        </div>
+        <div class="table-wrap">
+          <div id="country-list" style="display:grid;grid-template-columns:1fr 1fr">
+            <div class="empty-state" style="grid-column:span 2"><span class="spinner"></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /body -->
+</div><!-- /app -->
+
+<!-- Modal -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <div id="modal-title">Edit User</div>
+    <div id="modal-body"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save"   onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const BACKEND = 'https://tracker-fx-news-terminal-backend-production.up.railway.app';
+let _token = '';
+let _revPeriod = 'monthly';
+let _trafficPeriod = 'monthly';
+let _modalAction = null;
+let _charts = {};
+
+// ── Clock ──────────────────────────────────────────────────────
+function _tick() {
+  document.getElementById('hdr-time').textContent =
+    new Date().toUTCString().slice(17,25) + ' UTC';
+}
+setInterval(_tick,1000); _tick();
+
+// ── Auth ──────────────────────────────────────────────────────
+function doLogin() {
+  const v = document.getElementById('token-input').value.trim();
+  if (!v) return;
+  _token = v;
+  localStorage.setItem('tnt_admin_token', v);
+  verifyToken();
+}
+async function verifyToken() {
+  try {
+    const r = await api('/admin/stats/overview');
+    if (r.total_users !== undefined) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      document.getElementById('app').style.flexDirection = 'column';
+      init();
+    } else { showLoginErr(); }
+  } catch { showLoginErr(); }
+}
+function showLoginErr() {
+  const el = document.getElementById('login-err');
+  el.style.display = 'block';
+  _token = '';
+  localStorage.removeItem('tnt_admin_token');
+}
+function logout() {
+  localStorage.removeItem('tnt_admin_token');
+  location.reload();
+}
+
+// ── API ────────────────────────────────────────────────────────
+async function api(path, opts={}) {
+  const r = await fetch(BACKEND + path, {
+    ...opts,
+    headers: { 'x-admin-token': _token, 'Content-Type': 'application/json', ...(opts.headers||{}) }
+  });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+const SECTION_LABELS = {overview:'Overview',revenue:'Revenue',users:'Users',traffic:'Traffic',funnel:'Funnel',comparison:'Year Compare',customers:'Customers Map',feeds:'News Sources'};
+function nav(s) {
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
+  document.getElementById('nav-'+s).classList.add('active');
+  document.getElementById('sec-'+s).classList.add('active');
+  document.getElementById('header-section').textContent = SECTION_LABELS[s]||s;
+  if (s==='overview')   loadOverview();
+  if (s==='revenue')    loadRevenue();
+  if (s==='users')      searchUsers();
+  if (s==='traffic')    loadTraffic();
+  if (s==='funnel')     loadFunnel();
+  if (s==='comparison') loadComparison();
+  if (s==='customers')  loadCustomers();
+  if (s==='feeds')      loadFeeds();
+}
+function init() { loadOverview(); }
+
+// ── Feeds helpers ──────────────────────────────────────────────
+let _allFeeds = [];
+function _feedCategory(url) {
+  const u = url.toLowerCase();
+  if (/crypto|bitcoin|coin|block|decrypt|btc/.test(u)) return 'Crypto';
+  if (/forex|fx|currency|currencies|exchange/.test(u)) return 'Forex';
+  if (/oil|energy|gas|eia|opec|rigzone|petro/.test(u)) return 'Energy';
+  if (/central.bank|fed|ecb|boe|boj|bis|imf|worldbank|frbsf|frbatl|chicago.fed|newyork.fed|cepr|libertystreet/.test(u)) return 'Central Banks';
+  if (/wsj|dowjones|barrons|marketwatch|bloomberg|reuters|ft\.com|financial.times/.test(u)) return 'Premium Wire';
+  if (/cnbc|bbc|guardian|telegraph|politico|axios|atlantic/.test(u)) return 'News';
+  if (/seeking.alpha|thestreet|investopedia|motley.fool|investors\.com|tipranks|benzinga/.test(u)) return 'Stock Analysis';
+  if (/globenewswire|businesswire|prnewswire/.test(u)) return 'Press Releases';
+  if (/forexlive|fxstreet|dailyfx|myfxbook|actionforex|forexfactory/.test(u)) return 'FX Analysis';
+  if (/youtube\.com/.test(u)) return 'YouTube';
+  if (/investing\.com/.test(u)) return 'Investing.com';
+  if (/yahoo|nasdaq|briefing|fool|thestreet/.test(u)) return 'Markets';
+  if (/china|nikkei|scmp|xinhua|dw\.com|rte\.ie|aawsat|tass|anadolu|irna|mehr|tasnim/.test(u)) return 'International';
+  if (/kitco|oilprice|etf\.com|trading.economics/.test(u)) return 'Commodities';
+  if (/globe|pr\.newswire|business.wire/.test(u)) return 'Press Releases';
+  return 'General';
+}
+async function loadFeeds() {
+  _allFeeds = [];
+  document.getElementById('feeds-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px"><span class="spinner"></span></td></tr>';
+  document.getElementById('feeds-kpis').innerHTML = '';
+  try {
+    const data = await api('/admin/feeds');
+    _allFeeds = data.feeds || [];
+    // KPI cards
+    const cats = {};
+    _allFeeds.forEach(f => { const c = _feedCategory(f.url); cats[c] = (cats[c]||0)+1; });
+    const topCats = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    document.getElementById('feeds-kpis').innerHTML =
+      `<div class="kpi-card"><div class="kpi-label">Total Sources</div><div class="kpi-value">${data.total}</div></div>` +
+      `<div class="kpi-card"><div class="kpi-label">Categories</div><div class="kpi-value">${Object.keys(cats).length}</div></div>` +
+      topCats.map(([c,n])=>`<div class="kpi-card"><div class="kpi-label">${c}</div><div class="kpi-value">${n}</div></div>`).join('');
+    renderFeeds(_allFeeds);
+  } catch(e) {
+    document.getElementById('feeds-tbody').innerHTML = `<tr><td colspan="4" style="text-align:center;padding:30px;color:#f87171">Error loading feeds</td></tr>`;
+  }
+}
+function renderFeeds(feeds) {
+  document.getElementById('feeds-count').textContent = feeds.length + ' feeds';
+  document.getElementById('feeds-tbody').innerHTML = feeds.map((f,i)=>{
+    const cat = _feedCategory(f.url);
+    const catColor = {
+      'Crypto':'#a78bfa','Forex':'#38bdf8','Energy':'#fb923c','Central Banks':'#4ade80',
+      'Premium Wire':'#facc15','News':'#60a5fa','Stock Analysis':'#f472b6',
+      'Press Releases':'#94a3b8','FX Analysis':'#34d399','YouTube':'#f87171',
+      'Investing.com':'#e879f9','Markets':'#fbbf24','International':'#67e8f9',
+      'Commodities':'#a3e635','General':'#64748b'
+    }[cat]||'#64748b';
+    const short = f.url.replace(/^https?:\/\/(www\.)?/,'').split('/')[0];
+    return `<tr>
+      <td style="color:#607080;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;color:var(--accent)">${f.source}</td>
+      <td style="font-size:11px;color:var(--text-dim);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${f.url}"><span style="color:#607080">${short}</span>${f.url.replace(/^https?:\/\/(www\.)?[^/]+/,'')}</td>
+      <td><span style="font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:3px;background:${catColor}22;color:${catColor};border:1px solid ${catColor}44">${cat}</span></td>
+    </tr>`;
+  }).join('');
+}
+function filterFeeds() {
+  const q = document.getElementById('feeds-search').value.toLowerCase();
+  const filtered = _allFeeds.filter(f => f.url.toLowerCase().includes(q) || f.source.toLowerCase().includes(q) || _feedCategory(f.url).toLowerCase().includes(q));
+  renderFeeds(filtered);
+}
+
+// ── Chart factory ──────────────────────────────────────────────
+Chart.defaults.font.family = "'IBM Plex Mono', monospace";
+Chart.defaults.color = '#a0b4c4';
+
+const GRID   = { color:'rgba(30,37,48,.8)', drawBorder:false };
+const XTICK  = { color:'#607080', font:{size:9}, maxRotation:0 };
+const YTICK  = { color:'#607080', font:{size:9} };
+const LEGEND = { labels:{ color:'#a0b4c4', font:{size:10}, boxWidth:10, padding:16 } };
+
+function baseOpts(extra={}) {
+  return {
+    responsive:true, maintainAspectRatio:true,
+    interaction:{ intersect:false, mode:'index' },
+    plugins:{ legend:LEGEND, tooltip:{ backgroundColor:'#0f1217', borderColor:'#2a3444', borderWidth:1, titleFont:{size:11}, bodyFont:{size:11}, padding:10 } },
+    scales:{ x:{ grid:GRID, ticks:XTICK }, y:{ grid:GRID, ticks:YTICK } },
+    ...extra
+  };
+}
+
+function mkChart(id, type, data, extra={}) {
+  if (_charts[id]) _charts[id].destroy();
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  _charts[id] = new Chart(ctx, { type, data, options: baseOpts(extra) });
+}
+
+function mkDoughnut(id, labels, values, colors) {
+  if (_charts[id]) _charts[id].destroy();
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  _charts[id] = new Chart(ctx, {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data:values, backgroundColor:colors, borderColor:'#0f1217', borderWidth:3, hoverBorderColor:'#1e2530', hoverOffset:4 }] },
+    options:{ responsive:true, maintainAspectRatio:true, cutout:'68%',
+      plugins:{ legend:{ position:'bottom', labels:{ color:'#a0b4c4', font:{size:10}, boxWidth:10, padding:14 } },
+        tooltip:{ backgroundColor:'#0f1217', borderColor:'#2a3444', borderWidth:1 } } }
+  });
+}
+
+function lineDataset(label, data, color, fill=true) {
+  return { label, data, borderColor:color, backgroundColor: fill ? color+'18' : 'transparent',
+    fill, tension:.35, pointRadius:3, pointBackgroundColor:color, pointBorderColor:'#0a0c0f',
+    pointBorderWidth:2, borderWidth:2 };
+}
+function barDataset(label, data, color) {
+  return { label, data, backgroundColor:color+'55', borderColor:color, borderWidth:1, borderRadius:2, hoverBackgroundColor:color+'99' };
+}
+
+// ── Overview ───────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const yr = new Date().getFullYear();
+    const [ov, plans, rev, sig, visits] = await Promise.all([
+      api('/admin/stats/overview'),
+      api('/admin/stats/plans'),
+      api(`/admin/stats/revenue?period=monthly&year=${yr}`),
+      api(`/admin/stats/users-growth?period=monthly&year=${yr}`),
+      api('/admin/stats/visits?period=daily'),
+    ]);
+    renderKPIs(ov);
+    renderPlanDoughnut(plans);
+    const rev6 = rev.data.slice(-6);
+    mkChart('chart-rev-overview','bar',
+      { labels:rev6.map(r=>r.label), datasets:[barDataset('Revenue €', rev6.map(r=>r.revenue),'#00d4ff')] },
+      { scales:{ x:{grid:GRID,ticks:XTICK}, y:{grid:GRID,ticks:{...YTICK,callback:v=>'€'+v}} } });
+    const sig6 = sig.signups.slice(-6), sigLbl = sig.labels.slice(-6);
+    mkChart('chart-signups-overview','line',
+      { labels:sigLbl, datasets:[lineDataset('New Users',sig6,'#a78bfa')] });
+    mkChart('chart-traffic-overview','line',
+      { labels:visits.data.map(d=>d.label), datasets:[lineDataset('Visits',visits.data.map(d=>d.visits),'#10b981')] });
+  } catch(e){ showToast('Error loading overview','error'); console.error(e); }
+}
+
+function renderKPIs(d) {
+  const kpis = [
+    { label:'Total Users',       value:d.total_users,                    cls:'c-accent' },
+    { label:'Pro Subscribers',   value:d.pro_users,                      cls:'c-green'  },
+    { label:'Basic (free)',       value:(d.basic_users||0)+(d.free_users||0), cls:''     },
+    { label:'Active Trials',     value:d.active_trials,                  cls:'c-amber'  },
+    { label:'New Today',         value:d.new_today,                      cls:''         },
+    { label:'New This Week',     value:d.new_this_week,                  cls:''         },
+    { label:'New This Month',    value:d.new_this_month,                 cls:''         },
+    { label:'Revenue (Month)',   value:'€'+d.revenue_month.toFixed(0),   cls:'c-green'  },
+    { label:'Revenue (Week)',    value:'€'+d.revenue_week.toFixed(0),    cls:''         },
+    { label:'Total Revenue',     value:'€'+d.revenue_total.toFixed(0),   cls:'c-accent' },
+    { label:'Conversion Rate',   value:d.conversion_rate+'%',            cls:d.conversion_rate>5?'c-green':'c-amber' },
+    { label:'Abandoned Signups', value:d.unverified_signups,             cls:d.unverified_signups>0?'c-red':'' },
+  ];
+  document.getElementById('kpi-area').innerHTML = kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value ${k.cls}">${k.value}</div>
+    </div>`).join('');
+}
+
+function renderPlanDoughnut(plans) {
+  const cmap = { pro:'#00d4ff', free:'#2a3444', basic:'#a78bfa', trial:'#f59e0b' };
+  const labels = plans.data.map(d=>d.plan||'free');
+  const values = plans.data.map(d=>d.count);
+  const colors = labels.map(l=>cmap[l]||'#374151');
+  mkDoughnut('chart-plans', labels.map(l=>l.toUpperCase()), values, colors);
+}
+
+// ── Revenue ────────────────────────────────────────────────────
+function setRevPeriod(p) {
+  _revPeriod = p;
+  ['monthly','weekly','annual','daily'].forEach(x=>
+    document.getElementById('rev-'+x).classList.toggle('active',x===p));
+  loadRevenue();
+}
+async function loadRevenue() {
+  const yr = document.getElementById('rev-year').value;
+  const labels = {monthly:'Monthly Revenue',weekly:'Weekly Revenue (12w)',annual:'Annual Revenue (5y)',daily:'Daily Revenue (30d)'};
+  document.getElementById('rev-chart-title').textContent = labels[_revPeriod]||'Revenue';
+  try {
+    const d = await api(`/admin/stats/revenue?period=${_revPeriod}&year=${yr}`);
+    mkChart('chart-revenue','bar',
+      { labels:d.data.map(r=>r.label), datasets:[barDataset('Revenue',d.data.map(r=>r.revenue),'#00d4ff')] },
+      { scales:{ x:{grid:GRID,ticks:XTICK}, y:{grid:GRID,ticks:{...YTICK,callback:v=>'€'+v}} } });
+    mkChart('chart-txn-count','bar',
+      { labels:d.data.map(r=>r.label), datasets:[barDataset('Transactions',d.data.map(r=>r.count),'#a78bfa')] });
+    const mth = await api(`/admin/stats/revenue?period=monthly&year=${yr}`);
+    const monthly_total = mth.data.reduce((s,r)=>s+r.revenue,0);
+    mkDoughnut('chart-rev-period',['Monthly','Annual'],
+      [+monthly_total.toFixed(0), 0], ['#00d4ff','#a78bfa']);
+  } catch(e){ showToast('Revenue error','error'); }
+}
+
+// ── Users ──────────────────────────────────────────────────────
+let _st = null;
+function searchUsers() {
+  clearTimeout(_st);
+  _st = setTimeout(_doSearch,300);
+}
+async function _doSearch() {
+  const q = document.getElementById('user-search').value.trim();
+  const plan = document.getElementById('plan-filter').value;
+  const tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><span class="spinner"></span></td></tr>';
+  try {
+    const users = await api(`/admin/users/search?q=${encodeURIComponent(q)}&plan=${encodeURIComponent(plan)}`);
+    document.getElementById('users-count').textContent = users.length + ' users';
+    tbody.innerHTML = users.length===0
+      ? '<tr><td colspan="10" class="empty-state">No users found</td></tr>'
+      : users.map(userRow).join('');
+  } catch { tbody.innerHTML='<tr><td colspan="9" class="empty-state" style="color:var(--red)">Load error</td></tr>'; }
+}
+
+function userRow(u) {
+  const plan = u.plan||'free';
+  const planBadge = `<span class="badge badge-${plan}">${plan.toUpperCase()}</span>`;
+  const isActive = u.email_verified==1 || u.last_seen || ['pro','basic','trial'].includes(plan);
+  const activeTd = isActive
+    ? '<span style="color:var(--green);font-family:var(--font-mono);font-size:12px">✓</span>'
+    : `<button class="act-btn" onclick="verifyUser(${u.id},'${u.email}')">Verify</button>`;
+  const trial   = u.trial_ends_at ? u.trial_ends_at.slice(0,10) : '–';
+  const created = u.created_at   ? u.created_at.slice(0,10)    : '–';
+  const seen    = u.last_seen    ? u.last_seen.slice(0,10)      : '–';
+  const email   = u.email.replace(/'/g,'');
+  const name    = (u.name||'').replace(/'/g,'').replace(/"/g,'');
+  const COUNTRY_FLAGS = {PT:'🇵🇹',BR:'🇧🇷',US:'🇺🇸',GB:'🇬🇧',DE:'🇩🇪',FR:'🇫🇷',ES:'🇪🇸',IT:'🇮🇹',NL:'🇳🇱',BE:'🇧🇪',CH:'🇨🇭',AT:'🇦🇹',PL:'🇵🇱',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',FI:'🇫🇮',IE:'🇮🇪',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',ZA:'🇿🇦',AE:'🇦🇪',SG:'🇸🇬',HK:'🇭🇰',JP:'🇯🇵',IN:'🇮🇳',MX:'🇲🇽',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴'};
+  const flagStr = u.country ? (COUNTRY_FLAGS[u.country]||'🌍') + ' ' + u.country : '<span style="color:var(--border2)">—</span>';
+  return `<tr>
+    <td><span class="num">${u.id}</span></td>
+    <td>${u.email}</td>
+    <td style="color:var(--text-muted)">${u.name||'–'}</td>
+    <td style="font-size:12px">${flagStr}</td>
+    <td>${planBadge}</td>
+    <td style="text-align:center">${activeTd}</td>
+    <td><span class="num">${trial}</span></td>
+    <td><span class="num">${created}</span></td>
+    <td><span class="num">${seen}</span></td>
+    <td style="white-space:nowrap">
+      <button class="act-btn" onclick="openPlanModal(${u.id},'${email}','${plan}')">Plan</button>
+      <button class="act-btn" onclick="openTrialModal(${u.id},'${email}')">Trial</button>
+      <button class="act-btn danger" onclick="deleteUser(${u.id},'${email}')">✕</button>
+    </td>
+  </tr>`;
+}
+
+// ── Traffic ────────────────────────────────────────────────────
+function setTrafficPeriod(p) {
+  _trafficPeriod = p;
+  ['monthly','daily'].forEach(x=>
+    document.getElementById('trfc-'+x).classList.toggle('active',x===p));
+  loadTraffic();
+}
+async function loadTraffic() {
+  document.getElementById('traffic-title').textContent =
+    'Site Visits — ' + (_trafficPeriod==='monthly'?'Monthly':'Daily (30d)');
+  try {
+    const d = await api(`/admin/stats/visits?period=${_trafficPeriod}`);
+    mkChart('chart-traffic','line',
+      { labels:d.data.map(r=>r.label), datasets:[lineDataset('Visits',d.data.map(r=>r.visits),'#10b981')] },
+      { scales:{ x:{grid:GRID,ticks:XTICK}, y:{grid:GRID,ticks:YTICK,beginAtZero:true} } });
+  } catch { showToast('Traffic error','error'); }
+}
+
+// ── Funnel ─────────────────────────────────────────────────────
+async function loadFunnel() {
+  try {
+    const [d, plans] = await Promise.all([
+      api('/admin/stats/funnel'),
+      api('/admin/stats/plans'),
+    ]);
+    const reg  = d.total_registered || 0;
+    const conf = d.email_verified   || 0;
+    const paid = d.upgraded         || 0;
+    const planMap = {};
+    (plans.data||[]).forEach(p => planMap[p.plan||'free'] = p.count);
+    const nFree  = planMap['free']  || 0;
+    const nBasic = planMap['basic'] || 0;
+    const nPro   = planMap['pro']   || 0;
+    const nTrial = planMap['trial'] || 0;
+
+    // drop-off between steps
+    const dropConf = reg  > 0 ? Math.round((reg  - conf) / reg  * 100) : 0;
+    const dropPaid = conf > 0 ? Math.round((conf - paid) / conf * 100) : 0;
+
+    // pct of total at each stage
+    const pReg  = 100;
+    const pConf = reg  > 0 ? Math.round(conf / reg  * 100) : 0;
+    const pPaid = reg  > 0 ? Math.round(paid / reg  * 100) : 0;
+
+    // max for abandoned bar
+    const abPct = reg > 0 ? Math.round(d.abandoned_7d / reg * 100) : 0;
+
+    document.getElementById('funnel-wrap').innerHTML = `
+      <div class="fn-flow">
+
+        <!-- Step 1: Registered -->
+        <div class="fn-stage">
+          <div class="fn-block" style="color:#00d4ff;border:1px solid rgba(0,212,255,.25);background:rgba(0,212,255,.06)">
+            <div>
+              <div class="fn-label">① Registered</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;font-family:var(--font-mono)">Total signups</div>
+            </div>
+            <div style="text-align:right">
+              <div class="fn-count" style="color:#00d4ff">${reg}</div>
+              <div class="fn-pct"><strong style="color:rgba(255,255,255,.5)">100%</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow 1→2 -->
+        <div class="fn-arrow">
+          <div class="fn-arrow-line"></div>
+          ${dropConf > 0 ? `<div class="fn-arrow-drop">−${dropConf}% não confirmaram</div>` : ''}
+          <div class="fn-arrow-caret">▼</div>
+        </div>
+
+        <!-- Step 2: Email Confirmed -->
+        <div class="fn-stage">
+          <div class="fn-block" style="color:#a78bfa;border:1px solid rgba(167,139,250,.25);background:rgba(167,139,250,.06)">
+            <div>
+              <div class="fn-label">② Email Confirmado</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;font-family:var(--font-mono)">Conta ativa</div>
+            </div>
+            <div style="text-align:right">
+              <div class="fn-count" style="color:#a78bfa">${conf}</div>
+              <div class="fn-pct"><strong style="color:#a78bfa">${pConf}%</strong><span> do total</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow 2→3 -->
+        <div class="fn-arrow">
+          <div class="fn-arrow-line"></div>
+          ${dropPaid > 0 ? `<div class="fn-arrow-drop">−${dropPaid}% ficaram em free</div>` : ''}
+          <div class="fn-arrow-caret">▼</div>
+        </div>
+
+        <!-- Step 3: split -->
+        <div class="fn-stage">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;text-align:center">③ Estado Atual</div>
+        </div>
+      </div>
+
+      <!-- Split boxes — Free is merged into Basic (Basic = free tier) -->
+      <div class="fn-split">
+        <div class="fn-split-item">
+          <div class="fn-split-label">Basic <span style="font-weight:400;opacity:.5">(free)</span></div>
+          <div class="fn-split-count" style="color:var(--text-muted)">${nFree + nBasic}</div>
+          <div class="fn-split-pct">${reg>0?Math.round((nFree+nBasic)/reg*100):0}%</div>
+        </div>
+        <div class="fn-split-item">
+          <div class="fn-split-label">Trial</div>
+          <div class="fn-split-count" style="color:var(--amber)">${nTrial}</div>
+          <div class="fn-split-pct">${reg>0?Math.round(nTrial/reg*100):0}%</div>
+        </div>
+        <div class="fn-split-item" style="background:rgba(0,212,255,.04)">
+          <div class="fn-split-label" style="color:var(--accent)">Pro</div>
+          <div class="fn-split-count" style="color:var(--accent)">${nPro}</div>
+          <div class="fn-split-pct" style="color:var(--accent)">${reg>0?Math.round(nPro/reg*100):0}%</div>
+        </div>
+      </div>
+
+      <!-- Abandoned bar -->
+      <div class="fn-abandoned">
+        <div class="fn-ab-label">Abandonados (7d)</div>
+        <div class="fn-ab-bar-wrap"><div class="fn-ab-bar" style="width:${Math.min(100,abPct)}%"></div></div>
+        <div class="fn-ab-num">${d.abandoned_7d} <span style="color:var(--text-muted);font-size:10px">(${abPct}%)</span></div>
+      </div>
+    `;
+
+    const tbody = document.getElementById('funnel-tbody');
+    tbody.innerHTML = !d.abandoned_users.length
+      ? '<tr><td colspan="6" class="empty-state">Sem signups abandonados nos últimos 30 dias</td></tr>'
+      : d.abandoned_users.map(u=>`<tr>
+          <td><span class="num">${u.id}</span></td>
+          <td>${u.email}</td>
+          <td style="color:var(--text-muted)">${u.name||'–'}</td>
+          <td><span class="badge badge-warn">${u.step||'signup'}</span></td>
+          <td><span class="num">${(u.created_at||'').slice(0,10)}</span></td>
+          <td style="white-space:nowrap">
+            <button class="act-btn" onclick="openPlanModal(${u.id},'${u.email.replace(/'/g,'')}','free')">Activate</button>
+            <button class="act-btn" onclick="openTrialModal(${u.id},'${u.email.replace(/'/g,'')}')">Trial</button>
+          </td>
+        </tr>`).join('');
+  } catch(e){ showToast('Funnel error','error'); console.error(e); }
+}
+
+// ── Customers Map ──────────────────────────────────────────────
+const FLAG_MAP = {PT:'🇵🇹',BR:'🇧🇷',US:'🇺🇸',GB:'🇬🇧',DE:'🇩🇪',FR:'🇫🇷',ES:'🇪🇸',IT:'🇮🇹',NL:'🇳🇱',BE:'🇧🇪',CH:'🇨🇭',AT:'🇦🇹',PL:'🇵🇱',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',FI:'🇫🇮',IE:'🇮🇪',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',ZA:'🇿🇦',AE:'🇦🇪',SG:'🇸🇬',HK:'🇭🇰',JP:'🇯🇵',IN:'🇮🇳',MX:'🇲🇽',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',CN:'🇨🇳',RU:'🇷🇺',TR:'🇹🇷',KR:'🇰🇷',ID:'🇮🇩',MY:'🇲🇾',TH:'🇹🇭',PH:'🇵🇭',VN:'🇻🇳',PK:'🇵🇰',NG:'🇳🇬',EG:'🇪🇬',GR:'🇬🇷',CZ:'🇨🇿',HU:'🇭🇺',RO:'🇷🇴',SK:'🇸🇰',HR:'🇭🇷',RS:'🇷🇸',UA:'🇺🇦',IL:'🇮🇱',SA:'🇸🇦',QA:'🇶🇦',KW:'🇰🇼',XX:'🌍',OTHER:'🌍'};
+const COUNTRY_NAMES = {PT:'Portugal',BR:'Brazil',US:'United States',GB:'United Kingdom',DE:'Germany',FR:'France',ES:'Spain',IT:'Italy',NL:'Netherlands',BE:'Belgium',CH:'Switzerland',AT:'Austria',PL:'Poland',SE:'Sweden',NO:'Norway',DK:'Denmark',FI:'Finland',IE:'Ireland',CA:'Canada',AU:'Australia',NZ:'New Zealand',ZA:'South Africa',AE:'UAE',SG:'Singapore',HK:'Hong Kong',JP:'Japan',IN:'India',MX:'Mexico',AR:'Argentina',CL:'Chile',CO:'Colombia',CN:'China',RU:'Russia',TR:'Turkey',KR:'South Korea',ID:'Indonesia',MY:'Malaysia',TH:'Thailand',PH:'Philippines',VN:'Vietnam',PK:'Pakistan',NG:'Nigeria',EG:'Egypt',GR:'Greece',CZ:'Czech Rep.',HU:'Hungary',RO:'Romania',SK:'Slovakia',HR:'Croatia',RS:'Serbia',UA:'Ukraine',IL:'Israel',SA:'Saudi Arabia',QA:'Qatar',KW:'Kuwait',XX:'Unknown',OTHER:'Other'};
+
+// ISO 3166-1 numeric → alpha2 (subset covering main countries)
+const ISO_NUM = {4:'AF',8:'AL',12:'DZ',24:'AO',32:'AR',36:'AU',40:'AT',50:'BD',56:'BE',76:'BR',100:'BG',124:'CA',144:'LK',152:'CL',156:'CN',170:'CO',191:'HR',196:'CY',203:'CZ',208:'DK',818:'EG',233:'EE',246:'FI',250:'FR',276:'DE',300:'GR',344:'HK',348:'HU',356:'IN',360:'ID',372:'IE',376:'IL',380:'IT',392:'JP',400:'JO',398:'KZ',404:'KE',408:'KP',410:'KR',414:'KW',422:'LB',428:'LV',440:'LT',442:'LU',458:'MY',484:'MX',504:'MA',528:'NL',554:'NZ',566:'NG',578:'NO',586:'PK',604:'PE',608:'PH',616:'PL',620:'PT',634:'QA',642:'RO',643:'RU',682:'SA',703:'SK',724:'ES',752:'SE',756:'CH',158:'TW',764:'TH',792:'TR',804:'UA',784:'AE',826:'GB',840:'US',704:'VN',710:'ZA',716:'ZW'};
+
+async function loadCustomers() {
+  try {
+    const data = await api('/admin/stats/countries');
+    const stats = data.data || [];
+    const maxCount = stats[0]?.count || 1;
+
+    // Build alpha2(uppercase) → count map for jsvectormap
+    const countMap = {};
+    stats.forEach(d => {
+      if (d.country && d.country !== 'XX') countMap[d.country.toUpperCase()] = d.count;
+    });
+
+    // Render world map with jsvectormap
+    const mapEl = document.getElementById('chart-worldmap');
+    if (mapEl) {
+      // Destroy previous instance if any
+      if (_charts['chart-worldmap']) {
+        try { _charts['chart-worldmap'].destroy(); } catch(_) {}
+        mapEl.innerHTML = '';
+      }
+      _charts['chart-worldmap'] = new jsVectorMap({
+        selector: '#chart-worldmap',
+        map: 'world',
+        backgroundColor: '#0f1217',
+        zoomOnScroll: false,
+        regionStyle: {
+          initial:  { fill: '#1a2235', stroke: '#0a0c0f', strokeWidth: 0.5 },
+          hover:    { fill: '#00d4ff', fillOpacity: 0.7 },
+          selected: { fill: '#00d4ff' },
+        },
+        series: {
+          regions: [{
+            values: countMap,
+            scale: ['#0d3a5c', '#00d4ff'],
+            normalizeFunction: 'polynomial',
+            attribute: 'fill',
+          }]
+        },
+        onRegionTooltipShow(e, tooltip, code) {
+          const name = COUNTRY_NAMES[code] || code;
+          const cnt  = countMap[code] || 0;
+          tooltip.text(`${FLAG_MAP[code]||''} ${name}: ${cnt} user${cnt!==1?'s':''}`, true);
+        }
+      });
+    }
+
+    // Country list
+    const listEl = document.getElementById('country-list');
+    const visible = stats.filter(d => d.country && d.country !== 'XX');
+    if (!visible.length) {
+      listEl.innerHTML = '<div class="empty-state" style="grid-column:span 2">No country data yet</div>';
+      return;
+    }
+    listEl.innerHTML = visible.map((d,i) => {
+      const flag = FLAG_MAP[d.country] || '🌍';
+      const name = COUNTRY_NAMES[d.country] || d.country;
+      const barW = Math.round(d.count / maxCount * 100);
+      return `<div class="country-row">
+        <div class="country-rank">${i+1}</div>
+        <div class="country-flag">${flag}</div>
+        <div class="country-name">${name}</div>
+        <div class="country-bar-wrap"><div class="country-bar" style="width:${barW}%"></div></div>
+        <div class="country-count">${d.count}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('[MAP]', e);
+    showToast('Map error: ' + e.message, 'error');
+  }
+}
+
+// ── Comparison ─────────────────────────────────────────────────
+async function loadComparison() {
+  const y1=+document.getElementById('cmp-y1').value;
+  const y2=+document.getElementById('cmp-y2').value;
+  try {
+    const d = await api(`/admin/stats/comparison?year1=${y1}&year2=${y2}`);
+    mkChart('chart-cmp-users','line',{
+      labels:d.labels,
+      datasets:[
+        lineDataset(String(y1),d[y1].users,'#00d4ff'),
+        lineDataset(String(y2),d[y2].users,'#a78bfa'),
+      ]
+    });
+    mkChart('chart-cmp-revenue','line',{
+      labels:d.labels,
+      datasets:[
+        lineDataset(String(y1),d[y1].revenue,'#10b981'),
+        lineDataset(String(y2),d[y2].revenue,'#f59e0b'),
+      ]
+    },{ scales:{ x:{grid:GRID,ticks:XTICK}, y:{grid:GRID,ticks:{...YTICK,callback:v=>'€'+v}} } });
+  } catch(e){ showToast('Comparison error','error'); }
+}
+
+// ── Modals ─────────────────────────────────────────────────────
+const COUNTRIES = [['','Select country…'],['PT','🇵🇹 Portugal'],['BR','🇧🇷 Brazil'],['US','🇺🇸 United States'],['GB','🇬🇧 United Kingdom'],['DE','🇩🇪 Germany'],['FR','🇫🇷 France'],['ES','🇪🇸 Spain'],['IT','🇮🇹 Italy'],['NL','🇳🇱 Netherlands'],['CH','🇨🇭 Switzerland'],['BE','🇧🇪 Belgium'],['AT','🇦🇹 Austria'],['PL','🇵🇱 Poland'],['SE','🇸🇪 Sweden'],['NO','🇳🇴 Norway'],['DK','🇩🇰 Denmark'],['FI','🇫🇮 Finland'],['IE','🇮🇪 Ireland'],['CA','🇨🇦 Canada'],['AU','🇦🇺 Australia'],['NZ','🇳🇿 New Zealand'],['ZA','🇿🇦 South Africa'],['AE','🇦🇪 UAE'],['SG','🇸🇬 Singapore'],['HK','🇭🇰 Hong Kong'],['JP','🇯🇵 Japan'],['IN','🇮🇳 India'],['MX','🇲🇽 Mexico'],['AR','🇦🇷 Argentina'],['CL','🇨🇱 Chile'],['CO','🇨🇴 Colombia'],['OTHER','🌍 Other']];
+
+function openCreateUserModal() {
+  document.getElementById('modal-title').textContent = 'Create User';
+  document.getElementById('modal-body').innerHTML = `
+    <label>Full Name</label>
+    <input type="text" id="cu-name" placeholder="John Doe" autocomplete="off"/>
+    <label>Email <span style="color:var(--red)">*</span></label>
+    <input type="email" id="cu-email" placeholder="user@example.com" autocomplete="off"/>
+    <label>Country</label>
+    <select id="cu-country">${COUNTRIES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>
+    <label>Plan</label>
+    <select id="cu-plan">
+      <option value="free">Free</option>
+      <option value="basic">Basic</option>
+      <option value="pro">Pro</option>
+      <option value="trial">Trial</option>
+    </select>
+    <label>Password <span style="color:var(--text-muted);font-size:9px">(leave blank to auto-generate)</span></label>
+    <input type="text" id="cu-pass" placeholder="Auto-generated if empty" autocomplete="off"/>
+    <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
+      <input type="checkbox" id="cu-welcome" style="width:auto"/>
+      <span style="font-size:11px;color:var(--text-muted)">Send welcome/verification email</span>
+    </div>
+    <div id="cu-result" style="display:none;margin-top:12px;padding:10px 12px;background:var(--bg3);border:1px solid rgba(16,185,129,.3);border-radius:3px;font-family:var(--font-mono);font-size:11px;color:var(--green)"></div>`;
+  _modalAction = async () => {
+    const name    = document.getElementById('cu-name').value.trim();
+    const email   = document.getElementById('cu-email').value.trim();
+    const country = document.getElementById('cu-country').value;
+    const plan    = document.getElementById('cu-plan').value;
+    const password= document.getElementById('cu-pass').value.trim();
+    const send_welcome = document.getElementById('cu-welcome').checked;
+    if (!email) { showToast('Email is required','error'); return; }
+    const res = await api('/admin/users/create', { method:'POST', body: JSON.stringify({name,email,country,plan,password,send_welcome}) });
+    const resultEl = document.getElementById('cu-result');
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `✓ User created<br>Email: ${res.email}<br>Plan: ${res.plan}${res.password !== '***' ? '<br>Password: <strong>'+res.password+'</strong>' : ''}`;
+    showToast('User created','ok');
+    searchUsers();
+  };
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openPlanModal(id, email, cur) {
+  document.getElementById('modal-title').textContent = 'Change Plan';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">${email}</div>
+    <label>Plan</label>
+    <select id="modal-plan">
+      <option value="free"  ${cur==='free'  ?'selected':''}>Free</option>
+      <option value="basic" ${cur==='basic' ?'selected':''}>Basic</option>
+      <option value="pro"   ${cur==='pro'   ?'selected':''}>Pro</option>
+      <option value="trial" ${cur==='trial' ?'selected':''}>Trial</option>
+    </select>`;
+  _modalAction = async()=>{
+    const plan=document.getElementById('modal-plan').value;
+    await api(`/admin/users/${id}/plan`,{method:'PATCH',body:JSON.stringify({plan})});
+    showToast('Plan updated','ok'); closeModal(); searchUsers();
+  };
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function openTrialModal(id, email) {
+  document.getElementById('modal-title').textContent = 'Set Free Trial';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">${email}</div>
+    <label>Duration (days)</label>
+    <input type="number" id="modal-days" value="7" min="1" max="365"/>`;
+  _modalAction = async()=>{
+    const days=+document.getElementById('modal-days').value;
+    await api(`/admin/users/${id}/trial`,{method:'POST',body:JSON.stringify({days})});
+    showToast(`${days}-day trial activated`,'ok'); closeModal(); searchUsers();
+  };
+  document.getElementById('modal-overlay').classList.add('open');
+}
+async function verifyUser(id, email) {
+  try {
+    await api(`/admin/users/${id}/verify`,{method:'POST'});
+    showToast('User verified','ok'); searchUsers();
+  } catch { showToast('Error','error'); }
+}
+async function deleteUser(id, email) {
+  if (!confirm(`Delete ${email}?\nThis cannot be undone.`)) return;
+  try {
+    await api(`/admin/users/${id}`,{method:'DELETE'});
+    showToast('User deleted'); searchUsers();
+  } catch { showToast('Delete failed','error'); }
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); _modalAction=null; }
+async function saveModal() { if (_modalAction) try { await _modalAction(); } catch(e){ showToast(e.message,'error'); } }
+
+// ── Toast ──────────────────────────────────────────────────────
+function showToast(msg, type='') {
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='show'+(type?' '+type:'');
+  setTimeout(()=>t.className=type,2800);
+}
+
+// ── Boot ───────────────────────────────────────────────────────
+(function(){
+  const saved=localStorage.getItem('tnt_admin_token');
+  if (saved){_token=saved;verifyToken();}
+})();
+</script>
+</body>
+</html>

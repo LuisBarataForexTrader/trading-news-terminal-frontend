@@ -94,6 +94,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .squawk-chips{display:flex;gap:5px;flex-wrap:wrap;}
 .squawk-chip{padding:4px 10px;background:var(--bg3);border:1px solid var(--border);color:#fff;font-family:var(--font);font-size:10px;cursor:pointer;border-radius:3px;transition:all .12s;}
 .squawk-chip.sel{background:rgba(0,212,255,0.1);border-color:var(--accent);color:var(--accent);font-weight:700;}
+.squawk-chips-sublabel{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.38);margin:8px 0 4px;padding:0 1px;}
 .squawk-test-btn{width:100%;margin-top:4px;padding:7px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);color:var(--accent);font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .15s;}
 .squawk-test-btn:hover{background:rgba(0,212,255,0.14);}
 .squawk-dd-note{font-size:9px;color:#fff;margin-top:10px;line-height:1.5;}
@@ -925,7 +926,12 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
             <button class="squawk-chip"     data-sf="HIGH"     onclick="setSquawkFilter('HIGH',this)" data-i18n="squawk.chip_high">🔴 High Impact</button>
             <button class="squawk-chip"     data-sf="MEDIUM"   onclick="setSquawkFilter('MEDIUM',this)" data-i18n="squawk.chip_medium">🟡 Medium Impact</button>
             <button class="squawk-chip"     data-sf="MY_NEWS"  onclick="setSquawkFilter('MY_NEWS',this)" data-i18n="squawk.chip_mynews">★ My News</button>
-            <button class="squawk-chip"     data-sf="CALENDAR" onclick="setSquawkFilter('CALENDAR',this)" title="Read Medium + High Economic Calendar releases" data-i18n="squawk.chip_calendar">📅 Calendar</button>
+          </div>
+          <div class="squawk-chips-sublabel" data-i18n="squawk.ce_events">📅 CE Events</div>
+          <div class="squawk-chips">
+            <button class="squawk-chip" data-sf="CAL_HIGH"   onclick="setSquawkFilter('CAL_HIGH',this)"   data-i18n="squawk.chip_cal_high">🔴 High</button>
+            <button class="squawk-chip" data-sf="CAL_MEDIUM" onclick="setSquawkFilter('CAL_MEDIUM',this)" data-i18n="squawk.chip_cal_medium">🟡 Medium</button>
+            <button class="squawk-chip" data-sf="CAL_LOW"    onclick="setSquawkFilter('CAL_LOW',this)"    data-i18n="squawk.chip_cal_low">🟢 Low</button>
           </div>
         </div>
         <button class="squawk-test-btn" onclick="testSquawkVoice()" data-i18n="squawk.test">▶ Test Voice</button>
@@ -940,12 +946,17 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
         <div class="squawk-dd-row">
           <span class="squawk-dd-lbl" data-i18n="sound.alert_for">Alert for</span>
           <div class="squawk-chips">
-            <button class="squawk-chip sound-chip sel" data-sf="ALL"      onclick="setSoundFilter('ALL',this)"      data-i18n="squawk.chip_all">All</button>
-            <button class="squawk-chip sound-chip"     data-sf="HIGH"     onclick="setSoundFilter('HIGH',this)"     data-i18n="squawk.chip_high">🔴 High Impact</button>
-            <button class="squawk-chip sound-chip"     data-sf="MEDIUM"   onclick="setSoundFilter('MEDIUM',this)"   data-i18n="squawk.chip_medium">🟡 Medium Impact</button>
-            <button class="squawk-chip sound-chip"     data-sf="LOW"      onclick="setSoundFilter('LOW',this)"      data-i18n="squawk.chip_low">🟢 Low Impact</button>
-            <button class="squawk-chip sound-chip"     data-sf="MY_NEWS"  onclick="setSoundFilter('MY_NEWS',this)"  data-i18n="squawk.chip_mynews">★ My News</button>
-            <button class="squawk-chip sound-chip"     data-sf="CALENDAR" onclick="setSoundFilter('CALENDAR',this)" data-i18n="squawk.chip_calendar">📅 Calendar</button>
+            <button class="squawk-chip sound-chip sel" data-sf="ALL"     onclick="setSoundFilter('ALL',this)"     data-i18n="squawk.chip_all">All</button>
+            <button class="squawk-chip sound-chip"     data-sf="HIGH"    onclick="setSoundFilter('HIGH',this)"    data-i18n="squawk.chip_high">🔴 High Impact</button>
+            <button class="squawk-chip sound-chip"     data-sf="MEDIUM"  onclick="setSoundFilter('MEDIUM',this)"  data-i18n="squawk.chip_medium">🟡 Medium Impact</button>
+            <button class="squawk-chip sound-chip"     data-sf="LOW"     onclick="setSoundFilter('LOW',this)"     data-i18n="squawk.chip_low">🟢 Low Impact</button>
+            <button class="squawk-chip sound-chip"     data-sf="MY_NEWS" onclick="setSoundFilter('MY_NEWS',this)" data-i18n="squawk.chip_mynews">★ My News</button>
+          </div>
+          <div class="squawk-chips-sublabel" data-i18n="squawk.ce_events">📅 CE Events</div>
+          <div class="squawk-chips">
+            <button class="squawk-chip sound-chip" data-sf="CAL_HIGH"   onclick="setSoundFilter('CAL_HIGH',this)"   data-i18n="squawk.chip_cal_high">🔴 High</button>
+            <button class="squawk-chip sound-chip" data-sf="CAL_MEDIUM" onclick="setSoundFilter('CAL_MEDIUM',this)" data-i18n="squawk.chip_cal_medium">🟡 Medium</button>
+            <button class="squawk-chip sound-chip" data-sf="CAL_LOW"    onclick="setSoundFilter('CAL_LOW',this)"    data-i18n="squawk.chip_cal_low">🟢 Low</button>
           </div>
         </div>
         <div class="squawk-dd-row">
@@ -1608,7 +1619,13 @@ let allNews          = [];
 let calReleases      = [];
 let displayLimit     = PAGE_SIZE;
 let soundEnabled     = localStorage.getItem('soundEnabled') !== 'false';
-let soundFilters     = new Set(JSON.parse(localStorage.getItem('soundFilters') || '["ALL"]'));
+// Migrate legacy 'CALENDAR' filter value → CAL_HIGH + CAL_MEDIUM
+function _migrateFilters(arr) {
+  const s = new Set(arr);
+  if (s.has('CALENDAR')) { s.delete('CALENDAR'); s.add('CAL_HIGH'); s.add('CAL_MEDIUM'); }
+  return s;
+}
+let soundFilters     = _migrateFilters(JSON.parse(localStorage.getItem('soundFilters') || '["ALL"]'));
 let soundVolume      = parseFloat(localStorage.getItem('soundVolume') || '0.5');
 let knownUrls        = new Set();
 // In-session only — prevents duplicates within a session but resets on page load
@@ -1619,7 +1636,7 @@ let squawkEnabled    = localStorage.getItem('squawkEnabled') === 'true';
 let squawkQueue      = [];
 let squawkSpeaking   = false;
 let squawkRate       = parseFloat(localStorage.getItem('squawkRate') || '1.0');
-let squawkFilters    = new Set(JSON.parse(localStorage.getItem('squawkFilters') || '["ALL"]'));
+let squawkFilters    = _migrateFilters(JSON.parse(localStorage.getItem('squawkFilters') || '["ALL"]'));
 let squawkVoiceName  = localStorage.getItem('squawkVoiceName') || '';
 let recentNewUrls    = new Set(); // URLs arrived in last 3 min → show NEW badge
 let newItemsCount    = 0;         // count for notification badge
@@ -1745,6 +1762,7 @@ const STRINGS = {
     'squawk.speed':'Speed','squawk.read_news':'Read news',
     'squawk.chip_all':'All','squawk.chip_high':'🔴 High Impact','squawk.chip_medium':'🟡 Medium Impact',
     'squawk.chip_mynews':'★ My News','squawk.chip_calendar':'📅 Calendar','squawk.chip_low':'🟢 Low Impact',
+    'squawk.ce_events':'📅 CE Events','squawk.chip_cal_high':'🔴 High','squawk.chip_cal_medium':'🟡 Medium','squawk.chip_cal_low':'🟢 Low',
     'squawk.test':'▶ Test Voice',
     'squawk.note_html':'Voices always read in English for clarity.<br>Neural/Google voices sound best.',
     'sound.title':'🔔 Alert Settings','sound.alert_for':'Alert for','sound.volume':'Volume','sound.test':'▶ Test Sound',
@@ -1892,6 +1910,7 @@ const STRINGS = {
     'squawk.speed':'Velocidade','squawk.read_news':'Ler notícias',
     'squawk.chip_all':'Todas','squawk.chip_high':'🔴 Alto Impacto','squawk.chip_medium':'🟡 Médio Impacto',
     'squawk.chip_mynews':'★ As Minhas','squawk.chip_calendar':'📅 Calendário','squawk.chip_low':'🟢 Baixo Impacto',
+    'squawk.ce_events':'📅 Eventos CE','squawk.chip_cal_high':'🔴 Alto','squawk.chip_cal_medium':'🟡 Médio','squawk.chip_cal_low':'🟢 Baixo',
     'squawk.test':'▶ Testar Voz',
     'squawk.note_html':'As vozes lêem sempre em inglês para clareza.<br>As vozes Neural/Google soam melhor.',
     'sound.title':'🔔 Definições de Alertas','sound.alert_for':'Alertar para','sound.volume':'Volume','sound.test':'▶ Testar Som',
@@ -2039,6 +2058,7 @@ const STRINGS = {
     'squawk.speed':'Velocidad','squawk.read_news':'Leer noticias',
     'squawk.chip_all':'Todas','squawk.chip_high':'🔴 Alto Impacto','squawk.chip_medium':'🟡 Medio Impacto',
     'squawk.chip_mynews':'★ Mis Noticias','squawk.chip_calendar':'📅 Calendario','squawk.chip_low':'🟢 Bajo Impacto',
+    'squawk.ce_events':'📅 Eventos CE','squawk.chip_cal_high':'🔴 Alto','squawk.chip_cal_medium':'🟡 Medio','squawk.chip_cal_low':'🟢 Bajo',
     'squawk.test':'▶ Probar Voz',
     'squawk.note_html':'Las voces siempre leen en inglés para mayor claridad.<br>Las voces Neural/Google suenan mejor.',
     'sound.title':'🔔 Ajustes de Alertas','sound.alert_for':'Alertar por','sound.volume':'Volumen','sound.test':'▶ Probar Sonido',
@@ -2186,6 +2206,7 @@ const STRINGS = {
     'squawk.speed':'Vitesse','squawk.read_news':'Lire les actus',
     'squawk.chip_all':'Toutes','squawk.chip_high':'🔴 Impact Élevé','squawk.chip_medium':'🟡 Impact Moyen',
     'squawk.chip_mynews':'★ Mes Actus','squawk.chip_calendar':'📅 Calendrier','squawk.chip_low':'🟢 Faible Impact',
+    'squawk.ce_events':'📅 Événements CE','squawk.chip_cal_high':'🔴 Élevé','squawk.chip_cal_medium':'🟡 Moyen','squawk.chip_cal_low':'🟢 Faible',
     'squawk.test':'▶ Tester la Voix',
     'squawk.note_html':'Les voix lisent toujours en anglais pour la clarté.<br>Les voix Neural/Google sonnent le mieux.',
     'sound.title':'🔔 Paramètres des Alertes','sound.alert_for':'Alerter pour','sound.volume':'Volume','sound.test':'▶ Tester le Son',
@@ -2333,6 +2354,7 @@ const STRINGS = {
     'squawk.speed':'Geschwindigkeit','squawk.read_news':'Nachrichten vorlesen',
     'squawk.chip_all':'Alle','squawk.chip_high':'🔴 Hoher Impact','squawk.chip_medium':'🟡 Mittlerer Impact',
     'squawk.chip_mynews':'★ Meine','squawk.chip_calendar':'📅 Kalender','squawk.chip_low':'🟢 Geringer Impact',
+    'squawk.ce_events':'📅 CE Ereignisse','squawk.chip_cal_high':'🔴 Hoch','squawk.chip_cal_medium':'🟡 Mittel','squawk.chip_cal_low':'🟢 Niedrig',
     'squawk.test':'▶ Stimme testen',
     'squawk.note_html':'Stimmen lesen immer auf Englisch zur Klarheit.<br>Neural/Google-Stimmen klingen am besten.',
     'sound.title':'🔔 Alarm-Einstellungen','sound.alert_for':'Alarm für','sound.volume':'Lautstärke','sound.test':'▶ Sound testen',
@@ -2480,6 +2502,7 @@ const STRINGS = {
     'squawk.speed':'Velocità','squawk.read_news':'Leggi notizie',
     'squawk.chip_all':'Tutte','squawk.chip_high':'🔴 Alto Impatto','squawk.chip_medium':'🟡 Medio Impatto',
     'squawk.chip_mynews':'★ Le Mie','squawk.chip_calendar':'📅 Calendario','squawk.chip_low':'🟢 Basso Impatto',
+    'squawk.ce_events':'📅 Eventi CE','squawk.chip_cal_high':'🔴 Alto','squawk.chip_cal_medium':'🟡 Medio','squawk.chip_cal_low':'🟢 Basso',
     'squawk.test':'▶ Prova Voce',
     'squawk.note_html':'Le voci leggono sempre in inglese per chiarezza.<br>Le voci Neural/Google suonano meglio.',
     'sound.title':'🔔 Impostazioni Avvisi','sound.alert_for':'Avviso per','sound.volume':'Volume','sound.test':'▶ Prova Suono',
@@ -3138,12 +3161,14 @@ function _prepareSquawkText(text) {
 
 function squawkSpeak(text, url, newsItem) {
   if (!squawkEnabled || !text) return;
-  // Calendar releases: only spoken when user opted in via CALENDAR chip (or ALL)
+  // Calendar releases: spoken only for the CE impact levels the user opted into
   if (newsItem && newsItem._calRelease) {
-    const allowed = squawkFilters.has('ALL') || squawkFilters.has('CALENDAR');
-    if (!allowed) return;
-    // Calendar: Medium + High only; Low releases are never spoken even with ALL
-    if (newsItem.impact !== 'HIGH' && newsItem.impact !== 'MEDIUM') return;
+    if (!squawkFilters.has('ALL')) {
+      const calOk = (newsItem.impact === 'HIGH'   && squawkFilters.has('CAL_HIGH'))
+                 || (newsItem.impact === 'MEDIUM' && squawkFilters.has('CAL_MEDIUM'))
+                 || (newsItem.impact === 'LOW'    && squawkFilters.has('CAL_LOW'));
+      if (!calOk) return;
+    }
   } else if (newsItem && !squawkFilters.has('ALL')) {
     // Regular news filters (multi-select): must match at least one selected filter
     const impactOk = (squawkFilters.has('HIGH') && newsItem.impact === 'HIGH')
@@ -3346,7 +3371,7 @@ function setSquawkFilter(f) {
     }
   }
   localStorage.setItem('squawkFilters', JSON.stringify([...squawkFilters]));
-  document.querySelectorAll('.squawk-chip').forEach(c => c.classList.toggle('sel', squawkFilters.has(c.dataset.sf)));
+  document.querySelectorAll('#squawkDd .squawk-chip').forEach(c => c.classList.toggle('sel', squawkFilters.has(c.dataset.sf)));
 }
 function testSquawkVoice() {
   if (!window.speechSynthesis) return;
@@ -3397,7 +3422,9 @@ function _soundMatchesFilters(n) {
   if (soundFilters.has('ALL')) return true;
   if (!n) return false;
   if (n._calRelease) {
-    return soundFilters.has('CALENDAR') && (n.impact === 'HIGH' || n.impact === 'MEDIUM');
+    return (n.impact === 'HIGH'   && soundFilters.has('CAL_HIGH'))
+        || (n.impact === 'MEDIUM' && soundFilters.has('CAL_MEDIUM'))
+        || (n.impact === 'LOW'    && soundFilters.has('CAL_LOW'));
   }
   const impactOk = (soundFilters.has('HIGH')   && n.impact === 'HIGH')
                 || (soundFilters.has('MEDIUM') && n.impact === 'MEDIUM')
@@ -3418,7 +3445,7 @@ function setSoundFilter(f, btn) {
     }
   }
   localStorage.setItem('soundFilters', JSON.stringify([...soundFilters]));
-  document.querySelectorAll('.sound-chip').forEach(c => c.classList.toggle('sel', soundFilters.has(c.dataset.sf)));
+  document.querySelectorAll('#soundDd .squawk-chip').forEach(c => c.classList.toggle('sel', soundFilters.has(c.dataset.sf)));
 }
 function setSoundVolume(v) {
   soundVolume = parseFloat(v);

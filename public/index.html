@@ -6429,5 +6429,16 @@ function _fmtScTs(ts) {
   </div>
 </div>
 
+<script>
+// Re-run translations now that ALL modal HTML (Settings, My News Config, etc.)
+// has been parsed into the DOM. The main applyTranslations() at boot runs inside
+// the first <script> block which ends before the modal HTML — so modal elements
+// were not yet in the DOM at that point and were skipped. This second call fixes that.
+document.addEventListener('DOMContentLoaded', function() {
+  try { applyTranslations(); } catch(e) {}
+});
+// Also call immediately (script is at end of body, so DOM is ready):
+try { applyTranslations(); } catch(e) {}
+</script>
 </body>
 </html>

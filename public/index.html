@@ -4668,7 +4668,7 @@ async function loadScreener(type, force) {
         <span style="color:#b8cce0;">Preparing ${type} data…</span>
         <span style="font-size:10px;color:#8a9bb0;">This takes ~30s on first load. Retrying automatically…</span>
       </div>`;
-      setTimeout(() => loadScreener(type, true), 5000);
+      setTimeout(() => loadScreener(type, true), 2500);
       return;
     }
 

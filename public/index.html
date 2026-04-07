@@ -4321,7 +4321,7 @@ function renderNews() {
 
   const html = pageItems.map((n, idx) => {
     const isCalRelease = !!n._calRelease;
-    const headline  = lang==='pt' ? translatePT(n.headline_en) : n.headline_en;
+    const headline  = (lang !== 'en' && n['headline_' + lang]) ? n['headline_' + lang] : n.headline_en;
     const impactCls = (n.impact||'LOW').toLowerCase();
     const tags      = getAssetTags(n.assets);
     const moves     = isCalRelease ? [] : getMarketMoves(n.headline_en);

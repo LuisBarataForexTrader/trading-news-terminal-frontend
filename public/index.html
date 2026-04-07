@@ -1174,13 +1174,19 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
           <button class="tv-ch-btn" data-ch="skynews"   onclick="switchChannel('skynews',this)">Sky News</button>
           <button class="tv-ch-btn" data-ch="dw"        onclick="switchChannel('dw',this)">DW News</button>
           <button class="tv-ch-btn" data-ch="france24"  onclick="switchChannel('france24',this)">France 24</button>
-          <button class="tv-ch-btn" data-ch="schwab" onclick="switchChannel('schwab',this)">Schwab Network</button>
+          <button class="tv-ch-btn" data-ch="yahoofinance" onclick="switchChannel('yahoofinance',this)">Yahoo Finance</button>
         </div>
       </div>
       <div class="tv-body">
         <div class="tv-player-wrap">
           <div class="tv-player-container">
             <iframe id="tvPlayerFrame" src="" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+            <div id="tv-offline-overlay" style="display:none;position:absolute;inset:0;background:#0a0c0f;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:10">
+              <div style="font-size:40px">📡</div>
+              <div style="font-size:15px;font-weight:700;color:#fff" id="tv-offline-title">Yahoo Finance is offline right now</div>
+              <div style="font-size:12px;color:#607080;text-align:center;line-height:1.6" id="tv-offline-sub">Live weekdays 9am – 5pm ET (2pm – 10pm Lisbon)<br>Outside market hours the stream is unavailable on YouTube.</div>
+              <a id="tv-offline-link" href="https://finance.yahoo.com/live/" target="_blank" rel="noopener" style="margin-top:8px;padding:10px 24px;background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.35);border-radius:4px;color:#00d4ff;font-size:12px;font-weight:600;text-decoration:none;letter-spacing:.06em">Watch on Yahoo Finance →</a>
+            </div>
           </div>
           <div class="tv-disclaimer" data-i18n="tv.disclaimer">Live stream provided by YouTube. Availability may vary.</div>
         </div>
@@ -1217,9 +1223,9 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
               <div class="tv-ch-info"><div class="tv-ch-name">France 24</div><div class="tv-ch-desc">International News English</div></div>
               <div class="tv-live-badge">LIVE</div>
             </div>
-            <div class="tv-ch-item" data-ch="schwab" onclick="switchChannel('schwab',this)">
+            <div class="tv-ch-item" data-ch="yahoofinance" onclick="switchChannel('yahoofinance',this)">
               <div class="tv-ch-dot"></div>
-              <div class="tv-ch-info"><div class="tv-ch-name">Schwab Network</div><div class="tv-ch-desc">Markets & Financial Analysis</div></div>
+              <div class="tv-ch-info"><div class="tv-ch-name">Yahoo Finance</div><div class="tv-ch-desc">Markets & Financial News</div></div>
               <div class="tv-live-badge">LIVE</div>
             </div>
           </div>
@@ -3181,6 +3187,9 @@ function squawkSpeak(text, url, newsItem) {
   // Dedup: don't queue the same item twice (prevents looping on repeated API data)
   const dedupeKey = (url || clean).slice(0, 80);
   if (squawkQueue.some(q => (q.url || q.text).slice(0, 80) === dedupeKey)) return;
+  // Max queue depth: if already 4+ items pending, drop the oldest to stay current
+  // This prevents squawk falling minutes behind when many items arrive at once
+  if (squawkQueue.length >= 4) squawkQueue.shift();
   squawkQueue.push({
     text: clean,
     url: url||'',
@@ -3188,6 +3197,7 @@ function squawkSpeak(text, url, newsItem) {
     impact: newsItem ? (newsItem.impact||'') : '',
     country: newsItem ? (newsItem._calCountry||newsItem.country||'') : '',
     calId: newsItem ? (newsItem._calId||null) : null,
+    queuedAt: Date.now(),
   });
   if (!squawkSpeaking) drainSquawkQueue();
 }
@@ -3232,6 +3242,11 @@ function _pinSquawkCard(item) {
 function drainSquawkQueue() {
   document.querySelectorAll('.squawk-reading').forEach(el => el.classList.remove('squawk-reading'));
   _removeSquawkBanner();
+  // Drop stale items (queued >45 seconds ago) to stay current — prevents minutes-long backlog
+  const _now = Date.now();
+  while (squawkQueue.length > 0 && squawkQueue[0].queuedAt && (_now - squawkQueue[0].queuedAt) > 45000) {
+    squawkQueue.shift();
+  }
   if (!squawkQueue.length || !squawkEnabled) {
     squawkSpeaking = false;
     _setSquawkTabBlink(false);
@@ -3693,18 +3708,63 @@ const LIVE_STREAM_IDS = {
   'france24':   {type:'channel', id:'UCQfwfsi5VrQ8yKZ-UWmAEFg'},  // France 24 English
   'wion':       {type:'channel', id:'UCJYifGXaZCXxBIY0YkNFBiw'},  // WION
   'euronews':   {type:'channel', id:'UCg2PveIFoQEg2DVwTiT1wYA'},  // Euronews English
-  'schwab':      {type:'channel', id:'UCqoSrYgusd8ZddtMoWhjHYA'},  // Schwab Network (formerly TD Ameritrade Network) — Markets & Financial Analysis
+  'yahoofinance':{type:'smart',   id:'UCEAZeUIeJs0IjQiqTCdVSIg'},  // Yahoo Finance — live weekdays 9am-5pm ET, smart check
 };
 
-function openLiveStream(key, chipEl) {
+function _tvHideOverlay() {
+  const o = document.getElementById('tv-offline-overlay');
+  if (o) o.style.display = 'none';
+}
+function _tvShowOffline(title, sub, link) {
+  const frame = document.getElementById('tvPlayerFrame');
+  if (frame) frame.src = '';
+  const o = document.getElementById('tv-offline-overlay');
+  if (!o) return;
+  const t = document.getElementById('tv-offline-title');
+  const s = document.getElementById('tv-offline-sub');
+  const l = document.getElementById('tv-offline-link');
+  if (t) t.textContent = title || 'Stream offline right now';
+  if (s) s.innerHTML = sub || '';
+  if (l) { l.href = link || '#'; l.style.display = link ? '' : 'none'; }
+  o.style.display = 'flex';
+}
+async function openLiveStream(key, chipEl) {
   const s = LIVE_STREAM_IDS[key];
   if (!s) return;
+  document.querySelectorAll('.tv-ch-btn, .tv-ch-item').forEach(c => c.classList.toggle('active', c.dataset.ch === key));
+
+  // Smart loader for Yahoo Finance (and any future channel with type:'smart')
+  if (s.type === 'smart') {
+    _tvHideOverlay();
+    const frame = document.getElementById('tvPlayerFrame');
+    if (frame) frame.src = '';  // clear while checking
+    try {
+      const API = window.API_BASE || 'https://trading-news-terminal-backend-production.up.railway.app';
+      const res = await fetch(`${API}/proxy/youtube-live?channel=${s.id}`);
+      const data = await res.json();
+      if (data.live && data.video_id) {
+        _tvHideOverlay();
+        if (frame) frame.src = `https://www.youtube.com/embed/${data.video_id}?autoplay=1&rel=0`;
+      } else {
+        _tvShowOffline(
+          'Yahoo Finance is offline right now',
+          'Live weekdays 9am – 5pm ET (2pm – 10pm Lisbon)<br>Outside market hours the stream is unavailable on YouTube.',
+          'https://finance.yahoo.com/live/'
+        );
+      }
+    } catch(e) {
+      _tvShowOffline('Yahoo Finance', 'Could not check live status. Try opening directly.', 'https://finance.yahoo.com/live/');
+    }
+    return;
+  }
+
+  // Standard embed
+  _tvHideOverlay();
   const src = s.type === 'channel'
     ? `https://www.youtube.com/embed/live_stream?channel=${s.id}&autoplay=1`
     : `https://www.youtube.com/embed/${s.id}?autoplay=1&rel=0&modestbranding=1`;
   const frame = document.getElementById('tvPlayerFrame');
   if (frame) frame.src = src;
-  document.querySelectorAll('.tv-ch-btn, .tv-ch-item').forEach(c => c.classList.toggle('active', c.dataset.ch === key));
 }
 function closeLivePlayer() {
   const player = document.getElementById('livePlayerInline');
@@ -3734,7 +3794,7 @@ const TV_CHANNELS = {
   reuters:    'https://www.youtube.com/embed/live_stream?channel=UChqUTb7kYRX8-EiaN3XFrSQ&autoplay=1&mute=0',
   foxbiz:     'https://www.youtube.com/embed/live_stream?channel=UC5xQMo6rBuZHRNKnBhCi3Dw&autoplay=1&mute=0',
   aljazeera:  'https://www.youtube.com/embed/live_stream?channel=UCNye-wNBqNL5ZzHSJj3l8Bg&autoplay=1&mute=0',
-  schwab:     'https://www.youtube.com/embed/live_stream?channel=UCqoSrYgusd8ZddtMoWhjHYA&autoplay=1&mute=0',
+  yahoofinance: 'smart',  // handled by openLiveStream smart loader
 };
 let currentChannel = 'bloomberg';
 

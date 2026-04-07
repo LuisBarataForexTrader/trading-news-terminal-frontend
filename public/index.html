@@ -4940,12 +4940,13 @@ function _renderScTable(type, data) {
   for (const d of data) {
     // Build row onclick — symbols are always alphanumeric/safe for inline JS
     let rowClick = '';
-    if (type === 'stocks')      rowClick = `_scOpenChart('stocks','${d.symbol}','${(d.name||d.symbol).replace(/'/g,'').replace(/"/g,'')}')`;
+    if (type === 'stocks')      rowClick = `openCompanyDetail('${d.symbol}','${(d.name||d.symbol).replace(/'/g,'').replace(/"/g,'')}')`;
     else if (type === 'forex')  rowClick = `_scOpenChart('forex','${(d.pair||'').replace(/'/g,'')}','${(d.pair||'')}')`;
     else if (type === 'crypto') rowClick = `_scOpenChart('crypto','${d.symbol}','${(d.name||d.symbol).replace(/'/g,'')}')`;
     else if (type === 'commodities') rowClick = `_scOpenChart('commodities','${(d.ticker||d.name||'').replace(/'/g,'').replace(/\s/g,'')}','${(d.name||'').replace(/'/g,'')}')`;
     else if (type === 'multi')  rowClick = `_scOpenChart('${(d.asset_type||'stocks').toLowerCase()}','${(d.symbol||'').replace(/'/g,'')}','${(d.name||'').replace(/'/g,'')}')`;
-    h += `<tr onclick="${rowClick}" title="Open chart for ${d.symbol||d.pair||d.name}" style="cursor:pointer">`;
+    const rowTitle = type === 'stocks' ? `View ${d.symbol} company card` : `Open chart for ${d.symbol||d.pair||d.name}`;
+    h += `<tr onclick="${rowClick}" title="${rowTitle}" style="cursor:pointer">`;
     if (type === 'stocks') {
       const _sym = `<td><span class="sc-sym">${d.symbol}</span></td>
             <td><span class="sc-name" title="${d.name}">${d.name}</span></td>

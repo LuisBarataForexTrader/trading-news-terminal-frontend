@@ -107,7 +107,6 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .upgrade-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#7a9ab0;cursor:pointer;font-size:18px;line-height:1;}
 .upgrade-icon{font-size:36px;margin-bottom:16px;}
 .upgrade-title{font-size:22px;font-weight:800;margin-bottom:8px;}
-.upgrade-desc{font-size:14px;color:#dde8f4;line-height:1.6;margin-bottom:28px;}
 .upgrade-feature{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#a78bfa;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);padding:4px 12px;border-radius:2px;margin-bottom:20px;}
 .upgrade-benefits{display:flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:28px;}
 .upgrade-benefit{display:flex;align-items:center;gap:10px;font-size:13px;color:#ffffff;}
@@ -1866,8 +1865,9 @@ const STRINGS = {
     'upgrade.best_value':'💰 Best Value',
     'upgrade.billed_monthly':'Billed monthly','upgrade.cancel_anytime':'Cancel anytime',
     'upgrade.save':'Save €120 (25% off)',
+    'upgrade.per_mo':'/mo',
     'upgrade.choose':'Choose →','upgrade.maybe_later':'Maybe later',
-    'upgrade.vat':'ℹ excl. VAT where applicable · Billed in EUR',
+    'upgrade.vat':'excl. VAT where applicable · Billed in EUR',
   },
   pt:{
     'logo.sub':'Inteligência de Mercado em Tempo Real',
@@ -2026,8 +2026,9 @@ const STRINGS = {
     'upgrade.best_value':'💰 Melhor Valor',
     'upgrade.billed_monthly':'Faturado mensalmente','upgrade.cancel_anytime':'Cancela quando queres',
     'upgrade.save':'Poupa €120 (25% off)',
+    'upgrade.per_mo':'/mês',
     'upgrade.choose':'Escolher →','upgrade.maybe_later':'Talvez mais tarde',
-    'upgrade.vat':'ℹ IVA não incluído onde aplicável · Faturado em EUR',
+    'upgrade.vat':'IVA não incluído onde aplicável · Faturado em EUR',
   },
   es:{
     'logo.sub':'Inteligencia de Mercado en Tiempo Real',
@@ -2186,8 +2187,9 @@ const STRINGS = {
     'upgrade.best_value':'💰 Mejor Valor',
     'upgrade.billed_monthly':'Facturado mensualmente','upgrade.cancel_anytime':'Cancela cuando quieras',
     'upgrade.save':'Ahorra €120 (25% off)',
+    'upgrade.per_mo':'/mes',
     'upgrade.choose':'Elegir →','upgrade.maybe_later':'Quizás más tarde',
-    'upgrade.vat':'ℹ IVA no incluido donde aplique · Facturado en EUR',
+    'upgrade.vat':'IVA no incluido donde aplique · Facturado en EUR',
   },
   fr:{
     'logo.sub':'Intelligence de Marché en Temps Réel',
@@ -2346,8 +2348,9 @@ const STRINGS = {
     'upgrade.best_value':'💰 Meilleur Rapport',
     'upgrade.billed_monthly':'Facturé mensuellement','upgrade.cancel_anytime':'Annulez à tout moment',
     'upgrade.save':'Économisez €120 (25% off)',
+    'upgrade.per_mo':'/mois',
     'upgrade.choose':'Choisir →','upgrade.maybe_later':'Peut-être plus tard',
-    'upgrade.vat':'ℹ TVA excl. si applicable · Facturé en EUR',
+    'upgrade.vat':'TVA excl. si applicable · Facturé en EUR',
   },
   de:{
     'logo.sub':'Markt-Intelligenz in Echtzeit',
@@ -2506,8 +2509,9 @@ const STRINGS = {
     'upgrade.best_value':'💰 Bestes Angebot',
     'upgrade.billed_monthly':'Monatliche Abrechnung','upgrade.cancel_anytime':'Jederzeit kündbar',
     'upgrade.save':'Spare €120 (25% off)',
+    'upgrade.per_mo':'/Monat',
     'upgrade.choose':'Wählen →','upgrade.maybe_later':'Vielleicht später',
-    'upgrade.vat':'ℹ zzgl. MwSt. wenn anwendbar · Abrechnung in EUR',
+    'upgrade.vat':'zzgl. MwSt. wenn anwendbar · Abrechnung in EUR',
   },
   it:{
     'logo.sub':'Intelligence di Mercato in Tempo Reale',
@@ -2666,8 +2670,9 @@ const STRINGS = {
     'upgrade.best_value':'💰 Miglior Valore',
     'upgrade.billed_monthly':'Fatturazione mensile','upgrade.cancel_anytime':'Disdici quando vuoi',
     'upgrade.save':'Risparmia €120 (25% off)',
+    'upgrade.per_mo':'/mese',
     'upgrade.choose':'Scegli →','upgrade.maybe_later':'Forse più tardi',
-    'upgrade.vat':'ℹ IVA esclusa dove applicabile · Fatturato in EUR',
+    'upgrade.vat':'IVA esclusa dove applicabile · Fatturato in EUR',
   }
 };
 function t(key) { return (STRINGS[lang]||STRINGS.en)[key]||key; }
@@ -5189,9 +5194,7 @@ async function openCompanyDetail(ticker, name){
 }
 
 function showUpgrade(featureName) {
-  const desc = PRO_FEATURES[featureName] || 'This feature is available on the Pro plan.';
   document.getElementById('upgrade-feature-name').textContent = featureName;
-  document.getElementById('upgrade-feature-desc').textContent = desc;
   document.getElementById('upgrade-overlay').classList.add('show');
   applyTranslations();
 }
@@ -6424,7 +6427,6 @@ function _fmtScTs(ts) {
     <div class="upgrade-icon">🔒</div>
     <div class="upgrade-feature" id="upgrade-feature-name">Pro Feature</div>
     <h2 class="upgrade-title" data-i18n="upgrade.title">Upgrade to Pro</h2>
-    <p class="upgrade-desc" id="upgrade-feature-desc"></p>
     <div class="upgrade-benefits">
       <div class="upgrade-benefit" data-i18n="upgrade.benefit1">Real-time news feed — zero delay</div>
       <div class="upgrade-benefit" data-i18n="upgrade.benefit2">Live squawk — instant voice alerts</div>
@@ -6434,15 +6436,16 @@ function _fmtScTs(ts) {
     </div>
     <div class="plan-cards">
       <div class="plan-card">
+        <div style="height:24px"></div>
         <div class="plan-card-label" data-i18n="upgrade.monthly">Monthly</div>
-        <div class="plan-card-price">€40<span>/mo</span></div>
+        <div class="plan-card-price">€40<span data-i18n="upgrade.per_mo">/mo</span></div>
         <div class="plan-card-sub"><span data-i18n="upgrade.billed_monthly">Billed monthly</span><br><span data-i18n="upgrade.cancel_anytime">Cancel anytime</span></div>
         <button class="plan-card-btn" onclick="goToPro(this,'price_1THo43PgXWxcInoUGZJGT1Ti')" data-i18n="upgrade.choose">Choose →</button>
       </div>
       <div class="plan-card annual">
         <div class="plan-card-badge" data-i18n="upgrade.best_value">💰 Best Value</div>
         <div class="plan-card-label" data-i18n="upgrade.annual">Annual</div>
-        <div class="plan-card-price">€30<span>/mo</span></div>
+        <div class="plan-card-price">€30<span data-i18n="upgrade.per_mo">/mo</span></div>
         <div class="plan-card-sub">€360/year · <s>€480</s><br><span data-i18n="upgrade.save">Save €120 (25% off)</span></div>
         <button class="plan-card-btn" onclick="goToPro(this,'price_1THo41PgXWxcInoUF3o6fKDh')" data-i18n="upgrade.choose">Choose →</button>
       </div>

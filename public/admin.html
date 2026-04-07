@@ -715,6 +715,7 @@ setInterval(_tick,1000); _tick();
 
 // ── Auth ──────────────────────────────────────────────────────
 let _totpRequired = false;
+let _freshLogin = false;   // true for 5s after login — prevents race-condition auto-logout
 
 async function doLogin() {
   const pwd = document.getElementById('pwd-input').value.trim();
@@ -748,6 +749,8 @@ async function doLogin() {
     localStorage.setItem('tnt_admin_token', data.token);
     localStorage.setItem('tnt_admin_token_exp', exp.toString());
     _token = data.token;
+    _freshLogin = true;                           // block race-condition auto-logout
+    setTimeout(() => { _freshLogin = false; }, 5000);
     _enterApp();
   } catch(e) {
     showLoginErr('Connection error');
@@ -898,7 +901,8 @@ async function api(path, opts={}) {
     let detail = r.status.toString();
     try { const d = await r.json(); detail = d.detail || detail; } catch(e){}
     // Auto-logout on auth failure (expired/invalid session)
-    if (r.status === 403 && path !== '/admin/auth/login') {
+    // _freshLogin guard prevents race: verifyToken(old_token)->403 firing after a fresh login
+    if (r.status === 403 && path !== '/admin/auth/login' && !_freshLogin) {
       showToast('Session expired — please sign in again', 'error');
       setTimeout(() => logout(), 1500);
     }

@@ -1445,7 +1445,7 @@ async function saveProfile() {
   const btn = document.getElementById('saveProfileBtn');
   const msgEl = document.getElementById('profileMsg');
   msgEl.className = 'settings-msg'; msgEl.textContent = '';
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = t('settings.saving') || 'Saving…';
   const token = localStorage.getItem('tnt_token');
   const name = document.getElementById('settingsName').value.trim();
   const pendingAvatar = document.getElementById('settingsAvatarPreview').dataset.pending || null;
@@ -1481,7 +1481,7 @@ async function saveProfile() {
     msgEl.textContent = err.message || 'Error saving profile.';
     msgEl.className = 'settings-msg err';
   } finally {
-    btn.disabled = false; btn.textContent = 'Save Changes';
+    btn.disabled = false; btn.textContent = t('settings.save');
   }
 }
 async function savePassword() {
@@ -1494,7 +1494,7 @@ async function savePassword() {
   if (!cur || !nw) { msgEl.textContent='Fill in all password fields.'; msgEl.className='settings-msg err'; return; }
   if (nw.length < 6) { msgEl.textContent='New password must be at least 6 characters.'; msgEl.className='settings-msg err'; return; }
   if (nw !== cf) { msgEl.textContent='Passwords do not match.'; msgEl.className='settings-msg err'; return; }
-  btn.disabled = true; btn.textContent = 'Updating…';
+  btn.disabled = true; btn.textContent = t('settings.updating') || 'Updating…';
   const token = localStorage.getItem('tnt_token');
   try {
     const r = await fetch(BACKEND_URL+'/auth/me/password', {
@@ -1512,14 +1512,14 @@ async function savePassword() {
     msgEl.textContent = err.message || 'Error updating password.';
     msgEl.className = 'settings-msg err';
   } finally {
-    btn.disabled = false; btn.textContent = 'Update Password';
+    btn.disabled = false; btn.textContent = t('settings.update_pwd');
   }
 }
 async function openBillingPortal() {
   const btn = document.getElementById('settingsManageBtn');
   const msgEl = document.getElementById('billingMsg');
   msgEl.className = 'settings-msg'; msgEl.textContent = '';
-  btn.disabled = true; btn.textContent = 'Loading…';
+  btn.disabled = true; btn.textContent = t('settings.loading') || 'Loading…';
   const token = localStorage.getItem('tnt_token');
   try {
     const r = await fetch(BACKEND_URL+'/billing/portal', {
@@ -1532,7 +1532,7 @@ async function openBillingPortal() {
   } catch(err) {
     msgEl.textContent = err.message || 'Error opening billing portal.';
     msgEl.className = 'settings-msg err';
-    btn.disabled = false; btn.textContent = 'Manage Subscription';
+    btn.disabled = false; btn.textContent = t('settings.manage');
   }
 }
 
@@ -1700,6 +1700,7 @@ const STRINGS = {
     'settings.update_pwd':'Update Password',
     'settings.subscription':'Subscription','settings.current_plan':'Current Plan',
     'settings.upgrade':'Upgrade to Pro →','settings.manage':'Manage Subscription',
+    'settings.saving':'Saving…','settings.updating':'Updating…','settings.loading':'Loading…',
     'load.fx':'⟳ Loading FX rates...','load.crypto':'⟳ Loading crypto markets...',
     'load.commodities':'⟳ Loading commodity prices...','load.macro':'⟳ Loading macro indicators...',
     'load.sentiment':'⟳ Loading sentiment data...','load.earnings':'⟳ Loading earnings calendar...',
@@ -1842,6 +1843,7 @@ const STRINGS = {
     'settings.update_pwd':'Atualizar Palavra-passe',
     'settings.subscription':'Subscrição','settings.current_plan':'Plano Atual',
     'settings.upgrade':'Mudar para Pro →','settings.manage':'Gerir Subscrição',
+    'settings.saving':'A guardar…','settings.updating':'A atualizar…','settings.loading':'A carregar…',
     'load.fx':'⟳ A carregar câmbios...','load.crypto':'⟳ A carregar mercados cripto...',
     'load.commodities':'⟳ A carregar matérias-primas...','load.macro':'⟳ A carregar indicadores macro...',
     'load.sentiment':'⟳ A carregar sentimento...','load.earnings':'⟳ A carregar calendário de resultados...',
@@ -1984,6 +1986,7 @@ const STRINGS = {
     'settings.update_pwd':'Actualizar Contraseña',
     'settings.subscription':'Suscripción','settings.current_plan':'Plan Actual',
     'settings.upgrade':'Pásate a Pro →','settings.manage':'Gestionar Suscripción',
+    'settings.saving':'Guardando…','settings.updating':'Actualizando…','settings.loading':'Cargando…',
     'load.fx':'⟳ Cargando tipos FX...','load.crypto':'⟳ Cargando mercados cripto...',
     'load.commodities':'⟳ Cargando materias primas...','load.macro':'⟳ Cargando indicadores macro...',
     'load.sentiment':'⟳ Cargando sentimiento...','load.earnings':'⟳ Cargando calendario de resultados...',
@@ -2126,6 +2129,7 @@ const STRINGS = {
     'settings.update_pwd':'Mettre à Jour le Mot de Passe',
     'settings.subscription':'Abonnement','settings.current_plan':'Plan Actuel',
     'settings.upgrade':'Passer à Pro →','settings.manage':'Gérer l\u2019Abonnement',
+    'settings.saving':'Enregistrement…','settings.updating':'Mise à jour…','settings.loading':'Chargement…',
     'load.fx':'⟳ Chargement des taux FX...','load.crypto':'⟳ Chargement des marchés crypto...',
     'load.commodities':'⟳ Chargement des matières premières...','load.macro':'⟳ Chargement des indicateurs macro...',
     'load.sentiment':'⟳ Chargement du sentiment...','load.earnings':'⟳ Chargement du calendrier des résultats...',
@@ -2268,6 +2272,7 @@ const STRINGS = {
     'settings.update_pwd':'Passwort aktualisieren',
     'settings.subscription':'Abonnement','settings.current_plan':'Aktueller Plan',
     'settings.upgrade':'Auf Pro upgraden →','settings.manage':'Abonnement verwalten',
+    'settings.saving':'Wird gespeichert…','settings.updating':'Wird aktualisiert…','settings.loading':'Lädt…',
     'load.fx':'⟳ FX-Kurse werden geladen...','load.crypto':'⟳ Krypto-Märkte werden geladen...',
     'load.commodities':'⟳ Rohstoffpreise werden geladen...','load.macro':'⟳ Makro-Indikatoren werden geladen...',
     'load.sentiment':'⟳ Sentiment wird geladen...','load.earnings':'⟳ Ergebniskalender wird geladen...',
@@ -2410,6 +2415,7 @@ const STRINGS = {
     'settings.update_pwd':'Aggiorna Password',
     'settings.subscription':'Abbonamento','settings.current_plan':'Piano Attuale',
     'settings.upgrade':'Passa a Pro →','settings.manage':'Gestisci Abbonamento',
+    'settings.saving':'Salvataggio…','settings.updating':'Aggiornamento…','settings.loading':'Caricamento…',
     'load.fx':'⟳ Caricamento tassi FX...','load.crypto':'⟳ Caricamento mercati cripto...',
     'load.commodities':'⟳ Caricamento materie prime...','load.macro':'⟳ Caricamento indicatori macro...',
     'load.sentiment':'⟳ Caricamento sentiment...','load.earnings':'⟳ Caricamento calendario risultati...',

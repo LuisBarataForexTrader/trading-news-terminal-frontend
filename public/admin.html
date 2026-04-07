@@ -472,8 +472,8 @@ select.ctrl-sel:focus{border-color:var(--accent)}
         <div class="table-wrap">
           <div style="overflow-x:auto">
             <table class="data-table">
-              <thead><tr><th>ID</th><th>Email</th><th>Name</th><th>Country</th><th>Status</th><th>Trial Started</th><th>Plan Changed</th></tr></thead>
-              <tbody id="trial-conv-tbody"><tr><td colspan="7" class="empty-state">–</td></tr></tbody>
+              <thead><tr><th>ID</th><th>Email</th><th>Name</th><th>Country</th><th>Duration</th><th>Status</th><th>Trial Started</th><th>Plan Changed</th></tr></thead>
+              <tbody id="trial-conv-tbody"><tr><td colspan="8" class="empty-state">–</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -1570,23 +1570,28 @@ async function loadFunnel() {
     const COUNTRY_FLAGS2 = {PT:'🇵🇹',BR:'🇧🇷',US:'🇺🇸',GB:'🇬🇧',DE:'🇩🇪',FR:'🇫🇷',ES:'🇪🇸',IT:'🇮🇹',NL:'🇳🇱',BE:'🇧🇪',CH:'🇨🇭',AT:'🇦🇹',PL:'🇵🇱',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',FI:'🇫🇮',IE:'🇮🇪',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',ZA:'🇿🇦',AE:'🇦🇪',SG:'🇸🇬',HK:'🇭🇰',JP:'🇯🇵',IN:'🇮🇳',MX:'🇲🇽',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴'};
     const tcTbody = document.getElementById('trial-conv-tbody');
     if (!tc.users || !tc.users.length) {
-      tcTbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum utilizador com trial</td></tr>';
+      tcTbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhum utilizador com trial</td></tr>';
     } else {
       tcTbody.innerHTML = tc.users.map(u => {
         const flagStr = u.country ? (COUNTRY_FLAGS2[u.country]||'🌍') + ' ' + u.country : '<span style="color:var(--border2)">—</span>';
+        const durStr = _fmtTrialDur(u.trial_hours);
+        const durCell = durStr
+          ? `<span class="trial-dur-badge" style="font-size:11px">${durStr}</span>`
+          : '<span style="color:var(--border2)">—</span>';
         let statusBadge;
         if (u.plan === 'pro') {
           statusBadge = `<span class="badge badge-pro" style="color:var(--accent)">✓ Converteu → Pro</span>`;
         } else if (u.plan === 'trial') {
-          statusBadge = `<span class="badge badge-trial" style="color:var(--amber)">Em Trial</span>`;
+          statusBadge = `<span class="badge badge-trial" style="color:var(--amber)">⏳ Em Trial</span>`;
         } else {
-          statusBadge = `<span class="badge" style="background:rgba(239,68,68,.1);color:var(--red);border-color:rgba(239,68,68,.3)">Não Converteu</span>`;
+          statusBadge = `<span class="badge" style="background:rgba(239,68,68,.1);color:var(--red);border-color:rgba(239,68,68,.3)">✗ Não Converteu</span>`;
         }
         return `<tr>
           <td><span class="num">${u.id}</span></td>
           <td>${u.email}</td>
           <td style="color:var(--text-muted)">${u.name||'–'}</td>
           <td style="font-size:12px">${flagStr}</td>
+          <td style="text-align:center">${durCell}</td>
           <td>${statusBadge}</td>
           <td><span class="num">${(u.trial_started_at||'–').slice(0,10)}</span></td>
           <td><span class="num">${(u.plan_changed_at||'–').slice(0,10)}</span></td>

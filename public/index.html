@@ -890,10 +890,11 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
         <div class="squawk-dd-row">
           <span class="squawk-dd-lbl">Read news</span>
           <div class="squawk-chips">
-            <button class="squawk-chip sel" data-sf="ALL"     onclick="setSquawkFilter('ALL',this)">All</button>
-            <button class="squawk-chip"     data-sf="HIGH"    onclick="setSquawkFilter('HIGH',this)">🔴 High Impact</button>
-            <button class="squawk-chip"     data-sf="MEDIUM"  onclick="setSquawkFilter('MEDIUM',this)">🟡 Medium Impact</button>
-            <button class="squawk-chip"     data-sf="MY_NEWS" onclick="setSquawkFilter('MY_NEWS',this)">★ My News</button>
+            <button class="squawk-chip sel" data-sf="ALL"      onclick="setSquawkFilter('ALL',this)">All</button>
+            <button class="squawk-chip"     data-sf="HIGH"     onclick="setSquawkFilter('HIGH',this)">🔴 High Impact</button>
+            <button class="squawk-chip"     data-sf="MEDIUM"   onclick="setSquawkFilter('MEDIUM',this)">🟡 Medium Impact</button>
+            <button class="squawk-chip"     data-sf="MY_NEWS"  onclick="setSquawkFilter('MY_NEWS',this)">★ My News</button>
+            <button class="squawk-chip"     data-sf="CALENDAR" onclick="setSquawkFilter('CALENDAR',this)" title="Read Medium + High Economic Calendar releases">📅 Calendar</button>
           </div>
         </div>
         <button class="squawk-test-btn" onclick="testSquawkVoice()">▶ Test Voice</button>
@@ -2270,8 +2271,14 @@ function _prepareSquawkText(text) {
 
 function squawkSpeak(text, url, newsItem) {
   if (!squawkEnabled || !text) return;
-  // Apply squawk filters (multi-select): if ALL not active, news must match at least one selected filter
-  if (newsItem && !squawkFilters.has('ALL')) {
+  // Calendar releases: only spoken when user opted in via CALENDAR chip (or ALL)
+  if (newsItem && newsItem._calRelease) {
+    const allowed = squawkFilters.has('ALL') || squawkFilters.has('CALENDAR');
+    if (!allowed) return;
+    // Calendar: Medium + High only; Low releases are never spoken even with ALL
+    if (newsItem.impact !== 'HIGH' && newsItem.impact !== 'MEDIUM') return;
+  } else if (newsItem && !squawkFilters.has('ALL')) {
+    // Regular news filters (multi-select): must match at least one selected filter
     const impactOk = (squawkFilters.has('HIGH') && newsItem.impact === 'HIGH')
                   || (squawkFilters.has('MEDIUM') && newsItem.impact === 'MEDIUM');
     const myNewsOk = squawkFilters.has('MY_NEWS') && newsMatchesCategory(newsItem, 'MY_NEWS');
@@ -2930,7 +2937,8 @@ function isFresh(ts) { return (Date.now()-parseUTC(ts).getTime()) < 10*60*1000; 
 
 // ─── Render News ─────────────────────────────────────────────────
 function renderNews() {
-  const combined = [...allNews,...calReleases].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  // Sort strictly by UTC timestamp — always show latest on top, never pin calendar or CB news
+  const combined = [...allNews,...calReleases].sort((a,b)=>parseUTC(b.timestamp)-parseUTC(a.timestamp));
 
   let filtered = combined;
   // Impact filter (sidebar) — always applied
@@ -3210,7 +3218,14 @@ function injectCalRelease(e) {
     _calId: e.id,
   });
   if(soundEnabled&&e.importance===1){const now=Date.now();if(now-lastSoundTime>60000){lastSoundTime=now;playAlert();}}
-  if(e.importance===1) squawkSpeak(headline, calUrl, null); // Calendar events are always high impact
+  // Queue Medium + High calendar releases for squawk (filter CALENDAR controls whether it actually speaks)
+  if (e.importance === 1 || e.importance === 0) {
+    const calNewsItem = {
+      impact, _calRelease: true, _calCountry: e.country,
+      headline_en: headline, url: calUrl, timestamp: e.date,
+    };
+    squawkSpeak(headline, calUrl, calNewsItem);
+  }
   renderNews();
 }
 async function loadCalendar() {

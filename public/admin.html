@@ -1220,7 +1220,24 @@ function userRow(u) {
   const activeTd = isActive
     ? '<span style="color:var(--green);font-family:var(--font-mono);font-size:12px">✓</span>'
     : `<button class="act-btn" onclick="verifyUser(${u.id},'${u.email}')">Verify</button>`;
-  const trial   = u.trial_ends_at ? u.trial_ends_at.slice(0,10) : '–';
+  // Trial: show start → end with date + time (e.g. "07/04 10:12 → 14/04 10:12")
+  const _fmtDT = (iso) => {
+    if (!iso) return null;
+    try {
+      const d = new Date(iso.endsWith('Z')||iso.includes('+')?iso:iso+'Z');
+      const dd = String(d.getUTCDate()).padStart(2,'0');
+      const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+      const hh = String(d.getUTCHours()).padStart(2,'0');
+      const mi = String(d.getUTCMinutes()).padStart(2,'0');
+      return `${dd}/${mm} ${hh}:${mi}`;
+    } catch { return null; }
+  };
+  let trial = '–';
+  if (u.trial_ends_at) {
+    const start = u.plan === 'trial' && u.plan_changed_at ? _fmtDT(u.plan_changed_at) : null;
+    const end   = _fmtDT(u.trial_ends_at);
+    trial = start ? `${start} → ${end}` : (end || '–');
+  }
   const created = u.created_at   ? u.created_at.slice(0,10)    : '–';
   const seen    = u.last_seen    ? u.last_seen.slice(0,10)      : '–';
   const email   = u.email.replace(/'/g,'');

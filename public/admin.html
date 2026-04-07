@@ -466,7 +466,7 @@ select.ctrl-sel:focus{border-color:var(--accent)}
         <div class="sec-hdr" style="margin-top:32px">
           <h2>Trial Conversion</h2><div class="sec-hdr-line"></div>
         </div>
-        <div id="trial-conv-kpis" class="kpi-row" style="margin-bottom:20px">
+        <div id="trial-conv-kpis" class="kpi-grid" style="margin-bottom:20px">
           <div class="empty-state"><span class="spinner"></span> Loading…</div>
         </div>
         <div class="table-wrap">
@@ -1095,7 +1095,8 @@ function filterFeeds() {
 // ── Chart factory ──────────────────────────────────────────────
 Chart.defaults.font.family = "'IBM Plex Mono', monospace";
 Chart.defaults.color = '#a0b4c4';
-Chart.defaults.animation = { duration: 600, easing: 'easeOutQuart' };
+Chart.defaults.animation.duration = 600;
+Chart.defaults.animation.easing = 'easeOutQuart';
 
 // Gradient fill plugin — runs before each render to inject canvas gradients
 const _gradPlugin = {
@@ -1138,7 +1139,7 @@ function baseOpts(extra={}) {
         boxWidth:8, boxHeight:8,
       }
     },
-    scales:{ x:{ grid:GRID, ticks:XTICK, border:{color:'rgba(255,255,255,.06)'} }, y:{ grid:GRID, ticks:YTICK, border:{color:'transparent'} } },
+    scales:{ x:{ grid:GRID, ticks:XTICK }, y:{ grid:GRID, ticks:YTICK } },
     ...extra
   };
 }

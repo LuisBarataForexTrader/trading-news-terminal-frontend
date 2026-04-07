@@ -3828,8 +3828,7 @@ const _authHeader = () => {
   const t = localStorage.getItem('tnt_token');
   return t ? {'Authorization': 'Bearer ' + t} : {};
 };
-// Trigger backend fetch every 30s
-setInterval(async () => { try { await fetch(BACKEND_URL+'/fetch'); } catch(e){} }, 30000);
+
 // Fallback poll every 60s (treat as init — squawk only via WebSocket live updates)
 setInterval(async () => {
   try {

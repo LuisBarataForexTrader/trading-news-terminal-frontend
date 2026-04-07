@@ -3137,6 +3137,7 @@ function squawkSpeak(text, url, newsItem) {
     isCal: !!(newsItem && newsItem._calRelease),
     impact: newsItem ? (newsItem.impact||'') : '',
     country: newsItem ? (newsItem._calCountry||newsItem.country||'') : '',
+    calId: newsItem ? (newsItem._calId||null) : null,
   });
   if (!squawkSpeaking) drainSquawkQueue();
 }
@@ -3149,29 +3150,33 @@ function _setSquawkTabBlink(on) {
   if (!on) btn.classList.remove('tab-squawk-reading');
 }
 
-let _squawkBannerItem = null; // tracks the item currently shown in the banner
+// Tracks the item squawk is currently reading — renderNews uses this to pin it at top
+let _squawkBannerItem = null;
 
 function _removeSquawkBanner() {
   _squawkBannerItem = null;
+  // Remove any leftover DOM banner from old approach
   const b = document.getElementById('squawk-banner');
   if (b) b.remove();
+  // Re-render so item returns to its correct time-sorted position
+  try { renderNews(); } catch(e) {}
 }
 
-function _showSquawkBanner(item) {
+// Sets the pin and immediately moves the card to top in the live DOM (no re-render needed)
+function _pinSquawkCard(item) {
   _squawkBannerItem = item;
   const feed = document.getElementById('newsFeed');
   if (!feed) return;
-  const icon = item.isCal ? '📅' : '📢';
-  const impactColor = item.impact === 'HIGH' ? '#ff3b5c' : item.impact === 'MEDIUM' ? '#f59e0b' : '#00d4ff';
-  const impactTag  = item.impact ? `<span style="color:${impactColor};font-size:10px;font-weight:700;text-transform:uppercase;margin-left:6px;">${item.impact}</span>` : '';
-  const countryTag = item.country ? `<span style="color:#8899aa;font-size:10px;margin-left:6px;">${item.country}</span>` : '';
-  const label = item.isCal ? `📅 Economic Calendar${impactTag}${countryTag}` : `📢 Squawk${impactTag}`;
-  const banner = document.createElement('div');
-  banner.id = 'squawk-banner';
-  banner.className = 'squawk-banner';
-  banner.innerHTML = `<div class="squawk-banner-body"><div class="squawk-banner-label">${label}</div><div class="squawk-banner-text">${item.text}</div></div>`;
-  feed.insertBefore(banner, feed.firstChild);
-  feed.scrollTo({top: 0, behavior: 'smooth'});
+  // Find the card by calId (CE events) or by url (regular news)
+  const card = item.calId
+    ? feed.querySelector(`.news-item[data-calid="${CSS.escape(String(item.calId))}"]`)
+    : (item.url ? feed.querySelector(`.news-item[data-url="${CSS.escape(item.url)}"]`) : null);
+  if (card) {
+    card.classList.add('squawk-reading');
+    // Move card to very top of feed
+    feed.insertBefore(card, feed.firstChild);
+    feed.scrollTo({top: 0, behavior: 'smooth'});
+  }
 }
 
 function drainSquawkQueue() {
@@ -3201,21 +3206,8 @@ function drainSquawkQueue() {
   const voice = _getBestVoice();
   if (voice) utter.voice = voice;
   if (currentTab !== 'news') switchTab('news');
-  setTimeout(() => {
-    if (item.isCal) {
-      // Calendar events all share the same day URL — never try to match a card.
-      // Always show the floating banner so the user knows exactly what is being read.
-      _showSquawkBanner(item);
-    } else if (item.url) {
-      const card = [...document.querySelectorAll('.news-item[data-url]')].find(el => el.dataset.url === item.url);
-      if (card) {
-        card.classList.add('squawk-reading');
-        card.scrollIntoView({behavior:'smooth', block:'center'});
-      } else {
-        _showSquawkBanner(item);
-      }
-    }
-  }, 150);
+  // Pin the card at the top of the feed immediately
+  setTimeout(() => _pinSquawkCard(item), 150);
   // Chrome TTS warm-up: speak a silent zero-width utterance first to prevent
   // the first word ("Attention") from being cut off after a period of silence.
   try {
@@ -3970,6 +3962,14 @@ function renderNews() {
   if (!impactFilters.has('ALL')) filtered = filtered.filter(n=>impactFilters.has(n.impact));
   // Category filter (multi-select) — 0 selected = ALL
   if (selectedCategories.size > 0) filtered = filtered.filter(n=>newsMatchesSelected(n));
+  // Pin squawked item at the top while squawk is reading — after reading it falls to correct position
+  if (_squawkBannerItem) {
+    const _sq = _squawkBannerItem;
+    const sqIdx = _sq.calId
+      ? filtered.findIndex(n => n._calId === _sq.calId)
+      : (_sq.url ? filtered.findIndex(n => n.url === _sq.url) : -1);
+    if (sqIdx > 0) { const [sq] = filtered.splice(sqIdx, 1); filtered.unshift(sq); }
+  }
   // Search filter
   if (searchQuery) {
     // Expand forex pair searches: "eurusd" → ["eur","usd"], "gbpjpy" → ["gbp","jpy"]
@@ -4097,7 +4097,13 @@ function renderNews() {
       : (n.url && !ytId ? `window.open('${n.url}','_blank')` : 'void(0)');
 
     const safeUrl = (n.url||'').replace(/"/g,'&quot;');
-    const card = `<div class="news-item ${itemCls}${freshCls}${ageCls?' '+ageCls:''}${ytId?' has-video':''}" data-url="${safeUrl}" onclick="${clickAction}">
+    const calIdAttr = n._calId ? ` data-calid="${n._calId}"` : '';
+    const isSquawkActive = _squawkBannerItem && (
+      (n._calId && _squawkBannerItem.calId && n._calId === _squawkBannerItem.calId) ||
+      (!n._calId && n.url && n.url === _squawkBannerItem.url)
+    );
+    const squawkCls = isSquawkActive ? ' squawk-reading' : '';
+    const card = `<div class="news-item ${itemCls}${freshCls}${ageCls?' '+ageCls:''}${ytId?' has-video':''}${squawkCls}" data-url="${safeUrl}"${calIdAttr} onclick="${clickAction}">
       <div class="news-time">${formatTime(n.timestamp)}</div>
       <div>
         <div class="news-headline">${headline}${newBadge}</div>
@@ -4147,8 +4153,6 @@ function renderNews() {
     <div class="scroll-sentinel" id="scrollSentinel"></div>` : '';
 
   document.getElementById('newsFeed').innerHTML = html + loadMoreHtml;
-  // Re-inject squawk banner if renderNews() wiped it while squawk was still reading
-  if (_squawkBannerItem) _showSquawkBanner(_squawkBannerItem);
   // Render flag emoji as images so they work on Windows
   if (window.twemoji) twemoji.parse(document.getElementById('newsFeed'), {folder:'svg',ext:'.svg'});
 
@@ -4237,8 +4241,10 @@ function injectCalRelease(e) {
   const _d=new Date(e.date);
   const _mon=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][_d.getUTCMonth()];
   const calUrl=`https://www.forexfactory.com/calendar?day=${_mon}${_d.getUTCDate()}.${_d.getUTCFullYear()}`;
+  // Use arrival time (now) not the scheduled e.date — ensures correct sort order in the feed
+  const _arrivalTs = new Date().toISOString();
   calReleases.push({
-    timestamp: e.date,
+    timestamp: _arrivalTs,
     headline_en:headline, impact,
     assets:calAsset,
     url:calUrl,
@@ -4250,7 +4256,8 @@ function injectCalRelease(e) {
   if (e.importance === 1 || e.importance === 0) {
     const calNewsItem = {
       impact, _calRelease: true, _calCountry: e.country,
-      headline_en: headline, url: calUrl, timestamp: e.date,
+      headline_en: headline, url: calUrl, timestamp: _arrivalTs,
+      _calId: e.id,
     };
     squawkSpeak(headline, calUrl, calNewsItem);
   }

@@ -4,6 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Admin · Trading News Terminal</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0a0c0f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -36,6 +40,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .login-box label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:-8px}
 .login-box input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:4px;font-family:var(--font-mono);font-size:13px;outline:none;transition:border-color .15s;width:100%}
 .login-box input:focus{border-color:var(--accent)}
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:38px;}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:15px;line-height:1;padding:2px;transition:color .15s;}
+.pw-eye:hover{color:var(--text);}
 .login-box .login-btn{background:var(--accent);color:#000;border:none;padding:11px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-top:4px;width:100%}
 .login-box .login-btn:hover{box-shadow:0 0 20px rgba(0,212,255,.3)}
 .login-box .login-btn:disabled{opacity:.5;cursor:not-allowed}
@@ -121,6 +129,7 @@ select.ctrl-sel{font-family:var(--font);font-size:11px;font-weight:500;backgroun
 select.ctrl-sel:focus{border-color:var(--accent)}
 .refresh-btn{font-family:var(--font);font-size:11px;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:5px 12px;border-radius:3px;cursor:pointer;transition:all .12s}
 .refresh-btn:hover{border-color:var(--accent2);color:var(--accent)}
+.rs-badge{font-size:10px;font-family:var(--font-mono);color:var(--text-muted);padding:0 6px;white-space:nowrap;transition:color .3s}
 
 /* ─── KPI grid ───────────────────────────────────────────────── */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:20px}
@@ -271,7 +280,10 @@ select.ctrl-sel:focus{border-color:var(--accent)}
     <!-- Step 1: Password -->
     <div id="pwd-step">
       <label>Password</label>
-      <input type="password" id="pwd-input" placeholder="Admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <div class="pw-wrap">
+        <input type="password" id="pwd-input" placeholder="Admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button type="button" class="pw-eye" onclick="_toggleAdminPwd()" title="Show/hide password">👁</button>
+      </div>
     </div>
     <!-- Step 2: TOTP (shown only if 2FA enabled) -->
     <div id="totp-step">
@@ -293,6 +305,7 @@ select.ctrl-sel:focus{border-color:var(--accent)}
     <div class="header-title" id="header-section">Overview</div>
     <div class="header-spacer"></div>
     <div class="header-badge" id="hdr-time">—</div>
+    <div id="ar-chip" style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text-muted);font-family:var(--font-mono);padding:4px 10px;border:1px solid var(--border2);border-radius:3px;background:var(--bg2);">⟳ —</div>
     <button class="header-security-btn" onclick="openSecModal()">🔐 Security</button>
     <button class="header-signout" onclick="logout()">Sign Out</button>
   </div>
@@ -328,7 +341,10 @@ select.ctrl-sel:focus{border-color:var(--accent)}
       <div id="sec-overview" class="section active">
         <div class="sec-hdr">
           <h2>Overview</h2><div class="sec-hdr-line"></div>
-          <div class="controls"><button class="refresh-btn" onclick="loadOverview()">↻ Refresh</button></div>
+          <div class="controls">
+            <span class="rs-badge" id="rs-overview"></span>
+            <button class="refresh-btn" onclick="loadOverview()">↻ Refresh</button>
+          </div>
         </div>
         <div id="kpi-area" class="kpi-grid">
           <div class="kpi-card"><div class="kpi-label">Loading</div><div class="kpi-value"><span class="spinner"></span></div></div>
@@ -429,14 +445,24 @@ select.ctrl-sel:focus{border-color:var(--accent)}
         <div class="sec-hdr">
           <h2>Traffic</h2><div class="sec-hdr-line"></div>
           <div class="controls">
+            <span class="rs-badge" id="rs-traffic"></span>
             <button class="period-btn active" id="trfc-monthly" onclick="setTrafficPeriod('monthly')">Monthly</button>
             <button class="period-btn"        id="trfc-daily"   onclick="setTrafficPeriod('daily')">Daily (30d)</button>
           </div>
         </div>
+        <!-- Traffic KPI summary cards -->
+        <div id="traffic-kpis" class="kpi-grid" style="margin-bottom:20px"></div>
         <div class="chart-row cols-1">
           <div class="chart-box">
             <div class="chart-box-hdr"><span class="chart-box-title" id="traffic-title">Site Visits — Monthly</span></div>
             <div class="chart-canvas-wrap tall"><canvas id="chart-traffic"></canvas></div>
+          </div>
+        </div>
+        <!-- Source breakdown chart -->
+        <div class="chart-row cols-1">
+          <div class="chart-box">
+            <div class="chart-box-hdr"><span class="chart-box-title">Visits by Source</span></div>
+            <div class="chart-canvas-wrap tall"><canvas id="chart-traffic-sources"></canvas></div>
           </div>
         </div>
       </div>
@@ -445,7 +471,10 @@ select.ctrl-sel:focus{border-color:var(--accent)}
       <div id="sec-funnel" class="section">
         <div class="sec-hdr">
           <h2>Signup Funnel</h2><div class="sec-hdr-line"></div>
-          <div class="controls"><button class="refresh-btn" onclick="loadFunnel()">↻ Refresh</button></div>
+          <div class="controls">
+            <span class="rs-badge" id="rs-funnel"></span>
+            <button class="refresh-btn" onclick="loadFunnel()">↻ Refresh</button>
+          </div>
         </div>
         <div class="funnel-wrap" id="funnel-wrap">
           <div class="empty-state"><span class="spinner"></span> Loading…</div>
@@ -572,7 +601,10 @@ select.ctrl-sel:focus{border-color:var(--accent)}
       <div id="sec-customers" class="section">
         <div class="sec-hdr">
           <h2>Customers Map</h2><div class="sec-hdr-line"></div>
-          <div class="controls"><button class="refresh-btn" onclick="loadCustomers()">↻ Refresh</button></div>
+          <div class="controls">
+            <span class="rs-badge" id="rs-customers"></span>
+            <button class="refresh-btn" onclick="loadCustomers()">↻ Refresh</button>
+          </div>
         </div>
         <div class="chart-row cols-1">
           <div class="chart-box">
@@ -608,11 +640,11 @@ select.ctrl-sel:focus{border-color:var(--accent)}
         <div class="sec-section-lbl">Change Password</div>
         <div class="sec-field">
           <label class="sec-label">Current Password</label>
-          <input class="sec-input" type="password" id="sec-cur-pwd" placeholder="Current password" autocomplete="current-password">
+          <div class="pw-wrap"><input class="sec-input" type="password" id="sec-cur-pwd" placeholder="Current password" autocomplete="current-password"><button type="button" class="pw-eye" onclick="_toggleAdminPwd('sec-cur-pwd',this)">👁</button></div>
         </div>
         <div class="sec-field">
           <label class="sec-label">New Password</label>
-          <input class="sec-input" type="password" id="sec-new-pwd" placeholder="Min. 8 characters" autocomplete="new-password">
+          <div class="pw-wrap"><input class="sec-input" type="password" id="sec-new-pwd" placeholder="Min. 8 characters" autocomplete="new-password"><button type="button" class="pw-eye" onclick="_toggleAdminPwd('sec-new-pwd',this)">👁</button></div>
         </div>
         <div class="sec-field" id="sec-pwd-totp-wrap" style="display:none">
           <label class="sec-label">2FA Code</label>
@@ -702,6 +734,69 @@ let _trafficPeriod = 'monthly';
 let _modalAction = null;
 let _charts = {};
 
+// ── Auto-refresh system ────────────────────────────────────────
+let _activeSection = 'overview';
+let _lastRefresh   = {};          // section → timestamp (ms)
+let _arTimer       = null;        // auto-refresh interval handle
+let _arCountdown   = null;        // countdown display interval
+const AR_INTERVAL  = 60;          // seconds between auto-refreshes
+const AR_SKIP      = new Set(['feeds','users']); // heavy/interactive — no auto-refresh
+
+const SECTION_LOADERS = {
+  overview:   () => loadOverview(),
+  revenue:    () => loadRevenue(),
+  traffic:    () => loadTraffic(),
+  funnel:     () => loadFunnel(),
+  comparison: () => loadComparison(),
+  customers:  () => loadCustomers(),
+};
+
+function _markRefreshed(section) {
+  _lastRefresh[section] = Date.now();
+  _updateRefreshBadge(section);
+}
+
+function _updateRefreshBadge(section) {
+  const el = document.getElementById('rs-'+section);
+  if (!el) return;
+  const age = _lastRefresh[section]
+    ? Math.floor((Date.now() - _lastRefresh[section]) / 1000)
+    : null;
+  el.textContent = age === null ? '' : age < 5 ? '● just now' : `● ${age}s ago`;
+  el.style.color = age === null ? '' : age < 10 ? '#10b981' : age < 45 ? '#7a9ab0' : '#f59e0b';
+}
+
+function _stopAutoRefresh() {
+  if (_arTimer)    { clearInterval(_arTimer);    _arTimer    = null; }
+  if (_arCountdown){ clearInterval(_arCountdown); _arCountdown = null; }
+}
+
+function _startAutoRefresh(section) {
+  _stopAutoRefresh();
+  _activeSection = section;
+  if (AR_SKIP.has(section) || !SECTION_LOADERS[section]) return;
+  let remaining = AR_INTERVAL;
+  const chip = document.getElementById('ar-chip');
+  const _tick = () => {
+    if (chip) chip.textContent = `⟳ ${remaining}s`;
+    remaining--;
+    if (remaining < 0) remaining = AR_INTERVAL;
+  };
+  _tick();
+  _arCountdown = setInterval(_tick, 1000);
+  _arTimer = setInterval(async () => {
+    remaining = AR_INTERVAL;
+    if (_activeSection === section && SECTION_LOADERS[section]) {
+      await SECTION_LOADERS[section]();
+    }
+  }, AR_INTERVAL * 1000);
+}
+
+// Refresh all section badges every 10s so "X ago" stays current
+setInterval(() => {
+  Object.keys(_lastRefresh).forEach(_updateRefreshBadge);
+}, 10000);
+
 // ── Clock ──────────────────────────────────────────────────────
 function _tick() {
   const now = new Date();
@@ -717,6 +812,13 @@ setInterval(_tick,1000); _tick();
 let _totpRequired = false;
 let _freshLogin = false;   // true for 5s after login — prevents race-condition auto-logout
 
+function _toggleAdminPwd(id, btn) {
+  const inp = document.getElementById(id || 'pwd-input');
+  if (!btn) btn = inp.parentElement.querySelector('.pw-eye');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
 async function doLogin() {
   const pwd = document.getElementById('pwd-input').value.trim();
   const totp = document.getElementById('totp-input').value.trim();
@@ -780,10 +882,15 @@ async function verifyToken() {
     if (r.total_users !== undefined) {
       _enterApp();
     } else { showLoginErr(); }
-  } catch {
+  } catch(err) {
     // Same guard: if user logged in while this request was in-flight, ignore the error
     if (_token !== tokenAtStart) return;
-    showLoginErr();
+    const msg = (err?.message||'').toLowerCase();
+    if (msg.includes('failed to fetch') || msg.includes('networkerror') || msg.includes('load')) {
+      showLoginErr('Connection error — backend may be starting up, try again in a few seconds');
+    } else {
+      showLoginErr('Session expired — please sign in again');
+    }
   }
 }
 function showLoginErr(msg) {
@@ -929,6 +1036,10 @@ function nav(s) {
   document.getElementById('nav-'+s).classList.add('active');
   document.getElementById('sec-'+s).classList.add('active');
   document.getElementById('header-section').textContent = SECTION_LABELS[s]||s;
+  // Auto-refresh chip visibility
+  const chip = document.getElementById('ar-chip');
+  if (chip) chip.style.display = AR_SKIP.has(s) ? 'none' : '';
+  _startAutoRefresh(s);
   if (s==='overview')   loadOverview();
   if (s==='revenue')    loadRevenue();
   if (s==='users')      searchUsers();
@@ -938,7 +1049,7 @@ function nav(s) {
   if (s==='customers')  loadCustomers();
   if (s==='feeds')      loadFeeds();
 }
-function init() { loadOverview(); }
+function init() { _startAutoRefresh('overview'); loadOverview(); }
 
 // ── Feeds & Health Check ───────────────────────────────────────
 let _allFeeds = [];
@@ -1248,6 +1359,7 @@ async function loadOverview() {
       { labels:sigLbl, datasets:[lineDataset('New Users',sig6,'#a78bfa')] });
     mkChart('chart-traffic-overview','line',
       { labels:visits.data.map(d=>d.label), datasets:[lineDataset('Visits',visits.data.map(d=>d.visits),'#10b981')] });
+    _markRefreshed('overview');
   } catch(e){ showToast('Error loading overview','error'); console.error(e); }
 }
 
@@ -1303,6 +1415,7 @@ async function loadRevenue() {
     const monthly_total = mth.data.reduce((s,r)=>s+r.revenue,0);
     mkDoughnut('chart-rev-period',['Monthly','Annual'],
       [+monthly_total.toFixed(0), 0], ['#00d4ff','#a78bfa']);
+    _markRefreshed('revenue');
   } catch(e){ showToast('Revenue error','error'); }
 }
 
@@ -1419,10 +1532,47 @@ async function loadTraffic() {
     'Site Visits — ' + (_trafficPeriod==='monthly'?'Monthly':'Daily (30d)');
   try {
     const d = await api(`/admin/stats/visits?period=${_trafficPeriod}`);
+    const s = d.summary || {};
+
+    // KPI summary cards
+    const kpiEl = document.getElementById('traffic-kpis');
+    if (kpiEl) {
+      const kpis = [
+        { label:'Visits Today',      value: s.today      ?? '—', cls:'c-green'  },
+        { label:'Visits This Week',  value: s.this_week  ?? '—', cls:''         },
+        { label:'Visits This Month', value: s.this_month ?? '—', cls:'c-accent' },
+        { label:'All-Time Visits',   value: s.all_time   ?? '—', cls:''         },
+      ];
+      kpiEl.innerHTML = kpis.map(k=>`
+        <div class="kpi-card">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value ${k.cls}">${k.value.toLocaleString?.() ?? k.value}</div>
+        </div>`).join('');
+    }
+
+    // Total visits chart
     mkChart('chart-traffic','line',
-      { labels:d.data.map(r=>r.label), datasets:[lineDataset('Visits',d.data.map(r=>r.visits),'#10b981')] },
+      { labels: d.data.map(r=>r.label),
+        datasets: [lineDataset('Total Visits', d.data.map(r=>r.visits), '#10b981')] },
       { scales:{ x:{grid:GRID,ticks:XTICK}, y:{grid:GRID,ticks:YTICK,beginAtZero:true} } });
-  } catch { showToast('Traffic error','error'); }
+
+    // Source breakdown chart (stacked bars)
+    const srcColors = { terminal:'#00d4ff', landing:'#a78bfa', login:'#f59e0b' };
+    const srcDatasets = ['terminal','landing','login'].map(src => ({
+      label: src.charAt(0).toUpperCase()+src.slice(1),
+      data:  d.data.map(r => (r.by_source||{})[src] || 0),
+      backgroundColor: srcColors[src]+'99',
+      borderColor:     srcColors[src],
+      borderWidth: 1.5, borderRadius: 3, borderSkipped:'bottom',
+      stack: 'visits',
+    }));
+    mkChart('chart-traffic-sources','bar',
+      { labels: d.data.map(r=>r.label), datasets: srcDatasets },
+      { scales:{ x:{grid:GRID,ticks:XTICK,stacked:true},
+                 y:{grid:GRID,ticks:YTICK,beginAtZero:true,stacked:true} } });
+
+    _markRefreshed('traffic');
+  } catch(e) { showToast('Traffic error','error'); console.error(e); }
 }
 
 // ── Funnel ─────────────────────────────────────────────────────
@@ -1567,6 +1717,7 @@ async function loadFunnel() {
             <button class="act-btn" onclick="openTrialModal(${u.id},'${u.email.replace(/'/g,'')}')">Trial</button>
           </td>
         </tr>`).join('');
+    _markRefreshed('funnel');
   } catch(e){ showToast('Funnel error','error'); console.error(e); }
 
   // Trial conversion section
@@ -1707,6 +1858,7 @@ async function loadCustomers() {
         <div class="country-count">${d.count}</div>
       </div>`;
     }).join('');
+    _markRefreshed('customers');
   } catch(e) {
     console.error('[MAP]', e);
     showToast('Map error: ' + e.message, 'error');
@@ -1733,6 +1885,7 @@ async function loadComparison() {
         lineDataset(String(y2),d[y2].revenue,'#f59e0b'),
       ]
     },{ scales:{ x:{grid:GRID,ticks:XTICK}, y:{grid:GRID,ticks:{...YTICK,callback:v=>'€'+v}} } });
+    _markRefreshed('comparison');
   } catch(e){ showToast('Comparison error','error'); }
 }
 

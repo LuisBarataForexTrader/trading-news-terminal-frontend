@@ -4041,7 +4041,7 @@ function handleNewsData(data, isInit) {
 
 // ─── Track page visit (admin analytics) ─────────────────────────
 (function trackVisit() {
-  fetch(BACKEND_URL + '/admin/track/visit', { method: 'POST' }).catch(()=>{});
+  fetch(BACKEND_URL + '/admin/track/visit?source=terminal', { method: 'POST' }).catch(()=>{});
 }());
 
 // ─── Startup HTTP fetch (WS fallback) ────────────────────────────

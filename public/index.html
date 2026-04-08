@@ -1718,14 +1718,22 @@ if (IS_PRO) {
 const _GT_LANG = { pt:'pt-PT', es:'es', fr:'fr', de:'de', it:'it' };
 // Sites that block Google Translate proxy (Cloudflare / bot protection)
 const _GT_BLOCKED = new Set([
-  'www.investing.com','investing.com',
-  'www.tradingeconomics.com','tradingeconomics.com',
+  // Paywalls / Cloudflare hard-block
   'www.bloomberg.com','bloomberg.com',
   'www.ft.com','ft.com',
   'www.wsj.com','wsj.com',
-  'www.forexfactory.com','forexfactory.com',
-  'www.investing.com','investing.com','pt.investing.com','es.investing.com','fr.investing.com','de.investing.com','it.investing.com',
+  'www.barrons.com','barrons.com',
   'www.axios.com','axios.com',
+  'www.marketwatch.com','marketwatch.com',
+  'www.nytimes.com','nytimes.com',
+  'www.seekingalpha.com','seekingalpha.com',
+  'www.thestreet.com','thestreet.com',
+  // ForexFactory / TradingEconomics — Cloudflare
+  'www.forexfactory.com','forexfactory.com',
+  'www.tradingeconomics.com','tradingeconomics.com',
+  // Investing.com — already served in correct language
+  'www.investing.com','investing.com',
+  'pt.investing.com','es.investing.com','fr.investing.com','de.investing.com','it.investing.com',
 ]);
 
 // ─── Calendar headline label localisation ────────────────────────

@@ -1626,7 +1626,7 @@ async function _doSearch() {
     tbody.innerHTML = users.length===0
       ? '<tr><td colspan="5" class="empty-state">No users found</td></tr>'
       : users.map(userRow).join('');
-  } catch { tbody.innerHTML='<tr><td colspan="5" class="empty-state" style="color:var(--red)">Load error</td></tr>'; }
+  } catch(err) { console.error('[Users load error]', err); tbody.innerHTML='<tr><td colspan="5" class="empty-state" style="color:var(--red)">Load error</td></tr>'; }
 }
 
 function _fmtTrialDur(hours) {
@@ -1655,6 +1655,7 @@ function userRow(u) {
                     :                   { bg:'rgba(167,139,250,.18)', border:'rgba(167,139,250,.45)',color:'#a78bfa' };
 
   // ── Role badge ───────────────────────────────────────────────────────────
+  const isPro   = plan === 'pro';
   const roleTag = u.role === 'ceo'
     ? `<span class="badge badge-ceo">👑 CEO</span>`
     : isPro
@@ -1670,7 +1671,6 @@ function userRow(u) {
   // ── Plan Journey ─────────────────────────────────────────────────────────
   // Determine which steps are "done" (dimmed) vs active
   const hadTrial = u.had_trial == 1 || plan === 'trial';
-  const isPro    = plan === 'pro';
   const isTrial  = plan === 'trial';
   const isBasic  = plan === 'basic';
 

@@ -4582,9 +4582,9 @@ function renderNews() {
          </div>`
       : '';
 
-    // Calendar releases: compute investing.com URL dynamically using current lang
+    // Calendar releases: open lang-specific investing.com event page directly
     const clickAction = isCalRelease
-      ? `_openArticle(_investCalUrl())`
+      ? `_openCalItem(${JSON.stringify(n.url||'')})`
       : (n.url && !ytId ? `_openArticle('${n.url}')` : 'void(0)');
 
     const safeUrl = (n.url||'').replace(/"/g,'&quot;');
@@ -4710,7 +4710,7 @@ function renderCalendar() {
       const il=e.importance===1?t('cal.high_lbl'):e.importance===0?t('cal.med_lbl'):t('cal.low_lbl');
       const released=e.actual!==null&&e.actual!==undefined&&e.actual!=='';
       const cd=!released?countdown(e.date):null;
-      const calTitle=(lang!=='en'&&e['title_'+lang])?e['title_'+lang]:e.title;
+      const calTitle=e.title||'';
       const ac=actualClass(e.actual,e.forecast,e.previous,calTitle);
       const timeLocal=new Date(e.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
       return`<div class="cal-event ${ic}${released?' released':''}" data-date="${e.date}">
@@ -4741,13 +4741,12 @@ const _CAL_VAL_LABELS = {
   de:['Aktuell','Prognose','Vorherig'],
   it:['Effettivo','Previsione','Precedente'],
 };
-function _buildCalHeadline(acLabel,flag,titleStr,actual,forecast,previous,unit,hlang){
-  const[lA,lF,lP]=_CAL_VAL_LABELS[hlang]||_CAL_VAL_LABELS['en'];
-  return`${acLabel} ${flag} ${titleStr} — ${lA}: ${fmtVal(actual,unit)} | ${lF}: ${fmtVal(forecast,unit)} | ${lP}: ${fmtVal(previous,unit)}`;
-}
-// Investing.com subdomain per language — used at both injection and click time
+// Investing.com subdomain per language
 const _INVEST_SUB={pt:'pt',es:'es',fr:'fr',de:'de',it:'it'};
 function _investCalUrl(){return`https://${_INVEST_SUB[lang]||'www'}.investing.com/economic-calendar/`;}
+// Open a CE item: use stored detail_url if available, else fall back to generic calendar
+function _openCalItem(detailUrl){window.open(detailUrl||_investCalUrl(),'_blank');}
+
 function _doInjectCalRelease(e) {
   const unit=e.unit||'';
   const ac=actualClass(e.actual,e.forecast,e.previous,e.title);
@@ -4755,41 +4754,31 @@ function _doInjectCalRelease(e) {
   const flag=FLAGS[e.country]||'';
   const impact=e.importance===1?'HIGH':e.importance===0?'MEDIUM':'LOW';
   const calAsset=COUNTRY_ASSET[e.country]||'USD';
-  const _investSub=_INVEST_SUB[lang]||'www';
-  const calUrl=`https://${_investSub}.investing.com/economic-calendar/`;
-  // Use the event's scheduled time (e.date) as timestamp
+  // Title already in the user's language (fetched from lang-specific investing.com)
+  const title=e.title||'';
+  // Value labels in the user's language
+  const[lA,lF,lP]=_CAL_VAL_LABELS[lang]||_CAL_VAL_LABELS['en'];
+  const headline=`${acLabel} ${flag} ${title} — ${lA}: ${fmtVal(e.actual,unit)} | ${lF}: ${fmtVal(e.forecast,unit)} | ${lP}: ${fmtVal(e.previous,unit)}`;
+  // Direct link to the specific event page on investing.com in the user's language
+  const calUrl=e.detail_url||_investCalUrl();
   const _ts=e.date;
-  // Build English headline
-  const headline_en=_buildCalHeadline(acLabel,flag,e.title,e.actual,e.forecast,e.previous,unit,'en');
   const item={
     timestamp:_ts,
-    headline_en, impact,
-    assets:calAsset,
-    url:calUrl,
+    headline_en:headline,   // stored under headline_en; already in user's lang
+    impact, assets:calAsset, url:calUrl,
     source:'Economic Calendar', _calRelease:true, _ac:ac, _calCountry:e.country,
     _calId:e.id,
   };
-  // Add language-specific headlines where we have a translated title
-  for(const l of ['pt','es','fr','de','it']){
-    const lt=e['title_'+l];
-    if(lt) item['headline_'+l]=_buildCalHeadline(acLabel,flag,lt,e.actual,e.forecast,e.previous,unit,l);
-  }
   calReleases.push(item);
   if(soundEnabled){const _csn={_calRelease:true,impact,_calCountry:e.country};if(_soundMatchesFilters(_csn)){const now=Date.now();if(now-lastSoundTime>60000){lastSoundTime=now;_playBeep();}}}
-  // Queue Medium + High calendar releases for squawk (filter CALENDAR controls whether it actually speaks)
-  if (e.importance === 1 || e.importance === 0) {
-    const calNewsItem = {
-      impact, _calRelease: true, _calCountry: e.country,
-      headline_en, url: calUrl, timestamp: _ts,
-      _calId: e.id,
-    };
-    squawkSpeak(headline_en, calUrl, calNewsItem);
+  if(e.importance===1||e.importance===0){
+    squawkSpeak(headline,calUrl,{impact,_calRelease:true,_calCountry:e.country,headline_en:headline,url:calUrl,timestamp:_ts,_calId:e.id});
   }
   renderNews();
 }
 async function loadCalendar() {
   try {
-    const res=await fetch(BACKEND_URL+'/calendar?days=14');
+    const res=await fetch(BACKEND_URL+`/calendar?days=14&lang=${lang}`);
     const data=await res.json();
     const _hasActual=e=>e.actual!==null&&e.actual!==undefined&&e.actual!=='';
     const prevReleased=new Set(calEvents.filter(_hasActual).map(e=>e.id));

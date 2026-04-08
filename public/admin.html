@@ -441,7 +441,7 @@ th:hover .sort-arrow{color:var(--accent)}
             <div class="chart-canvas-wrap"><canvas id="chart-signups-overview"></canvas></div>
           </div>
           <div class="chart-box">
-            <div class="chart-box-hdr"><span class="chart-box-title">Landing Page Visits — SEO Trend (30d)</span></div>
+            <div class="chart-box-hdr"><span class="chart-box-title">Landing Page Visits — SEO Trend (30d)</span><span style="font-size:10px;color:var(--text-muted);margin-left:8px">só landing · excluí app e login</span></div>
             <div class="chart-canvas-wrap"><canvas id="chart-traffic-overview"></canvas></div>
           </div>
         </div>
@@ -496,7 +496,7 @@ th:hover .sort-arrow{color:var(--accent)}
               <option value="pro">Pro</option>
               <option value="trial">Trial</option>
               <option value="had_trial">Had Trial</option>
-              <option value="online">🟢 Online Now</option>
+              <option value="online">● Online Now</option>
             </select>
             <span id="users-count" class="table-count"></span>
           </div>
@@ -1211,21 +1211,13 @@ async function _pollOnline() {
     if (el('on-landing'))  el('on-landing').innerHTML    = `<strong>${c.landing ?? 0}</strong> site`;
     if (el('on-login'))    el('on-login').style.display  = 'none';
     const usersEl = el('on-users');
-    const onlineUids = new Set((r.users_online||[]).map(u => String(u.uid)));
-    _onlineUidSet = onlineUids; // keep global in sync for user filter
+    _onlineUidSet = new Set((r.users_online||[]).map(u => String(u.uid)));
     if (usersEl) {
       usersEl.innerHTML = (r.users_online||[]).map(u =>
         `<span class="on-user-chip" title="${u.email}">${u.email || 'User #'+u.uid}</span>`
       ).join('');
     }
-    // Update pulsing dot + avatar glow on each user row
-    document.querySelectorAll('tr[data-uid]').forEach(row => {
-      const online = onlineUids.has(row.dataset.uid);
-      const dot    = row.querySelector('.u-online-dot');
-      const avatar = row.querySelector('.u-avatar');
-      if (dot)    dot.style.display = online ? 'block' : 'none';
-      if (avatar) avatar.classList.toggle('is-online', online);
-    });
+    _applyOnlineDots();
   } catch(_) {}
 }
 function _startOnlinePoller() {
@@ -1674,6 +1666,18 @@ function _renderUsers() {
   tbody.innerHTML = sorted.length === 0
     ? '<tr><td colspan="5" class="empty-state">No users found</td></tr>'
     : sorted.map(userRow).join('');
+  // Apply online dots immediately after render (don't wait for next poll)
+  _applyOnlineDots();
+}
+
+function _applyOnlineDots() {
+  document.querySelectorAll('tr[data-uid]').forEach(row => {
+    const online = _onlineUidSet.has(row.dataset.uid);
+    const dot    = row.querySelector('.u-online-dot');
+    const avatar = row.querySelector('.u-avatar');
+    if (dot)    dot.style.display = online ? 'block' : 'none';
+    if (avatar) avatar.classList.toggle('is-online', online);
+  });
 }
 
 function _fmtTrialDur(hours) {

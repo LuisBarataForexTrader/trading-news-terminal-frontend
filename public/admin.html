@@ -1214,6 +1214,18 @@ async function _pollOnline() {
 }
 function _startOnlinePoller() {
   if (_onlineTimer) clearInterval(_onlineTimer);
+  // Admin dashboard also sends a heartbeat so it shows up in the counter
+  const _adminSid = (()=>{
+    let s = sessionStorage.getItem('_tnt_admin_sid');
+    if (!s) { s = crypto.randomUUID(); sessionStorage.setItem('_tnt_admin_sid', s); }
+    return s;
+  })();
+  const _adminPing = () => {
+    fetch(BACKEND + '/online/ping?session=' + _adminSid + '&source=terminal', {method:'POST'}).catch(()=>{});
+  };
+  _adminPing();
+  setInterval(_adminPing, 30000);
+
   _pollOnline();
   _onlineTimer = setInterval(_pollOnline, 15000);
 }

@@ -213,6 +213,9 @@ select.ctrl-sel:focus{border-color:var(--accent)}
 .u-btn.gold{border-color:rgba(251,191,36,.25);color:rgba(251,191,36,.7)}
 .u-btn.gold:hover{border-color:#fbbf24;color:#fbbf24}
 .u-active-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+.on-pill{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.on-pill strong{color:var(--text);font-family:var(--font-mono);font-size:13px}
+.on-user-chip{font-size:10px;font-family:var(--font-mono);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--accent);padding:2px 8px;border-radius:3px;white-space:nowrap}
 .trial-bar-wrap{min-width:140px;}
 .trial-bar-track{height:4px;background:var(--border2);border-radius:3px;overflow:hidden;margin-bottom:3px;}
 .trial-bar-fill{height:100%;border-radius:3px;transition:width .3s;}
@@ -382,6 +385,29 @@ select.ctrl-sel:focus{border-color:var(--accent)}
             <button class="refresh-btn" onclick="loadOverview()">↻ Refresh</button>
           </div>
         </div>
+
+        <!-- ── Online Now banner ── -->
+        <div id="online-banner" style="display:flex;align-items:center;gap:16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px 20px;margin-bottom:16px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;flex-shrink:0"></span>
+            <span style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)">Online Agora</span>
+          </div>
+          <div style="display:flex;gap:20px;align-items:center;flex:1;flex-wrap:wrap">
+            <div style="display:flex;align-items:baseline;gap:5px">
+              <span id="on-total" style="font-size:22px;font-weight:700;font-family:var(--font-mono);color:var(--text)">–</span>
+              <span style="font-size:10px;color:var(--text-muted)">total</span>
+            </div>
+            <div style="width:1px;height:20px;background:var(--border2)"></div>
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap" id="on-breakdown">
+              <span class="on-pill" id="on-terminal">🖥 <strong>–</strong> app</span>
+              <span class="on-pill" id="on-landing">🌐 <strong>–</strong> landing</span>
+              <span class="on-pill" id="on-login">🔑 <strong>–</strong> login</span>
+            </div>
+          </div>
+          <div id="on-users" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+          <span style="font-size:9px;color:var(--border2);margin-left:auto;font-family:var(--font-mono)">atualiza a cada 15s</span>
+        </div>
+
         <div id="kpi-area" class="kpi-grid">
           <div class="kpi-card"><div class="kpi-label">Loading</div><div class="kpi-value"><span class="spinner"></span></div></div>
         </div>
@@ -1148,7 +1174,33 @@ function nav(s) {
   if (s==='customers')  loadCustomers();
   if (s==='feeds')      loadFeeds();
 }
-function init() { _startAutoRefresh('overview'); loadOverview(); }
+function init() { _startAutoRefresh('overview'); loadOverview(); _startOnlinePoller(); }
+
+// ── Online Now ──────────────────────────────────────────────────
+let _onlineTimer = null;
+async function _pollOnline() {
+  try {
+    const r = await api('/admin/stats/online');
+    const c = r.counts || {};
+    const el = id => document.getElementById(id);
+    if (el('on-total'))    el('on-total').textContent    = c.total    ?? 0;
+    if (el('on-terminal')) el('on-terminal').innerHTML   = `🖥 <strong>${c.terminal ?? 0}</strong> app`;
+    if (el('on-landing'))  el('on-landing').innerHTML    = `🌐 <strong>${c.landing  ?? 0}</strong> landing`;
+    if (el('on-login'))    el('on-login').innerHTML      = `🔑 <strong>${c.login    ?? 0}</strong> login`;
+    const usersEl = el('on-users');
+    if (usersEl) {
+      const users = r.users_online || [];
+      usersEl.innerHTML = users.map(u =>
+        `<span class="on-user-chip" title="${u.email}">${u.email || 'User #'+u.uid}</span>`
+      ).join('');
+    }
+  } catch(_) {}
+}
+function _startOnlinePoller() {
+  if (_onlineTimer) clearInterval(_onlineTimer);
+  _pollOnline();
+  _onlineTimer = setInterval(_pollOnline, 15000);
+}
 
 // ── Feeds & Health Check ───────────────────────────────────────
 let _allFeeds = [];

@@ -4044,6 +4044,20 @@ function handleNewsData(data, isInit) {
   fetch(BACKEND_URL + '/admin/track/visit?source=terminal', { method: 'POST' }).catch(()=>{});
 }());
 
+// ─── Real-time online heartbeat ───────────────────────────────────
+(function onlineHeartbeat() {
+  let _sid = sessionStorage.getItem('_tnt_sid');
+  if (!_sid) { _sid = crypto.randomUUID(); sessionStorage.setItem('_tnt_sid', _sid); }
+  function _ping() {
+    const user = (() => { try { return JSON.parse(localStorage.getItem('tnt_user') || '{}'); } catch { return {}; } })();
+    const uid   = user.id    ? '&uid='   + encodeURIComponent(user.id)    : '';
+    const email = user.email ? '&email=' + encodeURIComponent(user.email) : '';
+    fetch(BACKEND_URL + '/online/ping?session=' + _sid + '&source=terminal' + uid + email, { method: 'POST' }).catch(()=>{});
+  }
+  _ping();
+  setInterval(_ping, 30000);
+}());
+
 // ─── Startup HTTP fetch (WS fallback) ────────────────────────────
 // Fetch news via HTTP immediately so data appears even if WS is slow/down
 (async function startupFetch() {

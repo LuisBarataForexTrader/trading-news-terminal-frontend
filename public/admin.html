@@ -214,6 +214,7 @@ select.ctrl-sel:focus{border-color:var(--accent)}
 .u-btn.gold{border-color:rgba(251,191,36,.25);color:rgba(251,191,36,.7)}
 .u-btn.gold:hover{border-color:#fbbf24;color:#fbbf24}
 .u-active-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+.u-online-dot{animation:pulse 2s infinite}
 .on-pill{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
 .on-pill strong{color:var(--text);font-family:var(--font-mono);font-size:13px}
 .on-user-chip{font-size:10px;font-family:var(--font-mono);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--accent);padding:2px 8px;border-radius:3px;white-space:nowrap}
@@ -1205,12 +1206,17 @@ async function _pollOnline() {
     if (el('on-landing'))  el('on-landing').innerHTML    = `<strong>${c.landing ?? 0}</strong> site`;
     if (el('on-login'))    el('on-login').style.display  = 'none';
     const usersEl = el('on-users');
+    const onlineUids = new Set((r.users_online||[]).map(u => String(u.uid)));
     if (usersEl) {
-      const users = r.users_online || [];
-      usersEl.innerHTML = users.map(u =>
+      usersEl.innerHTML = (r.users_online||[]).map(u =>
         `<span class="on-user-chip" title="${u.email}">${u.email || 'User #'+u.uid}</span>`
       ).join('');
     }
+    // Update pulsing dot on each user row
+    document.querySelectorAll('tr[data-uid]').forEach(row => {
+      const dot = row.querySelector('.u-online-dot');
+      if (dot) dot.style.display = onlineUids.has(row.dataset.uid) ? 'block' : 'none';
+    });
   } catch(_) {}
 }
 function _startOnlinePoller() {
@@ -1754,10 +1760,13 @@ function userRow(u) {
     </div>
   </div>`;
 
-  return `<tr class="user-row">
+  return `<tr class="user-row" data-uid="${u.id}">
     <td>
       <div class="u-cell">
-        <div class="u-avatar" style="background:${avatarColor.bg};border:1.5px solid ${avatarColor.border};color:${avatarColor.color}">${initials}</div>
+        <div style="position:relative;flex-shrink:0">
+          <div class="u-avatar" style="background:${avatarColor.bg};border:1.5px solid ${avatarColor.border};color:${avatarColor.color}">${initials}</div>
+          <span class="u-online-dot" style="display:none;position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);border:1.5px solid var(--bg2)"></span>
+        </div>
         <div class="u-meta">
           <div class="u-name">${u.name||'<span style="color:var(--text-muted);font-style:italic;font-weight:400">No name</span>'}${roleTag}</div>
           <div class="u-email">${u.email}</div>

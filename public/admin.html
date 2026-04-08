@@ -343,6 +343,14 @@ select.ctrl-sel:focus{border-color:var(--accent)}
     <div class="header-sep"></div>
     <div class="header-title" id="header-section">Overview</div>
     <div class="header-spacer"></div>
+    <!-- Online Now — always visible in header -->
+    <div id="hdr-online" style="display:flex;align-items:center;gap:7px;padding:4px 12px;border:1px solid rgba(16,185,129,.25);border-radius:3px;background:rgba(16,185,129,.06)">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;animation:pulse 2s infinite;flex-shrink:0"></span>
+      <span style="font-size:10px;font-weight:700;letter-spacing:.08em;font-family:var(--font-mono);color:var(--green)" id="hdr-on-total">–</span>
+      <span style="font-size:9px;color:var(--text-muted)">online</span>
+      <span style="color:var(--border2);font-size:10px">·</span>
+      <span style="font-size:9px;color:var(--text-muted)" id="hdr-on-detail">–</span>
+    </div>
     <div class="header-badge" id="hdr-time">—</div>
     <div id="ar-chip" style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text-muted);font-family:var(--font-mono);padding:4px 10px;border:1px solid var(--border2);border-radius:3px;background:var(--bg2);">⟳ —</div>
     <button class="header-security-btn" onclick="openSecModal()">🔐 Security</button>
@@ -1183,7 +1191,15 @@ async function _pollOnline() {
     const r = await api('/admin/stats/online');
     const c = r.counts || {};
     const el = id => document.getElementById(id);
-    if (el('on-total'))    el('on-total').textContent    = c.total    ?? 0;
+    const total = c.total ?? 0;
+
+    // Header widget (always visible)
+    if (el('hdr-on-total'))  el('hdr-on-total').textContent  = total;
+    if (el('hdr-on-detail')) el('hdr-on-detail').textContent =
+      `🖥${c.terminal??0} 🌐${c.landing??0} 🔑${c.login??0}`;
+
+    // Overview banner (only when on overview section)
+    if (el('on-total'))    el('on-total').textContent    = total;
     if (el('on-terminal')) el('on-terminal').innerHTML   = `🖥 <strong>${c.terminal ?? 0}</strong> app`;
     if (el('on-landing'))  el('on-landing').innerHTML    = `🌐 <strong>${c.landing  ?? 0}</strong> landing`;
     if (el('on-login'))    el('on-login').innerHTML      = `🔑 <strong>${c.login    ?? 0}</strong> login`;

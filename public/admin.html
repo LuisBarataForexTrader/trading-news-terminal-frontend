@@ -782,6 +782,30 @@ th:hover .sort-arrow{color:var(--accent)}
           Click <strong>⚡ Diagnose</strong> to check TOConline connection status.
         </div>
 
+        <!-- Manual token form (when OAuth fails) -->
+        <div id="toc-manual-token-wrap" style="background:var(--bg2);border:1px solid rgba(245,158,11,.3);border-radius:6px;padding:20px;margin-bottom:20px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px">⚠️ OAuth Inoperacional — Inserir Token Manualmente</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:14px">Se o OAuth do TOConline estiver com <code>invalid_request</code>, podes obter um token diretamente via <a href="https://app6.toconline.pt" target="_blank" style="color:var(--accent)">TOConline</a> → Definições → API / Integrações → gerar novo token de acesso.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="grid-column:span 2">
+              <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:4px">Access Token *</label>
+              <input id="mt-access" class="sec-input" type="text" placeholder="eyJ..." style="width:100%;box-sizing:border-box;font-family:var(--font-mono);font-size:11px">
+            </div>
+            <div style="grid-column:span 2">
+              <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:4px">Refresh Token *</label>
+              <input id="mt-refresh" class="sec-input" type="text" placeholder="eyJ..." style="width:100%;box-sizing:border-box;font-family:var(--font-mono);font-size:11px">
+            </div>
+            <div>
+              <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:4px">Expires In (segundos)</label>
+              <input id="mt-expires" class="sec-input" type="number" value="3600" style="width:100%;box-sizing:border-box">
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+            <button class="sec-btn primary" onclick="saveManualToken()" style="padding:8px 20px;font-size:12px">💾 Guardar Token</button>
+            <span id="mt-result" style="font-size:11px;color:var(--text-muted)"></span>
+          </div>
+        </div>
+
         <!-- Manual invoice form -->
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:20px;margin-bottom:20px">
           <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px">Create Manual Invoice</div>
@@ -2727,16 +2751,60 @@ async function tocDiagnose() {
   const card = document.getElementById('toc-status-card');
   card.innerHTML = '<span class="spinner"></span> A diagnosticar…';
   try {
-    const data = await api('/admin/toconline/diagnose');
+    const [diag, oauthInfo] = await Promise.all([
+      api('/admin/toconline/diagnose'),
+      api('/admin/toconline/oauth-info').catch(() => null),
+    ]);
     let html = '';
-    for (const [k, v] of Object.entries(data)) {
+    for (const [k, v] of Object.entries(diag)) {
       const val = Array.isArray(v) ? v.join(', ') : (typeof v === 'object' ? JSON.stringify(v) : v);
       const color = String(val).startsWith('✅') ? 'var(--green)' : String(val).startsWith('❌') ? 'var(--red)' : 'var(--text)';
       html += `<div style="margin-bottom:6px"><span style="color:var(--text-muted);min-width:140px;display:inline-block">${k}:</span> <span style="color:${color}">${val}</span></div>`;
     }
+    if (oauthInfo) {
+      html += `<hr style="border-color:var(--border);margin:10px 0">`;
+      html += `<div style="margin-bottom:4px;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em">OAuth Config</div>`;
+      html += `<div style="margin-bottom:4px"><span style="color:var(--text-muted);min-width:140px;display:inline-block">client_id:</span> <span style="color:var(--text);font-family:var(--font-mono);font-size:11px">${oauthInfo.client_id}</span></div>`;
+      html += `<div style="margin-bottom:4px"><span style="color:var(--text-muted);min-width:140px;display:inline-block">client_secret:</span> <span style="color:${oauthInfo.client_secret_set ? 'var(--green)' : 'var(--red)'};">${oauthInfo.client_secret_set ? '✅ set' : '❌ not set'}</span></div>`;
+      html += `<div style="margin-bottom:4px"><span style="color:var(--text-muted);min-width:140px;display:inline-block">redirect_uri:</span> <span style="color:var(--text);font-family:var(--font-mono);font-size:11px">${oauthInfo.redirect_uri}</span></div>`;
+    }
     card.innerHTML = html;
   } catch(e) {
     card.innerHTML = `<span style="color:var(--red)">❌ Erro: ${e.message}</span>`;
+  }
+}
+
+async function saveManualToken() {
+  const access  = document.getElementById('mt-access').value.trim();
+  const refresh = document.getElementById('mt-refresh').value.trim();
+  const expires = parseInt(document.getElementById('mt-expires').value) || 3600;
+  const result  = document.getElementById('mt-result');
+  if (!access || !refresh) {
+    result.textContent = '⚠️ Access token e refresh token são obrigatórios.';
+    result.style.color = 'var(--yellow)';
+    return;
+  }
+  result.textContent = '⏳ A guardar…';
+  result.style.color = 'var(--text-muted)';
+  try {
+    // /toconline/save-tokens uses admin_token field (raw), not x-admin-token header
+    const r = await fetch(`${BACKEND}/toconline/save-tokens`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ access_token: access, refresh_token: refresh, expires_in: expires, admin_token: _token }),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      result.textContent = '✅ Token guardado! Clica ⚡ Diagnose para confirmar.';
+      result.style.color = 'var(--green)';
+      setTimeout(tocDiagnose, 1000);
+    } else {
+      result.textContent = `❌ ${data.error || 'Erro desconhecido'}`;
+      result.style.color = 'var(--red)';
+    }
+  } catch(e) {
+    result.textContent = `❌ ${e.message}`;
+    result.style.color = 'var(--red)';
   }
 }
 

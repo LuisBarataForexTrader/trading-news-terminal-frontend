@@ -618,6 +618,22 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .feed-ad-cta{flex-shrink:0;padding:7px 16px;background:#ffffff;color:#5B4BDD;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:.06em;border-radius:3px;border:none;cursor:pointer;text-transform:uppercase;transition:all .15s;white-space:nowrap;}
 .feed-ad-card:hover .feed-ad-cta{background:#f0f0ff;color:#4A3ACC;}
 .feed-ad-sponsored{display:none;}
+/* ── White cTrader ad ── */
+.feed-ad-white-card{cursor:pointer;background:#fff;border-left:4px solid #CC1A2A;overflow:hidden;transition:box-shadow .2s;position:relative;}
+.feed-ad-white-card:hover{box-shadow:0 2px 16px rgba(204,26,42,.12);}
+.feed-ad-white-inner{display:flex;align-items:center;height:60px;}
+.feed-ad-tfx-block{display:flex;align-items:center;padding:0 16px;border-right:1px solid #eee;height:100%;flex-shrink:0;}
+.feed-ad-tfx-logo{height:28px;width:auto;max-width:140px;display:block;}
+.feed-ad-white-copy{flex:1;padding:0 16px;min-width:0;}
+.feed-ad-white-hl{font-size:11.5px;font-weight:700;color:#111;line-height:1.35;}
+.feed-ad-white-hl em{color:#CC1A2A;font-style:normal;}
+.feed-ad-white-sub{font-size:10px;color:#777;margin-top:3px;}
+.feed-ad-ctrader-block{display:flex;align-items:center;justify-content:center;padding:0 14px;border-left:1px solid #eee;height:100%;flex-shrink:0;}
+.feed-ad-ctrader-svg{width:90px;height:auto;display:block;}
+.feed-ad-white-cta-wrap{display:flex;align-items:center;padding:0 14px;border-left:1px solid #eee;height:100%;flex-shrink:0;}
+.feed-ad-white-cta{padding:6px 14px;background:#CC1A2A;color:#fff;font-family:var(--font);font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border:none;border-radius:3px;cursor:pointer;white-space:nowrap;}
+.feed-ad-white-pill{position:absolute;top:0;left:0;background:#CC1A2A;color:#fff;font-size:7px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:0 0 4px 0;}
+.feed-ad-white-sponsored{position:absolute;top:3px;right:8px;font-size:8px;color:#bbb;letter-spacing:.04em;text-transform:uppercase;}
 
 /* ── Empty ── */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--text-muted);gap:12px;}
@@ -2004,6 +2020,7 @@ const STRINGS = {
     'ad.sponsored':'Sponsored','ad.tagline':'The Master Key to<br>Profitable Trading','ad.brand_tag':'Trading Journal',
     'ad.headline':'The Master Key to Profitable Trading','ad.sub':'Automated Journal · 1200+ Brokers · MT4/MT5 · Free Trial on cTrader',
     'ad.cta':'Start Your Journey','ad.stat_brokers':'Brokers','ad.stat_sync':'Auto Sync','ad.stat_trial':'Free Trial','ad.footer':'Automated Trading Journal',
+    'ad2.pill':'14-day free trial','ad2.hl':'Got a <em>cTrader</em> account? Try Tracker FX free for 14 days.','ad2.sub':'Syncs your cTrader and MetaTrader accounts automatically','ad2.cta':'Start Free Trial →','ad2.sponsored':'Ad',
     'empty.connecting':'Connecting','empty.connecting_sub':'Establishing real-time connection...',
     'empty.no_news':'No news found','empty.no_news_sub':'Change filters or wait for next update',
     'share.btn':'⇪ Share','toast.link_copied':'Link copied',
@@ -2179,6 +2196,7 @@ const STRINGS = {
     'ad.sponsored':'Patrocinado','ad.tagline':'A Chave Mestra para<br>Trading Lucrativo','ad.brand_tag':'Diário de Trading',
     'ad.headline':'A Chave Mestra para Trading Lucrativo','ad.sub':'Diário Automático · +1200 Brokers · MT4/MT5 · Trial Grátis no cTrader',
     'ad.cta':'Começa Agora','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diário de Trading Automático',
+    'ad2.pill':'14 dias grátis','ad2.hl':'Tens conta <em>cTrader</em>? Experimenta a Tracker FX grátis por 14 dias.','ad2.sub':'Sincroniza as tuas contas cTrader e MetaTrader automaticamente','ad2.cta':'Experimentar grátis →','ad2.sponsored':'Anúncio',
     'empty.connecting':'A conectar','empty.connecting_sub':'A estabelecer ligação em tempo real...',
     'empty.no_news':'Sem notícias','empty.no_news_sub':'Altera os filtros ou aguarda a próxima atualização',
     'share.btn':'⇪ Partilhar','toast.link_copied':'Ligação copiada',
@@ -2354,6 +2372,7 @@ const STRINGS = {
     'ad.sponsored':'Patrocinado','ad.tagline':'La Clave Maestra del<br>Trading Rentable','ad.brand_tag':'Diario de Trading',
     'ad.headline':'La Clave Maestra del Trading Rentable','ad.sub':'Diario Automático · +1200 Brokers · MT4/MT5 · Trial Gratis en cTrader',
     'ad.cta':'Empieza Ahora','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diario de Trading Automático',
+    'ad2.pill':'14 días gratis','ad2.hl':'¿Tienes cuenta <em>cTrader</em>? Prueba Tracker FX gratis 14 días.','ad2.sub':'Sincroniza tus cuentas de cTrader y MetaTrader automáticamente','ad2.cta':'Prueba gratis →','ad2.sponsored':'Anuncio',
     'empty.connecting':'Conectando','empty.connecting_sub':'Estableciendo conexión en tiempo real...',
     'empty.no_news':'Sin noticias','empty.no_news_sub':'Cambia los filtros o espera la próxima actualización',
     'share.btn':'⇪ Compartir','toast.link_copied':'Enlace copiado',
@@ -2529,6 +2548,7 @@ const STRINGS = {
     'ad.sponsored':'Sponsorisé','ad.tagline':'La Clé Maîtresse du<br>Trading Profitable','ad.brand_tag':'Journal de Trading',
     'ad.headline':'La Clé Maîtresse du Trading Profitable','ad.sub':'Journal Automatisé · +1200 Brokers · MT4/MT5 · Essai Gratuit sur cTrader',
     'ad.cta':'Commencer','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Essai cTrader','ad.footer':'Journal de Trading Automatisé',
+    'ad2.pill':'14 jours gratuits','ad2.hl':'Compte <em>cTrader</em>&nbsp;? Essayez Tracker FX gratuitement 14 jours.','ad2.sub':'Synchronise vos comptes cTrader et MetaTrader automatiquement','ad2.cta':'Essai gratuit →','ad2.sponsored':'Pub',
     'empty.connecting':'Connexion','empty.connecting_sub':'Établissement de la connexion en temps réel...',
     'empty.no_news':'Aucune actualité','empty.no_news_sub':'Modifiez les filtres ou attendez la prochaine mise à jour',
     'share.btn':'⇪ Partager','toast.link_copied':'Lien copié',
@@ -2704,6 +2724,7 @@ const STRINGS = {
     'ad.sponsored':'Gesponsert','ad.tagline':'Der Schlüssel zum<br>profitablen Trading','ad.brand_tag':'Trading Journal',
     'ad.headline':'Der Schlüssel zum profitablen Trading','ad.sub':'Automatisches Journal · +1200 Broker · MT4/MT5 · Kostenlose Testversion auf cTrader',
     'ad.cta':'Jetzt starten','ad.stat_brokers':'Broker','ad.stat_sync':'Auto-Sync','ad.stat_trial':'Test cTrader','ad.footer':'Automatisches Trading Journal',
+    'ad2.pill':'14 Tage kostenlos','ad2.hl':'<em>cTrader</em>-Konto? Teste Tracker FX 14 Tage kostenlos.','ad2.sub':'Synchronisiert deine cTrader- und MetaTrader-Konten automatisch','ad2.cta':'Kostenlos testen →','ad2.sponsored':'Anzeige',
     'empty.connecting':'Verbinden','empty.connecting_sub':'Echtzeit-Verbindung wird hergestellt...',
     'empty.no_news':'Keine Nachrichten','empty.no_news_sub':'Filter ändern oder auf nächstes Update warten',
     'share.btn':'⇪ Teilen','toast.link_copied':'Link kopiert',
@@ -2879,6 +2900,7 @@ const STRINGS = {
     'ad.sponsored':'Sponsorizzato','ad.tagline':'La Chiave Maestra del<br>Trading Redditizio','ad.brand_tag':'Diario di Trading',
     'ad.headline':'La Chiave Maestra del Trading Redditizio','ad.sub':'Diario Automatico · +1200 Broker · MT4/MT5 · Prova Gratuita su cTrader',
     'ad.cta':'Inizia ora','ad.stat_brokers':'Broker','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diario di Trading Automatico',
+    'ad2.pill':'14 giorni gratis','ad2.hl':'Hai un account <em>cTrader</em>? Prova Tracker FX gratis per 14 giorni.','ad2.sub':'Sincronizza automaticamente i tuoi account cTrader e MetaTrader','ad2.cta':'Prova gratis →','ad2.sponsored':'Annuncio',
     'empty.connecting':'Connessione','empty.connecting_sub':'Connessione in tempo reale in corso...',
     'empty.no_news':'Nessuna notizia','empty.no_news_sub':'Cambia i filtri o attendi il prossimo aggiornamento',
     'share.btn':'⇪ Condividi','toast.link_copied':'Link copiato',
@@ -4669,9 +4691,37 @@ function renderNews() {
       <div class="news-impact"><span class="impact-badge ${badgeCls}">${badgeLbl}</span></div>
     </div>`;
 
-    // Inject inline ad: first ad pinned at position 3 (idx 2), then every 15 items
-    const adHtml = (!IS_PRO && (idx === 2 || (idx > 2 && (idx - 2) % 15 === 0)))
-      ? `<div class="feed-ad-card" onclick="window.open('https://www.trackerfx.com','_blank')">
+    // Inject inline ad every 3 items, alternating white (cTrader trial) and dark (Tracker FX brand)
+    let adHtml = '';
+    if (!IS_PRO && idx >= 2 && (idx - 2) % 3 === 0) {
+      const adSlot = Math.floor((idx - 2) / 3);
+      if (adSlot % 2 === 0) {
+        // ── Ad A: white — cTrader 14-day trial ──
+        adHtml = `<div class="feed-ad-white-card" onclick="window.open('https://www.trackerfx.com','_blank')">
+          <div class="feed-ad-white-pill">${t('ad2.pill')}</div>
+          <div class="feed-ad-white-inner">
+            <div class="feed-ad-tfx-block">
+              <img src="/assets/trackerfx-positive.svg" class="feed-ad-tfx-logo" alt="Tracker FX">
+            </div>
+            <div class="feed-ad-white-copy">
+              <div class="feed-ad-white-hl">${t('ad2.hl')}</div>
+              <div class="feed-ad-white-sub">${t('ad2.sub')}</div>
+            </div>
+            <div class="feed-ad-ctrader-block">
+              <svg class="feed-ad-ctrader-svg" viewBox="0 0 360 64" xmlns="http://www.w3.org/2000/svg">
+                <text x="0" y="52" font-size="60" font-weight="900" font-style="italic" font-family="'Arial Black','Impact',sans-serif" fill="#CC1A2A">c</text>
+                <text x="40" y="52" font-size="60" font-weight="900" font-style="italic" font-family="'Arial Black','Impact',sans-serif" fill="#111">TRADER</text>
+              </svg>
+            </div>
+            <div class="feed-ad-white-cta-wrap">
+              <button class="feed-ad-white-cta" onclick="event.stopPropagation();window.open('https://www.trackerfx.com','_blank')">${t('ad2.cta')}</button>
+            </div>
+          </div>
+          <div class="feed-ad-white-sponsored">${t('ad2.sponsored')}</div>
+        </div>`;
+      } else {
+        // ── Ad B: dark — Tracker FX brand (existing, unchanged) ──
+        adHtml = `<div class="feed-ad-card" onclick="window.open('https://www.trackerfx.com','_blank')">
            <div class="feed-ad-banner">
              <div class="feed-ad-brand">
                <div class="feed-ad-brand-name">Tracker<span>FX</span></div>
@@ -4685,8 +4735,9 @@ function renderNews() {
              <button class="feed-ad-cta" onclick="event.stopPropagation();window.open('https://www.trackerfx.com','_blank')">${t('ad.cta')}</button>
              <span class="feed-ad-sponsored">${t('ad.sponsored')}</span>
            </div>
-         </div>`
-      : '';
+         </div>`;
+      }
+    }
     return adHtml + card;
   }).join('');
 

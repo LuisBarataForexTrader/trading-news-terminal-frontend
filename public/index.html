@@ -631,6 +631,16 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .feed-ad-white-pill{position:absolute;top:0;left:0;background:#CC1A2A;color:#fff;font-size:7px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:0 0 4px 0;}
 .feed-ad-white-sponsored{position:absolute;top:3px;right:8px;font-size:8px;color:#bbb;letter-spacing:.04em;text-transform:uppercase;}
 
+/* ── Auto-update banner ── */
+#updateBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#5B4BDD,#7C6BFF);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;padding:9px 16px;text-align:center;box-shadow:0 2px 12px rgba(91,75,221,.45);align-items:center;justify-content:center;gap:12px;}
+#updateBanner.show{display:flex;}
+#updateBanner .upd-msg{letter-spacing:.02em;}
+#updateBanner .upd-count{background:rgba(255,255,255,.2);border-radius:3px;padding:2px 7px;font-size:11px;font-weight:800;min-width:28px;text-align:center;}
+#updateBanner .upd-now{padding:5px 14px;background:#fff;color:#5B4BDD;border:none;border-radius:3px;font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:.06em;cursor:pointer;text-transform:uppercase;}
+#updateBanner .upd-now:hover{background:#f0f0ff;}
+#updateBanner .upd-dismiss{background:none;border:none;color:rgba(255,255,255,.6);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;}
+#updateBanner .upd-dismiss:hover{color:#fff;}
+
 /* ── Empty ── */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--text-muted);gap:12px;}
 .empty-icon{font-size:28px;opacity:0.3;}
@@ -962,6 +972,15 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 </style>
 </head>
 <body>
+
+<!-- ── Auto-update banner ── -->
+<div id="updateBanner">
+  <span class="upd-msg">🔄 Nova versão disponível — a recarregar em</span>
+  <span class="upd-count" id="updCount">15</span>
+  <span class="upd-msg">s</span>
+  <button class="upd-now" onclick="_updReload()">Recarregar agora</button>
+  <button class="upd-dismiss" onclick="_updDismiss()" title="Dispensar">✕</button>
+</div>
 
 <!-- ── HEADER ── -->
 <header class="header">
@@ -7285,5 +7304,65 @@ try { applyTranslations(); } catch(e) {}
     <button class="tr-notice-btn">Open Original Article →</button>
   </div>
 </div>
+
+<script>
+/* ── Auto-update: version polling ── */
+(function(){
+  let _currentV = null;
+  let _updTimer = null;
+  let _updCountdown = null;
+  let _dismissed = false;
+  let _lastActivity = Date.now();
+
+  // Track user activity
+  ['mousemove','keydown','click','scroll','touchstart'].forEach(ev =>
+    document.addEventListener(ev, () => { _lastActivity = Date.now(); }, {passive:true})
+  );
+
+  function _idleSecs() { return (Date.now() - _lastActivity) / 1000; }
+
+  async function _checkVersion() {
+    try {
+      const r = await fetch('/api/version?_=' + Date.now(), {cache:'no-store'});
+      if (!r.ok) return;
+      const {v} = await r.json();
+      if (!_currentV) { _currentV = v; return; }          // first load — store
+      if (v !== _currentV && !_dismissed) _showBanner();   // new version detected
+    } catch(e) {}
+  }
+
+  function _showBanner() {
+    const banner = document.getElementById('updateBanner');
+    if (!banner || banner.classList.contains('show')) return;
+    banner.classList.add('show');
+    let secs = _idleSecs() > 120 ? 5 : 15;  // idle >2min → reload fast
+    document.getElementById('updCount').textContent = secs;
+    _updCountdown = setInterval(() => {
+      secs--;
+      const el = document.getElementById('updCount');
+      if (el) el.textContent = secs;
+      if (secs <= 0) _updReload();
+    }, 1000);
+  }
+
+  window._updReload = function() {
+    clearInterval(_updCountdown);
+    window.location.reload();
+  };
+  window._updDismiss = function() {
+    _dismissed = true;
+    clearInterval(_updCountdown);
+    const banner = document.getElementById('updateBanner');
+    if (banner) banner.classList.remove('show');
+    // re-enable after 10min so very long sessions still catch updates
+    setTimeout(() => { _dismissed = false; }, 10 * 60 * 1000);
+  };
+
+  // Poll every 2 minutes
+  setInterval(_checkVersion, 2 * 60 * 1000);
+  // First check after 30s (give page time to settle)
+  setTimeout(_checkVersion, 30 * 1000);
+})();
+</script>
 </body>
 </html>

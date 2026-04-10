@@ -3951,7 +3951,7 @@ function connectWebSocket() {
   ws = new WebSocket(url);
   ws.onopen = () => {
     clearTimeout(wsReconnectTimer);
-    document.getElementById('wsStatus').textContent = 'Online Worldwide';
+    document.getElementById('wsStatus').textContent = 'Globally Connected';
     document.getElementById('wsStatus').className = 'ws-badge connected';
     document.getElementById('statusText').textContent = 'Connected';
     // Keep-alive ping every 30s

@@ -624,8 +624,8 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .delay-banner-icon{font-size:14px;flex-shrink:0;}
 .delay-banner-text{font-size:11px;color:#000;line-height:1.3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;min-width:0;}
 .delay-banner-text strong{color:#5B4BDD;font-weight:700;}
-.delay-banner-btn{flex-shrink:0;padding:6px 11px;background:linear-gradient(135deg,#5B4BDD,#7C6BFF);color:#fff;font-family:var(--font);font-size:9px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;border-radius:3px;white-space:nowrap;}
-.delay-banner-btn:hover{background:linear-gradient(135deg,#4A3ACC,#6B5BEF);}
+.delay-banner-btn{flex-shrink:0;padding:6px 11px;background:#fff;color:#5B4BDD;font-family:var(--font);font-size:9px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;border-radius:3px;white-space:nowrap;-webkit-appearance:none;appearance:none;}
+.delay-banner-btn:hover{background:#f0eeff;color:#4A3ACC;}
 @media(max-width:768px){
   /* Dark ad (Tracker FX brand) — mobile */
   .feed-ad-dark-logo{max-width:90px !important;}
@@ -633,7 +633,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   .feed-ad-copy{overflow:hidden;}
   .feed-ad-sub{font-size:11px !important;white-space:normal !important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden !important;text-overflow:unset !important;}
   .feed-ad-headline{display:none !important;}
-  .feed-ad-cta{padding:5px 9px !important;font-size:8.5px !important;}
+  .feed-ad-cta{padding:5px 9px !important;font-size:8.5px !important;background:#fff !important;color:#5B4BDD !important;}
   /* White ad (cTrader trial) — mobile */
   .feed-ad-ctrader-block{display:none !important;}
   .feed-ad-tfx-block{padding:0 10px !important;}
@@ -654,7 +654,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .feed-ad-copy{flex:1;min-width:0;}
 .feed-ad-sub{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .feed-ad-headline{font-size:10px;font-weight:400;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.feed-ad-cta{flex-shrink:0;padding:5px 11px;background:#ffffff;color:#5B4BDD;font-family:var(--font);font-size:8.5px;font-weight:800;letter-spacing:.06em;border-radius:3px;border:none;cursor:pointer;text-transform:uppercase;transition:all .15s;white-space:nowrap;}
+.feed-ad-cta{flex-shrink:0;padding:5px 11px;background:#ffffff;color:#5B4BDD;font-family:var(--font);font-size:8.5px;font-weight:800;letter-spacing:.06em;border-radius:3px;border:none;cursor:pointer;text-transform:uppercase;transition:all .15s;white-space:nowrap;-webkit-appearance:none;appearance:none;}
 .feed-ad-card:hover .feed-ad-cta{background:#f0f0ff;color:#4A3ACC;}
 .feed-ad-sponsored{display:none;}
 /* ── White cTrader ad ── */
@@ -664,15 +664,15 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .feed-ad-tfx-block{display:flex;align-items:center;padding:0 16px;border-right:1px solid #eee;height:100%;flex-shrink:0;}
 .feed-ad-tfx-logo{height:28px;width:auto;max-width:140px;display:block;}
 .feed-ad-white-copy{flex:1;padding:0 16px;min-width:0;}
-.feed-ad-white-hl{font-size:11.5px;font-weight:700;color:#111;line-height:1.35;}
-.feed-ad-white-hl em{color:#CC1A2A;font-style:normal;}
-.feed-ad-white-sub{font-size:10px;color:#111;margin-top:3px;}
+.feed-ad-white-hl{font-size:11.5px;font-weight:700;color:#111;-webkit-text-fill-color:#111;line-height:1.35;}
+.feed-ad-white-hl em{color:#CC1A2A;-webkit-text-fill-color:#CC1A2A;font-style:normal;}
+.feed-ad-white-sub{font-size:10px;color:#111;-webkit-text-fill-color:#111;margin-top:3px;}
 .feed-ad-ctrader-block{display:flex;align-items:center;justify-content:center;padding:0 14px;border-left:1px solid #eee;height:100%;flex-shrink:0;}
 .feed-ad-ctrader-svg{width:90px;height:auto;display:block;}
 .feed-ad-white-cta-wrap{display:flex;align-items:center;padding:0 14px;border-left:1px solid #eee;height:100%;flex-shrink:0;}
-.feed-ad-white-cta{padding:6px 14px;background:#CC1A2A;color:#fff;font-family:var(--font);font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border:none;border-radius:3px;cursor:pointer;white-space:nowrap;}
+.feed-ad-white-cta{padding:6px 14px;background:#CC1A2A;color:#fff;font-family:var(--font);font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border:none;border-radius:3px;cursor:pointer;white-space:nowrap;-webkit-appearance:none;appearance:none;}
 .feed-ad-white-pill{position:absolute;top:0;left:0;background:#CC1A2A;color:#fff;font-size:7px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:0 0 4px 0;}
-.feed-ad-white-sponsored{position:absolute;top:3px;right:8px;font-size:8px;color:#111;letter-spacing:.04em;text-transform:uppercase;}
+.feed-ad-white-sponsored{position:absolute;top:3px;right:8px;font-size:8px;color:#111;-webkit-text-fill-color:#111;letter-spacing:.04em;text-transform:uppercase;}
 
 
 /* ── Empty ── */
@@ -1103,13 +1103,24 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   /* ── Banner: hide desktop layout, show mobile compact layout ── */
   .delay-banner-desk{display:none !important;}
   .delay-banner-mob{display:inline-block !important;}
+  /* ── Banner button: purple bg + white text on mobile ── */
+  .delay-banner-btn{background:linear-gradient(135deg,#5B4BDD,#7C6BFF) !important;color:#fff !important;}
   /* ── Force black text on white-background ads & fixed banner ── */
-  .delay-banner-sep{color:#000 !important;}
-  .delay-banner-text{color:#000 !important;}
-  .feed-ad-white-hl{color:#000 !important;}
-  .feed-ad-white-hl em{color:#CC1A2A !important;}
-  .feed-ad-white-sub{color:#000 !important;}
-  .feed-ad-white-sponsored{color:#000 !important;}
+  .delay-banner-sep{color:#000 !important;-webkit-text-fill-color:#000 !important;}
+  .delay-banner-text{color:#000 !important;-webkit-text-fill-color:#000 !important;}
+  .feed-ad-white-hl{color:#000 !important;-webkit-text-fill-color:#000 !important;}
+  .feed-ad-white-hl em{color:#CC1A2A !important;-webkit-text-fill-color:#CC1A2A !important;}
+  .feed-ad-white-sub{color:#000 !important;-webkit-text-fill-color:#000 !important;}
+  .feed-ad-white-sponsored{color:#000 !important;-webkit-text-fill-color:#000 !important;}
+}
+
+/* ── Mobile landscape: allow full-page scroll ── */
+@media screen and (orientation:landscape) and (max-width:1024px){
+  .main{height:auto !important;min-height:calc(100vh - var(--header-h));overflow-y:auto !important;}
+  .tab-content{overflow-y:visible !important;overflow-x:hidden !important;flex:none !important;height:auto !important;}
+  .feed-inner,.cal-body,.data-panel,.mynews-body{overflow-y:visible !important;height:auto !important;flex:none !important;padding-bottom:60px !important;}
+  .tab-content#tab-sentiment{overflow-y:visible !important;}
+  #sentiment-body{overflow:visible !important;height:auto !important;}
 }
 </style>
 </head>
@@ -1622,6 +1633,12 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
     (async () => {
       try {
         const _r = await fetch(_BE + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (_r.status === 401) {
+          // Session invalidated (e.g. kicked by a 3rd login) — force logout
+          localStorage.removeItem('tnt_token'); localStorage.removeItem('tnt_user'); localStorage.removeItem('tnt_login_at');
+          window.location.replace(LOGIN_URL + '?reason=session_expired');
+          return;
+        }
         if (!_r.ok) return;
         const _d = await _r.json();
         const _planChanged = _d.plan && _d.plan !== (user.plan || 'free');
@@ -1635,6 +1652,13 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
 })();
 
 function doLogout() {
+  const tok = localStorage.getItem('tnt_token');
+  if (tok) {
+    fetch(BACKEND_URL + '/auth/logout', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + tok }
+    }).catch(() => {});
+  }
   localStorage.removeItem('tnt_token');
   localStorage.removeItem('tnt_user');
   localStorage.removeItem('tnt_login_at');
@@ -2149,6 +2173,58 @@ let wsReconnectTimer = null;
 let myWatchlist      = JSON.parse(localStorage.getItem('myWatchlist')    || '[]');
 let myCatWatch       = JSON.parse(localStorage.getItem('myCatWatch')     || '[]');
 let myCalCountries   = JSON.parse(localStorage.getItem('myCalCountries') || '[]');
+
+// ─── Preferences sync (backend ↔ localStorage) ──────────────────
+let _prefSaveTimer = null;
+function _savePreferences() {
+  const tok = localStorage.getItem('tnt_token');
+  if (!tok) return;
+  const prefs = {
+    myWatchlist, myCatWatch, myCalCountries,
+    squawkEnabled, squawkRate,
+    squawkFilters: [...squawkFilters],
+    squawkVoiceName,
+    soundEnabled,
+    soundFilters: [...soundFilters],
+    soundVolume,
+  };
+  // Debounce: wait 1s after last change before saving
+  clearTimeout(_prefSaveTimer);
+  _prefSaveTimer = setTimeout(() => {
+    fetch(BACKEND_URL + '/auth/me/preferences', {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preferences: prefs })
+    }).catch(() => {});
+  }, 1000);
+}
+async function _loadPreferences() {
+  const tok = localStorage.getItem('tnt_token');
+  if (!tok) return;
+  try {
+    const r = await fetch(BACKEND_URL + '/auth/me/preferences', {
+      headers: { 'Authorization': 'Bearer ' + tok }
+    });
+    if (!r.ok) return;
+    const { preferences: p } = await r.json();
+    if (!p || !Object.keys(p).length) return;
+    // Apply synced preferences, overriding localStorage
+    if (Array.isArray(p.myWatchlist))    { myWatchlist = p.myWatchlist;    localStorage.setItem('myWatchlist', JSON.stringify(myWatchlist)); }
+    if (Array.isArray(p.myCatWatch))     { myCatWatch  = p.myCatWatch;     localStorage.setItem('myCatWatch',  JSON.stringify(myCatWatch)); }
+    if (Array.isArray(p.myCalCountries)) { myCalCountries = p.myCalCountries; localStorage.setItem('myCalCountries', JSON.stringify(myCalCountries)); }
+    if (typeof p.squawkEnabled === 'boolean') { squawkEnabled = p.squawkEnabled; localStorage.setItem('squawkEnabled', squawkEnabled); }
+    if (typeof p.squawkRate    === 'number')  { squawkRate    = p.squawkRate;    localStorage.setItem('squawkRate', squawkRate.toString()); }
+    if (Array.isArray(p.squawkFilters))  { squawkFilters = new Set(p.squawkFilters); localStorage.setItem('squawkFilters', JSON.stringify([...squawkFilters])); }
+    if (typeof p.squawkVoiceName=== 'string') { squawkVoiceName = p.squawkVoiceName; localStorage.setItem('squawkVoiceName', squawkVoiceName); }
+    if (typeof p.soundEnabled  === 'boolean') { soundEnabled = p.soundEnabled;   localStorage.setItem('soundEnabled', soundEnabled); }
+    if (Array.isArray(p.soundFilters))   { soundFilters = new Set(p.soundFilters);   localStorage.setItem('soundFilters', JSON.stringify([...soundFilters])); }
+    if (typeof p.soundVolume   === 'number')  { soundVolume  = p.soundVolume;    localStorage.setItem('soundVolume', soundVolume); }
+    // Refresh UI to reflect loaded preferences
+    updateSquawkBtn();
+  } catch(e) {}
+}
+// Load preferences from backend on startup
+_loadPreferences();
 
 const COUNTRY_ASSET  = {US:'USD',EU:'EUR',GB:'GBP',JP:'JPY',CH:'CHF',AU:'AUD',CA:'CAD',NZ:'NZD',CN:'CNY',DE:'EUR',FR:'EUR'};
 const ASSET_COUNTRIES= {USD:['US'],EUR:['EU','DE','FR'],GBP:['GB'],JPY:['JP'],AUD:['AU'],CAD:['CA'],CNY:['CN'],CHF:['CH'],NZD:['NZ']};
@@ -3660,6 +3736,7 @@ function addCustomTicker(val) {
     myWatchlist.push(ticker);
     localStorage.setItem('myWatchlist', JSON.stringify(myWatchlist));
     _updateMyNewsCount();
+    _savePreferences();
     if (selectedCategories.has('MY_NEWS')) renderNews();
   }
   _renderCustomChips();
@@ -3670,6 +3747,7 @@ function removeCustomTicker(ticker) {
   localStorage.setItem('myWatchlist', JSON.stringify(myWatchlist));
   _renderCustomChips();
   _updateMyNewsCount();
+  _savePreferences();
   if (selectedCategories.has('MY_NEWS')) renderNews();
 }
 function _updateMyNewsCount() {
@@ -3712,6 +3790,7 @@ function toggleWatch(asset) {
     el.classList.toggle('sel',      myWatchlist.includes(asset));
   });
   _updateMyNewsCount();
+  _savePreferences();
   if (selectedCategories.has('MY_NEWS')) renderNews();
 }
 function toggleCatWatch(cat) {
@@ -3724,6 +3803,7 @@ function toggleCatWatch(cat) {
     el.classList.toggle('sel',      myCatWatch.includes(cat));
   });
   _updateMyNewsCount();
+  _savePreferences();
   if (selectedCategories.has('MY_NEWS')) renderNews();
 }
 function toggleCalCountry(country) {
@@ -3733,6 +3813,7 @@ function toggleCalCountry(country) {
   localStorage.setItem('myCalCountries', JSON.stringify(myCalCountries));
   document.querySelectorAll('[data-country="'+country+'"]').forEach(el => el.classList.toggle('sel', myCalCountries.includes(country)));
   _updateMyNewsCount();
+  _savePreferences();
   if (selectedCategories.has('MY_NEWS')) renderNews();
 }
 function clearMyNewsFeed() {
@@ -3742,59 +3823,53 @@ function clearMyNewsFeed() {
   localStorage.setItem('myCalCountries', JSON.stringify(myCalCountries));
   _syncModalSelections();
   _updateMyNewsCount();
+  _savePreferences();
   if (selectedCategories.has('MY_NEWS')) renderNews();
 }
 // Initialise on load
 _syncModalSelections();
 _updateMyNewsCount();
 
-// ─── Squawk (Web Speech API) ─────────────────────────────────────
-let _squawkVoices = [];
-function _loadVoices() {
-  _squawkVoices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+// ─── Squawk (Edge TTS via backend API — guaranteed neural voices) ─
+let _ttsVoices = [];       // [{id, name, gender, accent}] from backend
+let _ttsAudio  = null;     // current Audio element
+let _ttsDefaultVoice = 'en-US-BrianNeural';
+
+async function _loadTTSVoices() {
+  try {
+    const r = await fetch(BACKEND_URL + '/api/tts/voices');
+    const d = await r.json();
+    _ttsVoices = d.voices || [];
+    _ttsDefaultVoice = d.default || 'en-US-BrianNeural';
+    populateSquawkVoices();
+  } catch(e) { console.warn('[TTS] Failed to load voices:', e); }
 }
-if (window.speechSynthesis) {
-  _loadVoices();
-  speechSynthesis.onvoiceschanged = () => { _loadVoices(); populateSquawkVoices(); };
+_loadTTSVoices();
+
+// Get the selected voice ID for the backend TTS API
+function _getSquawkVoiceId() {
+  if (squawkVoiceName && _ttsVoices.some(v => v.id === squawkVoiceName)) return squawkVoiceName;
+  return _ttsDefaultVoice;
 }
 
-// Score a voice by quality — higher is more natural/human-sounding
-function _voiceScore(v) {
-  const n = (v.name || '').toLowerCase();
-  let score = 0;
-  // Tier 1 (best): Neural / Natural / Online cloud voices
-  if (/natural|neural|online|wavenet|studio/.test(n)) score += 100;
-  if (/premium|enhanced|siri/.test(n)) score += 90;
-  // Tier 2: known high-quality named voices per platform
-  //   macOS: Siri voices, Ava, Evan, Zoe, Allison, Tom, Samantha (enhanced)
-  //   Windows: Aria, Jenny, Guy, Davis, Jane, Jason, Nancy, Tony (all Neural)
-  //   Chrome: Google US/UK English
-  if (/\b(aria|jenny|guy|davis|jane|jason|nancy|tony|sara|michelle)\b/.test(n)) score += 60;
-  if (/\b(ava|evan|zoe|allison|tom|serena|kate|oliver|arthur)\b/.test(n)) score += 55;
-  if (/google\s+us\s+english|google\s+uk\s+english/.test(n)) score += 50;
-  // Tier 3: OS default good voices
-  if (/\b(samantha|alex|karen|daniel|moira|victoria|fiona)\b/.test(n)) score += 30;
-  // Prefer en-US slightly over en-GB/en-AU for financial news
-  if (v.lang === 'en-US') score += 5;
-  else if (v.lang === 'en-GB') score += 3;
-  // Penalise novelty/low-quality voices
-  if (/compact|eloquence|espeak/.test(n)) score -= 50;
-  if (/albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|pipe organ|trinoids|whisper|zarvox/.test(n)) score -= 80;
-  return score;
+// Convert squawkRate (0.5–2.0) to Edge TTS rate string (e.g. "+20%", "-30%")
+function _rateToEdge(r) {
+  const pct = Math.round((r - 1) * 100);
+  return (pct >= 0 ? '+' : '') + pct + '%';
 }
 
-// Pick the best available English voice — scored by quality
-function _getBestVoice() {
-  const voices = _squawkVoices.length ? _squawkVoices : (window.speechSynthesis ? speechSynthesis.getVoices() : []);
-  if (squawkVoiceName) {
-    const named = voices.find(v => v.name === squawkVoiceName);
-    if (named) return named;
-  }
-  const en = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
-  if (!en.length) return voices[0] || null;
-  // Sort by score descending, pick best
-  en.sort((a, b) => _voiceScore(b) - _voiceScore(a));
-  return en[0];
+// Play TTS audio from backend API — returns a Promise that resolves when done
+function _playTTS(text) {
+  return new Promise((resolve, reject) => {
+    const voiceId = _getSquawkVoiceId();
+    const rate = _rateToEdge(squawkRate);
+    const url = BACKEND_URL + '/api/tts?text=' + encodeURIComponent(text) + '&voice=' + encodeURIComponent(voiceId) + '&rate=' + encodeURIComponent(rate);
+    if (_ttsAudio) { try { _ttsAudio.pause(); _ttsAudio.src = ''; } catch(e){} }
+    _ttsAudio = new Audio(url);
+    _ttsAudio.onended  = resolve;
+    _ttsAudio.onerror  = () => { console.warn('[TTS] Audio playback error'); resolve(); };
+    _ttsAudio.play().catch(e => { console.warn('[TTS] Play blocked:', e); resolve(); });
+  });
 }
 
 // Pre-process text to improve TTS pronunciation and pacing
@@ -3940,22 +4015,15 @@ function drainSquawkQueue() {
   const item = squawkQueue.shift();
   // "Attention:" prefix — gives the user a clear audio cue before each headline
   const spokenText = 'Attention. ' + _prepareSquawkText(item.text);
-  const voice = _getBestVoice();
   if (currentTab !== 'news') switchTab('news');
   // Pin the card at the top of the feed immediately
   setTimeout(() => _pinSquawkCard(item), 150);
-  // Cancel any stuck TTS state before speaking (fixes Chrome hung-speech bug)
-  try { speechSynthesis.cancel(); } catch(e) {}
-  setTimeout(() => {
+  // Stop any current playback
+  if (_ttsAudio) { try { _ttsAudio.pause(); _ttsAudio.src = ''; } catch(e) {} }
+  setTimeout(async () => {
     if (!squawkEnabled) return; // user may have toggled off while waiting
-    const utter = new SpeechSynthesisUtterance(spokenText);
-    utter.lang  = 'en-US'; // News content is always English
-    utter.rate  = squawkRate;
-    utter.pitch = 1.05;
-    if (voice) utter.voice = voice;
-    utter.onend   = () => drainSquawkQueue();
-    utter.onerror = () => { squawkSpeaking = false; drainSquawkQueue(); };
-    speechSynthesis.speak(utter);
+    await _playTTS(spokenText);
+    drainSquawkQueue();
   }, 150);
 }
 
@@ -3966,12 +4034,14 @@ function toggleSquawk() {
   squawkEnabled = !squawkEnabled;
   localStorage.setItem('squawkEnabled', squawkEnabled);
   if (!squawkEnabled) {
-    speechSynthesis.cancel(); squawkQueue = []; squawkSpeaking = false;
+    if (_ttsAudio) { try { _ttsAudio.pause(); _ttsAudio.src = ''; } catch(e){} }
+    squawkQueue = []; squawkSpeaking = false;
     _setSquawkTabBlink(false);
   } else {
     squawkSpeak('Squawk enabled. Listening for new headlines.', '', null);
   }
   updateSquawkBtn();
+  _savePreferences();
 }
 
 function updateSquawkBtn() {
@@ -4029,35 +4099,33 @@ function openSquawkFromSidebar(btn) {
 function populateSquawkVoices() {
   const sel = document.getElementById('squawkVoiceSel');
   if (!sel) return;
-  const voices = _squawkVoices.length ? _squawkVoices : (window.speechSynthesis ? speechSynthesis.getVoices() : []);
-  const en = voices.filter(v => v.lang.startsWith('en'));
-  sel.innerHTML = '<option value="">Auto — best available</option>';
-  en.forEach(v => {
+  sel.innerHTML = '<option value="">Auto — Brian (US)</option>';
+  _ttsVoices.forEach(v => {
     const opt = document.createElement('option');
-    opt.value = v.name;
-    opt.textContent = v.name + ' (' + v.lang + ')';
-    if (v.name === squawkVoiceName) opt.selected = true;
+    opt.value = v.id;
+    opt.textContent = v.name + ' — ' + v.gender + ' (' + v.accent + ')';
+    if (v.id === squawkVoiceName) opt.selected = true;
     sel.appendChild(opt);
   });
 }
 function setSquawkVoice(name) {
   squawkVoiceName = name;
   localStorage.setItem('squawkVoiceName', name);
+  _savePreferences();
 }
 function setSquawkRate(val) {
   squawkRate = parseFloat(val);
   localStorage.setItem('squawkRate', squawkRate.toString());
   document.getElementById('squawkRateVal').textContent = squawkRate.toFixed(1) + '×';
+  _savePreferences();
 }
 function setSquawkFilter(f) {
   if (f === 'ALL') {
-    // ALL clears everything else
     squawkFilters = new Set(['ALL']);
   } else {
     squawkFilters.delete('ALL');
     if (squawkFilters.has(f)) {
       squawkFilters.delete(f);
-      // If nothing left, fall back to ALL
       if (squawkFilters.size === 0) squawkFilters.add('ALL');
     } else {
       squawkFilters.add(f);
@@ -4065,17 +4133,11 @@ function setSquawkFilter(f) {
   }
   localStorage.setItem('squawkFilters', JSON.stringify([...squawkFilters]));
   document.querySelectorAll('#squawkDd .squawk-chip').forEach(c => c.classList.toggle('sel', squawkFilters.has(c.dataset.sf)));
+  _savePreferences();
 }
 function testSquawkVoice() {
-  if (!window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance('Markets alert. Euro Dollar up zero point three percent. Gold hits two thousand seven hundred.');
-  utter.lang  = 'en-US';
-  utter.rate  = squawkRate;
-  utter.pitch = 1.05;
-  const voice = _getBestVoice();
-  if (voice) utter.voice = voice;
-  speechSynthesis.speak(utter);
+  if (_ttsAudio) { try { _ttsAudio.pause(); _ttsAudio.src = ''; } catch(e){} }
+  _playTTS('Markets alert. Euro Dollar up zero point three percent. Gold hits two thousand seven hundred.');
 }
 // Close squawk/sound dropdowns on outside click
 document.addEventListener('click', e => {
@@ -4139,12 +4201,14 @@ function setSoundFilter(f, btn) {
   }
   localStorage.setItem('soundFilters', JSON.stringify([...soundFilters]));
   document.querySelectorAll('#soundDd .squawk-chip').forEach(c => c.classList.toggle('sel', soundFilters.has(c.dataset.sf)));
+  _savePreferences();
 }
 function setSoundVolume(v) {
   soundVolume = parseFloat(v);
   localStorage.setItem('soundVolume', soundVolume);
   const lbl = document.getElementById('soundVolVal');
   if (lbl) lbl.textContent = Math.round(soundVolume * 100) + '%';
+  _savePreferences();
 }
 function toggleSoundCfg(e) {
   e.stopPropagation();
@@ -4176,7 +4240,8 @@ function toggleSound() {
   const b = document.getElementById('soundBtn');
   b.textContent = t(soundEnabled ? 'nav.alerts_on' : 'nav.alerts_off');
   b.classList.toggle('active', soundEnabled);
-  if (soundEnabled) _playBeep(); // test beep on enable
+  if (soundEnabled) _playBeep();
+  _savePreferences();
 }
 
 // ─── WebSocket ────────────────────────────────────────────────────
@@ -4842,10 +4907,10 @@ function renderNews() {
   // Delay banner — rendered in both news and calendar tabs (only for basic/free users)
   const _isMob = window.innerWidth <= 768;
   const _bannerInner = _isMob
-    ? `<span class="delay-banner-plan" style="color:#5B4BDD;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0;letter-spacing:.04em">${t('delay.plan')}</span>
-       <span style="color:#000;font-size:11px;flex-shrink:0">—</span>
+    ? `<span class="delay-banner-plan" style="color:#5B4BDD;-webkit-text-fill-color:#5B4BDD;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0;letter-spacing:.04em">${t('delay.plan')}</span>
+       <span style="color:#000;-webkit-text-fill-color:#000;font-size:11px;flex-shrink:0">—</span>
        <span style="font-size:14px;flex-shrink:0">⏱</span>
-       <span style="color:#000;font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;min-width:0">${t('delay.title')}</span>`
+       <span style="color:#000;-webkit-text-fill-color:#000;font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;min-width:0">${t('delay.title')}</span>`
     : `<span style="font-size:20px;flex-shrink:0">⏱</span>
        <span class="delay-banner-text"><strong>${t('delay.title')}</strong> — ${t('delay.sub')}</span>`;
   const bannerHtml = !IS_PRO ? `<div class="delay-banner">
@@ -4853,9 +4918,25 @@ function renderNews() {
       <button class="delay-banner-btn" onclick="showUpgrade('Real-Time News Feed')">${t('delay.btn')}</button>
     </div>` : '';
   const bannerWrap = document.getElementById('delayBannerWrap');
-  if (bannerWrap) bannerWrap.innerHTML = bannerHtml;
+  if (bannerWrap) {
+    bannerWrap.innerHTML = bannerHtml;
+    if (_isMob) bannerWrap.querySelectorAll('span').forEach(el => {
+      if (!el.classList.contains('delay-banner-plan')) {
+        el.style.setProperty('color','#000','important');
+        el.style.setProperty('-webkit-text-fill-color','#000','important');
+      }
+    });
+  }
   const calBannerWrap = document.getElementById('calBannerWrap');
-  if (calBannerWrap) calBannerWrap.innerHTML = bannerHtml;
+  if (calBannerWrap) {
+    calBannerWrap.innerHTML = bannerHtml;
+    if (_isMob) calBannerWrap.querySelectorAll('span').forEach(el => {
+      if (!el.classList.contains('delay-banner-plan')) {
+        el.style.setProperty('color','#000','important');
+        el.style.setProperty('-webkit-text-fill-color','#000','important');
+      }
+    });
+  }
 
   if (total === 0) {
     document.getElementById('newsFeed').innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-text">${t('empty.no_news')}</div><div class="empty-sub">${t('empty.no_news_sub')}</div></div>`;
@@ -4943,8 +5024,8 @@ function renderNews() {
               <img src="/assets/trackerfx-positive.svg" class="feed-ad-tfx-logo" alt="Tracker FX">
             </div>
             <div class="feed-ad-white-copy">
-              <div class="feed-ad-white-hl" style="color:#000">${t('ad2.hl')}</div>
-              <div class="feed-ad-white-sub" style="color:#000">${t('ad2.sub')}</div>
+              <div class="feed-ad-white-hl" style="color:#000;-webkit-text-fill-color:#000">${t('ad2.hl')}</div>
+              <div class="feed-ad-white-sub" style="color:#000;-webkit-text-fill-color:#000">${t('ad2.sub')}</div>
             </div>
             <div class="feed-ad-ctrader-block">
               <svg class="feed-ad-ctrader-svg" viewBox="0 0 360 64" xmlns="http://www.w3.org/2000/svg">
@@ -4956,7 +5037,7 @@ function renderNews() {
               <button class="feed-ad-white-cta" onclick="event.stopPropagation();window.open('https://www.trackerfx.com','_blank')">${t('ad2.cta')}</button>
             </div>
           </div>
-          <div class="feed-ad-white-sponsored" style="color:#000">${t('ad2.sponsored')}</div>
+          <div class="feed-ad-white-sponsored" style="color:#000;-webkit-text-fill-color:#000">${t('ad2.sponsored')}</div>
         </div>`;
       } else {
         // ── Ad B: dark — Tracker FX brand ──
@@ -4986,9 +5067,27 @@ function renderNews() {
     </div>
     <div class="scroll-sentinel" id="scrollSentinel"></div>` : '';
 
-  document.getElementById('newsFeed').innerHTML = html + loadMoreHtml;
+  const feedEl = document.getElementById('newsFeed');
+  feedEl.innerHTML = html + loadMoreHtml;
+  // Force black text on white ad elements — override any inherited body color or iOS webkit fill
+  feedEl.querySelectorAll('.feed-ad-white-hl,.feed-ad-white-sub,.feed-ad-white-sponsored').forEach(el => {
+    el.style.setProperty('color','#000','important');
+    el.style.setProperty('-webkit-text-fill-color','#000','important');
+  });
+  feedEl.querySelectorAll('.feed-ad-white-hl em').forEach(el => {
+    el.style.setProperty('color','#CC1A2A','important');
+    el.style.setProperty('-webkit-text-fill-color','#CC1A2A','important');
+  });
+  // Force white bg + purple text on dark ad CTA button (iOS Safari -webkit-appearance override)
+  feedEl.querySelectorAll('.feed-ad-cta').forEach(el => {
+    el.style.setProperty('background','#ffffff','important');
+    el.style.setProperty('background-color','#ffffff','important');
+    el.style.setProperty('color','#5B4BDD','important');
+    el.style.setProperty('-webkit-text-fill-color','#5B4BDD','important');
+    el.style.setProperty('-webkit-appearance','none','important');
+  });
   // Render flag emoji as images so they work on Windows
-  if (window.twemoji) twemoji.parse(document.getElementById('newsFeed'), {folder:'svg',ext:'.svg'});
+  if (window.twemoji) twemoji.parse(feedEl, {folder:'svg',ext:'.svg'});
 
   // Infinite scroll
   if (hasMore) {

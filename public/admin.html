@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"></script>
@@ -301,7 +303,7 @@ th:hover .sort-arrow{color:var(--accent)}
 .country-name{font-size:12px;color:var(--text-dim);flex:1}
 .country-bar-wrap{width:80px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;flex-shrink:0}
 .country-bar{height:100%;border-radius:2px;background:var(--accent);transition:width .6s ease}
-.country-count{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text);width:28px;text-align:right;flex-shrink:0}
+.country-count{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text);min-width:28px;text-align:right;flex-shrink:0;overflow:visible}
 .map-canvas-wrap{position:relative;background:var(--bg2);border-radius:4px;overflow:hidden;min-height:420px}
 .jvectormap-container{background:transparent !important}
 .jvectormap-tip{background:#0f1217 !important;border:1px solid #2a3444 !important;color:#d0dde8 !important;font-family:'Inter',sans-serif !important;font-size:12px !important;padding:6px 10px !important;border-radius:4px !important}
@@ -442,8 +444,19 @@ th:hover .sort-arrow{color:var(--accent)}
             <div class="chart-canvas-wrap"><canvas id="chart-signups-overview"></canvas></div>
           </div>
           <div class="chart-box">
-            <div class="chart-box-hdr"><span class="chart-box-title">Landing Page Visits — SEO Trend (30d)</span><span style="font-size:10px;color:var(--text-muted);margin-left:8px">só landing · excluí app e login</span></div>
-            <div class="chart-canvas-wrap"><canvas id="chart-traffic-overview"></canvas></div>
+            <div class="chart-box-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="chart-box-title">Landing Page Visits — SEO Trend (30d)</span>
+                <span style="font-size:10px;color:var(--text-muted)">só landing · excluí app e login</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px" id="seo-zoom-controls">
+                <button onclick="seoZoomIn()" title="Zoom In" style="padding:3px 8px;font-size:11px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-muted);border-radius:3px;cursor:pointer;font-family:var(--font)">＋</button>
+                <button onclick="seoZoomOut()" title="Zoom Out" style="padding:3px 8px;font-size:11px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-muted);border-radius:3px;cursor:pointer;font-family:var(--font)">－</button>
+                <button onclick="seoZoomReset()" title="Reset" style="padding:3px 8px;font-size:11px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-muted);border-radius:3px;cursor:pointer;font-family:var(--font)">↺ Reset</button>
+                <span style="font-size:9px;color:var(--text-muted);margin-left:4px">scroll para zoom · drag para mover</span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap" style="height:220px;position:relative"><canvas id="chart-traffic-overview"></canvas></div>
           </div>
         </div>
       </div>
@@ -550,7 +563,7 @@ th:hover .sort-arrow{color:var(--accent)}
           <div class="chart-box">
             <div class="chart-box-hdr"><span class="chart-box-title">Visits by Country</span></div>
             <div class="map-canvas-wrap"><div id="chart-traffic-worldmap" style="width:100%;height:400px"></div></div>
-            <div id="traffic-country-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;padding:16px 20px 20px"></div>
+            <div id="traffic-country-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;padding:16px 20px 20px;overflow:hidden"></div>
           </div>
         </div>
         <!-- Adjust Visits panel (for removing admin test traffic) -->
@@ -753,6 +766,7 @@ th:hover .sort-arrow{color:var(--accent)}
             <div class="map-canvas-wrap"><div id="chart-worldmap" style="width:100%;height:420px"></div></div>
             <div id="customers-map-legend" style="display:none;gap:16px;padding:8px 16px 4px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">
               <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:#00d4ff;display:inline-block"></span>Pro</span>
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Trial</span>
               <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:#a78bfa;display:inline-block"></span>Basic</span>
             </div>
           </div>
@@ -761,7 +775,7 @@ th:hover .sort-arrow{color:var(--accent)}
           <h2>By Country</h2><div class="sec-hdr-line"></div>
         </div>
         <div class="table-wrap">
-          <div id="country-list" style="display:grid;grid-template-columns:1fr 1fr">
+          <div id="country-list" style="display:grid;grid-template-columns:1fr 1fr;overflow:hidden">
             <div class="empty-state" style="grid-column:span 2"><span class="spinner"></span></div>
           </div>
         </div>
@@ -1624,6 +1638,115 @@ function barDataset(label, data, color) {
   };
 }
 
+// ── SEO Chart (zoom-enabled, gradient bars) ──────────────────────
+function mkSeoChart(id, labels, data) {
+  if (_charts[id]) { try { _charts[id].destroy(); } catch(_){} }
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+
+  // Build gradient fill per bar based on value
+  const maxVal = Math.max(...data, 1);
+  const getGradient = (ctx2, chartArea) => {
+    const grad = ctx2.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+    grad.addColorStop(0,   'rgba(167,139,250,0.85)');
+    grad.addColorStop(0.5, 'rgba(139,92,246,0.55)');
+    grad.addColorStop(1,   'rgba(109,40,217,0.12)');
+    return grad;
+  };
+
+  let gradient = null;
+  _charts[id] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Landing Visits (SEO)',
+        data,
+        backgroundColor(context) {
+          const chart = context.chart;
+          const { ctx: c, chartArea } = chart;
+          if (!chartArea) return 'rgba(167,139,250,0.4)';
+          if (!gradient) gradient = getGradient(c, chartArea);
+          return gradient;
+        },
+        borderColor: 'rgba(167,139,250,0.9)',
+        borderWidth: 1,
+        borderRadius: { topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 },
+        borderSkipped: false,
+        hoverBackgroundColor: 'rgba(167,139,250,0.95)',
+        hoverBorderColor: '#c4b5fd',
+        hoverBorderWidth: 1.5,
+        barPercentage: 0.72,
+        categoryPercentage: 0.85,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 400, easing: 'easeOutQuart' },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f1520',
+          borderColor: 'rgba(167,139,250,0.4)',
+          borderWidth: 1,
+          padding: { top:10, right:14, bottom:10, left:14 },
+          titleColor: '#c4b5fd',
+          titleFont: { size:11, weight:'600', family:'IBM Plex Mono' },
+          bodyColor: '#e2e8f0',
+          bodyFont: { size:13, weight:'700', family:'IBM Plex Mono' },
+          displayColors: false,
+          callbacks: {
+            title: items => items[0]?.label || '',
+            label: item => `${item.raw} visit${item.raw !== 1 ? 's' : ''}`,
+          }
+        },
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'x',
+            threshold: 5,
+          },
+          zoom: {
+            wheel: { enabled: true, speed: 0.08 },
+            pinch: { enabled: true },
+            mode: 'x',
+          },
+          limits: {
+            x: { minRange: 3 },
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false },
+          ticks: {
+            color: '#5a7080',
+            font: { size: 9, family: 'IBM Plex Mono' },
+            maxRotation: 0,
+            maxTicksLimit: 15,
+          },
+          border: { display: false },
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+          ticks: {
+            color: '#5a7080',
+            font: { size: 9, family: 'IBM Plex Mono' },
+            beginAtZero: true,
+            precision: 0,
+          },
+          border: { display: false },
+        }
+      }
+    }
+  });
+}
+function seoZoomIn()    { _charts['chart-traffic-overview']?.zoom(1.3); }
+function seoZoomOut()   { _charts['chart-traffic-overview']?.zoom(0.7); }
+function seoZoomReset() { _charts['chart-traffic-overview']?.resetZoom(); }
+
 // ── Overview ───────────────────────────────────────────────────
 async function loadOverview() {
   try {
@@ -1644,12 +1767,10 @@ async function loadOverview() {
     const sig6 = sig.signups.slice(-6), sigLbl = sig.labels.slice(-6);
     mkChart('chart-signups-overview','line',
       { labels:sigLbl, datasets:[lineDataset('New Users',sig6,'#a78bfa')] });
-    // Landing page visits only — SEO indicator
-    const landingData = visits.data.map(d => (d.by_source||{}).landing || 0);
-    mkChart('chart-traffic-overview','bar',
-      { labels: visits.data.map(d=>d.label),
-        datasets:[barDataset('Landing Visits (SEO)', landingData, '#a78bfa')] },
-      { scales:{ x:{grid:GRID,ticks:XTICK}, y:{grid:GRID,ticks:YTICK,beginAtZero:true} } });
+    // Landing page visits only — SEO indicator (zoom-enabled)
+    const landingData  = visits.data.map(d => (d.by_source||{}).landing || 0);
+    const landingLabels = visits.data.map(d => d.label);
+    mkSeoChart('chart-traffic-overview', landingLabels, landingData);
     _markRefreshed('overview');
   } catch(e){ showToast('Error loading overview','error'); console.error(e); }
 }
@@ -1723,15 +1844,29 @@ function searchUsers() {
   _st = setTimeout(_doSearch, 300);
 }
 
+let _countryFilter = '';
+
+function filterUsersByCountry(countryCode) {
+  _countryFilter = countryCode;
+  nav('users');
+  // Clear search/plan so country filter dominates
+  document.getElementById('user-search').value = '';
+  document.getElementById('plan-filter').value = '';
+  searchUsers();
+}
+
 async function _doSearch() {
   const q    = document.getElementById('user-search').value.trim();
   const plan = document.getElementById('plan-filter').value;
+  // Reset country filter if user types manually
+  if (q || plan) _countryFilter = '';
   const tbody = document.getElementById('users-tbody');
   tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><span class="spinner"></span></td></tr>';
   try {
     // "online" is a client-side filter — fetch all users then filter
     const apiPlan = plan === 'online' ? '' : plan;
-    const users = await api(`/admin/users/search?q=${encodeURIComponent(q)}&plan=${encodeURIComponent(apiPlan)}`);
+    const countryParam = _countryFilter ? `&country=${encodeURIComponent(_countryFilter)}` : '';
+    const users = await api(`/admin/users/search?q=${encodeURIComponent(q)}&plan=${encodeURIComponent(apiPlan)}${countryParam}`);
     _usersCache = plan === 'online'
       ? users.filter(u => _onlineUidSet.has(String(u.id)) || _onlineEmailSet.has((u.email||'').toLowerCase()))
       : users;
@@ -2070,12 +2205,11 @@ function _renderTrafficWorldMap(data) {
   if (!listEl) return;
   const top = data.slice(0,20);
   if (!top.length) { listEl.innerHTML = '<div style="color:var(--text-muted);font-size:11px;padding:4px">No geo data yet — visit data is geolocated in the background.</div>'; return; }
-  listEl.innerHTML = top.map((d,i) => {
+  listEl.innerHTML = top.map((d) => {
     const flag = FLAG_MAP[d.country] || '🌍';
     const name = COUNTRY_NAMES[d.country] || d.country;
     const barW = Math.round(d.count / maxCount * 100);
     return `<div class="country-row">
-      <div class="country-rank">${i+1}</div>
       <div class="country-flag">${flag}</div>
       <div class="country-name">${name}</div>
       <div class="country-bar-wrap"><div class="country-bar" style="width:${barW}%;background:linear-gradient(90deg,#0099cc,#00d4ff)"></div></div>
@@ -2424,8 +2558,8 @@ function _renderTrialDonut({ basicOnly, stillTrial, converted, didNot, total, ra
 }
 
 // ── Customers Map ──────────────────────────────────────────────
-const FLAG_MAP = {PT:'🇵🇹',BR:'🇧🇷',US:'🇺🇸',GB:'🇬🇧',DE:'🇩🇪',FR:'🇫🇷',ES:'🇪🇸',IT:'🇮🇹',NL:'🇳🇱',BE:'🇧🇪',CH:'🇨🇭',AT:'🇦🇹',PL:'🇵🇱',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',FI:'🇫🇮',IE:'🇮🇪',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',ZA:'🇿🇦',AE:'🇦🇪',SG:'🇸🇬',HK:'🇭🇰',JP:'🇯🇵',IN:'🇮🇳',MX:'🇲🇽',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',CN:'🇨🇳',RU:'🇷🇺',TR:'🇹🇷',KR:'🇰🇷',ID:'🇮🇩',MY:'🇲🇾',TH:'🇹🇭',PH:'🇵🇭',VN:'🇻🇳',PK:'🇵🇰',NG:'🇳🇬',EG:'🇪🇬',GR:'🇬🇷',CZ:'🇨🇿',HU:'🇭🇺',RO:'🇷🇴',SK:'🇸🇰',HR:'🇭🇷',RS:'🇷🇸',UA:'🇺🇦',IL:'🇮🇱',SA:'🇸🇦',QA:'🇶🇦',KW:'🇰🇼',LI:'🇱🇮',IM:'🇮🇲',GI:'🇬🇮',JE:'🇯🇪',GG:'🇬🇬',MC:'🇲🇨',LU:'🇱🇺',MT:'🇲🇹',CY:'🇨🇾',XX:'🌍',OTHER:'🌍'};
-const COUNTRY_NAMES = {PT:'Portugal',BR:'Brazil',US:'United States',GB:'United Kingdom',DE:'Germany',FR:'France',ES:'Spain',IT:'Italy',NL:'Netherlands',BE:'Belgium',CH:'Switzerland',AT:'Austria',PL:'Poland',SE:'Sweden',NO:'Norway',DK:'Denmark',FI:'Finland',IE:'Ireland',CA:'Canada',AU:'Australia',NZ:'New Zealand',ZA:'South Africa',AE:'UAE',SG:'Singapore',HK:'Hong Kong',JP:'Japan',IN:'India',MX:'Mexico',AR:'Argentina',CL:'Chile',CO:'Colombia',CN:'China',RU:'Russia',TR:'Turkey',KR:'South Korea',ID:'Indonesia',MY:'Malaysia',TH:'Thailand',PH:'Philippines',VN:'Vietnam',PK:'Pakistan',NG:'Nigeria',EG:'Egypt',GR:'Greece',CZ:'Czech Rep.',HU:'Hungary',RO:'Romania',SK:'Slovakia',HR:'Croatia',RS:'Serbia',UA:'Ukraine',IL:'Israel',SA:'Saudi Arabia',QA:'Qatar',KW:'Kuwait',LI:'Liechtenstein',IM:'Isle of Man',GI:'Gibraltar',JE:'Jersey',GG:'Guernsey',MC:'Monaco',LU:'Luxembourg',MT:'Malta',CY:'Cyprus',XX:'Unknown',OTHER:'Other'};
+const FLAG_MAP = {PT:'🇵🇹',BR:'🇧🇷',US:'🇺🇸',GB:'🇬🇧',DE:'🇩🇪',FR:'🇫🇷',ES:'🇪🇸',IT:'🇮🇹',NL:'🇳🇱',BE:'🇧🇪',CH:'🇨🇭',AT:'🇦🇹',PL:'🇵🇱',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',FI:'🇫🇮',IE:'🇮🇪',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',ZA:'🇿🇦',AE:'🇦🇪',SG:'🇸🇬',HK:'🇭🇰',JP:'🇯🇵',IN:'🇮🇳',MX:'🇲🇽',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',CN:'🇨🇳',RU:'🇷🇺',TR:'🇹🇷',KR:'🇰🇷',ID:'🇮🇩',MY:'🇲🇾',TH:'🇹🇭',PH:'🇵🇭',VN:'🇻🇳',PK:'🇵🇰',NG:'🇳🇬',EG:'🇪🇬',GR:'🇬🇷',CZ:'🇨🇿',HU:'🇭🇺',RO:'🇷🇴',SK:'🇸🇰',HR:'🇭🇷',RS:'🇷🇸',UA:'🇺🇦',IL:'🇮🇱',SA:'🇸🇦',QA:'🇶🇦',KW:'🇰🇼',LI:'🇱🇮',IM:'🇮🇲',GI:'🇬🇮',JE:'🇯🇪',GG:'🇬🇬',MC:'🇲🇨',LU:'🇱🇺',MT:'🇲🇹',CY:'🇨🇾',GT:'🇬🇹',PA:'🇵🇦',CR:'🇨🇷',PE:'🇵🇪',EC:'🇪🇨',UY:'🇺🇾',PY:'🇵🇾',BO:'🇧🇴',VE:'🇻🇪',DO:'🇩🇴',CU:'🇨🇺',TW:'🇹🇼',BD:'🇧🇩',LK:'🇱🇰',KZ:'🇰🇿',AZ:'🇦🇿',GE:'🇬🇪',AM:'🇦🇲',JO:'🇯🇴',LB:'🇱🇧',BH:'🇧🇭',OM:'🇴🇲',MA:'🇲🇦',TN:'🇹🇳',DZ:'🇩🇿',KE:'🇰🇪',GH:'🇬🇭',ET:'🇪🇹',TZ:'🇹🇿',UG:'🇺🇬',CM:'🇨🇲',CI:'🇨🇮',SN:'🇸🇳',BG:'🇧🇬',SI:'🇸🇮',EE:'🇪🇪',LV:'🇱🇻',LT:'🇱🇹',MK:'🇲🇰',AL:'🇦🇱',IS:'🇮🇸',LU:'🇱🇺',XX:'🌍',OTHER:'🌍'};
+const COUNTRY_NAMES = {PT:'Portugal',BR:'Brazil',US:'United States',GB:'United Kingdom',DE:'Germany',FR:'France',ES:'Spain',IT:'Italy',NL:'Netherlands',BE:'Belgium',CH:'Switzerland',AT:'Austria',PL:'Poland',SE:'Sweden',NO:'Norway',DK:'Denmark',FI:'Finland',IE:'Ireland',CA:'Canada',AU:'Australia',NZ:'New Zealand',ZA:'South Africa',AE:'UAE',SG:'Singapore',HK:'Hong Kong',JP:'Japan',IN:'India',MX:'Mexico',AR:'Argentina',CL:'Chile',CO:'Colombia',CN:'China',RU:'Russia',TR:'Turkey',KR:'South Korea',ID:'Indonesia',MY:'Malaysia',TH:'Thailand',PH:'Philippines',VN:'Vietnam',PK:'Pakistan',NG:'Nigeria',EG:'Egypt',GR:'Greece',CZ:'Czech Rep.',HU:'Hungary',RO:'Romania',SK:'Slovakia',HR:'Croatia',RS:'Serbia',UA:'Ukraine',IL:'Israel',SA:'Saudi Arabia',QA:'Qatar',KW:'Kuwait',LI:'Liechtenstein',IM:'Isle of Man',GI:'Gibraltar',JE:'Jersey',GG:'Guernsey',MC:'Monaco',LU:'Luxembourg',MT:'Malta',CY:'Cyprus',GT:'Guatemala',PA:'Panama',CR:'Costa Rica',PE:'Peru',EC:'Ecuador',UY:'Uruguay',PY:'Paraguay',BO:'Bolivia',VE:'Venezuela',DO:'Dom. Republic',CU:'Cuba',TW:'Taiwan',BD:'Bangladesh',LK:'Sri Lanka',KZ:'Kazakhstan',AZ:'Azerbaijan',GE:'Georgia',AM:'Armenia',JO:'Jordan',LB:'Lebanon',BH:'Bahrain',OM:'Oman',MA:'Morocco',TN:'Tunisia',DZ:'Algeria',KE:'Kenya',GH:'Ghana',ET:'Ethiopia',TZ:'Tanzania',UG:'Uganda',CM:'Cameroon',CI:'Ivory Coast',SN:'Senegal',BG:'Bulgaria',SI:'Slovenia',EE:'Estonia',LV:'Latvia',LT:'Lithuania',MK:'North Macedonia',AL:'Albania',IS:'Iceland',XX:'Unknown',OTHER:'Other'};
 
 // ISO 3166-1 numeric → alpha2 (subset covering main countries)
 const ISO_NUM = {4:'AF',8:'AL',12:'DZ',24:'AO',32:'AR',36:'AU',40:'AT',50:'BD',56:'BE',76:'BR',100:'BG',124:'CA',144:'LK',152:'CL',156:'CN',170:'CO',191:'HR',196:'CY',203:'CZ',208:'DK',818:'EG',233:'EE',246:'FI',250:'FR',276:'DE',300:'GR',344:'HK',348:'HU',356:'IN',360:'ID',372:'IE',376:'IL',380:'IT',392:'JP',400:'JO',398:'KZ',404:'KE',408:'KP',410:'KR',414:'KW',422:'LB',428:'LV',440:'LT',442:'LU',458:'MY',484:'MX',504:'MA',528:'NL',554:'NZ',566:'NG',578:'NO',586:'PK',604:'PE',608:'PH',616:'PL',620:'PT',634:'QA',642:'RO',643:'RU',682:'SA',703:'SK',724:'ES',752:'SE',756:'CH',158:'TW',764:'TH',792:'TR',804:'UA',784:'AE',826:'GB',840:'US',704:'VN',710:'ZA',716:'ZW'};
@@ -2436,14 +2570,15 @@ async function loadCustomers() {
     const stats = data.data || [];
     const maxCount = stats[0]?.count || 1;
 
-    // Build maps: total count, pro count, basic count per country
-    const countMap = {}, proMap = {}, basicMap = {};
+    // Build maps: total count, pro count, basic count, trial count per country
+    const countMap = {}, proMap = {}, basicMap = {}, trialMap = {};
     stats.forEach(d => {
       if (d.country && d.country !== 'XX') {
         const k = d.country.toUpperCase();
         countMap[k]  = d.count;
-        proMap[k]    = d.pro_count || 0;
+        proMap[k]    = d.pro_count   || 0;
         basicMap[k]  = d.basic_count || 0;
+        trialMap[k]  = d.trial_count || 0;
       }
     });
 
@@ -2469,11 +2604,11 @@ async function loadCustomers() {
           initial:  { fill: '#141c28', stroke: '#0a0c0f', strokeWidth: 0.4 },
           hover:    { fill: '#ffffff', fillOpacity: 0.9 },
         },
-        series: {
-          regions: [{
-            values: fillMap,
-            attribute: 'fill',
-          }]
+        onLoaded(map) {
+          Object.entries(fillMap).forEach(([code, color]) => {
+            const region = map.regions[code] || map.regions[code.toLowerCase()];
+            if (region && region.element) region.element.setStyle('fill', color);
+          });
         },
         onRegionTooltipShow(e, tooltip, code) {
           const name = COUNTRY_NAMES[code] || code;
@@ -2481,8 +2616,10 @@ async function loadCustomers() {
           if (!total) return;
           const pro   = proMap[code]   || 0;
           const basic = basicMap[code] || 0;
+          const trial = trialMap[code] || 0;
           tooltip.text(`${FLAG_MAP[code]||''} ${name}: ${total} user${total!==1?'s':''}` +
             (pro   > 0 ? ` · <span style="color:#00d4ff">${pro} Pro</span>`   : '') +
+            (trial > 0 ? ` · <span style="color:#f59e0b">${trial} Trial</span>` : '') +
             (basic > 0 ? ` · <span style="color:#a78bfa">${basic} Basic</span>` : ''), true);
         }
       });
@@ -2499,22 +2636,23 @@ async function loadCustomers() {
       listEl.innerHTML = '<div class="empty-state" style="grid-column:span 2">No country data yet</div>';
       return;
     }
-    listEl.innerHTML = visible.map((d,i) => {
+    listEl.innerHTML = visible.map((d) => {
       const flag  = FLAG_MAP[d.country]  || '🌍';
       const name  = COUNTRY_NAMES[d.country] || d.country;
       const barW  = Math.round(d.count / maxCount * 100);
       const pro   = d.pro_count   || 0;
       const basic = d.basic_count || 0;
+      const trial = d.trial_count || 0;
       const planBadges = [
         pro   > 0 ? `<span style="font-size:9px;font-weight:700;color:#00d4ff;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);border-radius:2px;padding:1px 5px">PRO ${pro}</span>`   : '',
+        trial > 0 ? `<span style="font-size:9px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:2px;padding:1px 5px">TRIAL ${trial}</span>` : '',
         basic > 0 ? `<span style="font-size:9px;font-weight:700;color:#a78bfa;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);border-radius:2px;padding:1px 5px">BASIC ${basic}</span>` : '',
       ].filter(Boolean).join(' ');
-      return `<div class="country-row">
-        <div class="country-rank">${i+1}</div>
+      return `<div class="country-row" style="cursor:pointer" onclick="filterUsersByCountry('${d.country}')" title="Ver utilizadores de ${name}">
         <div class="country-flag">${flag}</div>
         <div class="country-name">${name}</div>
-        <div class="country-bar-wrap"><div class="country-bar" style="width:${barW}%;background:${pro>0?'#00d4ff':'#a78bfa'}"></div></div>
-        <div class="country-count" style="display:flex;align-items:center;gap:5px">${d.count} ${planBadges}</div>
+        <div class="country-bar-wrap" style="width:50px"><div class="country-bar" style="width:${barW}%;background:${pro>0?'#00d4ff':'#a78bfa'}"></div></div>
+        <div class="country-count" style="display:flex;align-items:center;gap:4px;white-space:nowrap">${d.count} ${planBadges}</div>
       </div>`;
     }).join('');
     _markRefreshed('customers');

@@ -1024,6 +1024,8 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 
 /* ── Mobile overrides (MUST stay last — overrides global styles defined above) ── */
 @media(max-width:768px){
+  /* Hide 2nd ticker bar */
+  .ticker-bar-2{display:none !important;}
   /* TV — force-hide sidebar so player takes full width */
   .tv-sidebar{display:none !important;}
   .tv-body{display:flex !important;flex-direction:column !important;overflow:visible !important;}
@@ -1031,11 +1033,17 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   .tv-player-container{position:relative !important;width:100% !important;height:0 !important;padding-bottom:56.25% !important;min-height:0 !important;}
   .tv-player-container iframe{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;}
   .tv-disclaimer{display:none !important;}
+  /* Commodities + Earnings — contained scroll, no page drift */
+  #tab-commodities,#tab-earnings{overflow:hidden !important;}
+  #commodities-body,#earnings-body{overflow:auto !important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   /* Sentiment — stack vertically and allow scroll */
   .sentiment-layout{display:flex !important;flex-direction:column !important;height:auto !important;overflow:visible !important;min-height:0 !important;}
   #sentiment-body{overflow:visible !important;flex:none !important;height:auto !important;}
   .fg-panel{width:100% !important;overflow-y:visible !important;}
-  .cot-panel{width:100% !important;overflow-x:auto !important;-webkit-overflow-scrolling:touch;}
+  .cot-panel{width:100% !important;overflow-x:auto !important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  /* Status bar — hide less critical items, prevent cutoff */
+  .status-bar{gap:10px !important;padding:5px 10px !important;overflow:hidden !important;}
+  .status-item:nth-child(3),.status-item:nth-child(4){display:none !important;}
   /* Header — hide verbose right-side items to prevent overflow */
   #userLabel{display:none !important;}
   #logoutBtn{display:none !important;}

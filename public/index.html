@@ -3951,7 +3951,7 @@ function connectWebSocket() {
   ws = new WebSocket(url);
   ws.onopen = () => {
     clearTimeout(wsReconnectTimer);
-    document.getElementById('wsStatus').textContent = 'WS LIVE';
+    document.getElementById('wsStatus').textContent = 'Online Worldwide';
     document.getElementById('wsStatus').className = 'ws-badge connected';
     document.getElementById('statusText').textContent = 'Connected';
     // Keep-alive ping every 30s
@@ -3961,7 +3961,7 @@ function connectWebSocket() {
     try { const msg = JSON.parse(e.data); if (msg.type==='init'||msg.type==='update') handleNewsData(msg.data, msg.type==='init'); } catch(err){}
   };
   ws.onclose = () => {
-    document.getElementById('wsStatus').textContent = 'WS OFF';
+    document.getElementById('wsStatus').textContent = 'Offline';
     document.getElementById('wsStatus').className = 'ws-badge disconnected';
     document.getElementById('statusText').textContent = t('status.connecting');
     wsReconnectTimer = setTimeout(connectWebSocket, 5000);

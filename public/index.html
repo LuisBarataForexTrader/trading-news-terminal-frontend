@@ -1044,13 +1044,16 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   /* Status bar — hide less critical items, prevent cutoff */
   .status-bar{gap:10px !important;padding:5px 10px !important;overflow:hidden !important;}
   .status-item:nth-child(3),.status-item:nth-child(4){display:none !important;}
-  /* Header — hide verbose right-side items to prevent overflow */
+  /* Ticker bar — more height so TradingView quotes aren't clipped */
+  .ticker-bar{height:56px !important;}
+  .ticker-bar .tradingview-widget-container{height:56px !important;}
+  /* Header — hide verbose right-side items, keep lang flag accessible */
   #userLabel{display:none !important;}
   #logoutBtn{display:none !important;}
-  .header-right{gap:4px !important;flex-shrink:1 !important;min-width:0 !important;overflow:hidden !important;}
-  /* TradingView widget containers — clip to screen */
-  .tradingview-widget-container{overflow:hidden !important;max-width:100vw !important;}
-  .tradingview-widget-container>div{overflow:hidden !important;}
+  .header-right{gap:4px !important;flex-shrink:1 !important;min-width:0 !important;overflow:visible !important;}
+  /* lang-menu dropdown must escape header clipping */
+  .lang-picker{position:static !important;}
+  .lang-menu{position:fixed !important;top:auto !important;right:8px !important;}
   /* Settings modal — full-screen scroll on mobile */
   .settings-overlay{padding:0 !important;align-items:flex-end !important;}
   .settings-modal{max-height:92vh !important;border-radius:12px 12px 0 0 !important;max-width:100% !important;width:100% !important;}
@@ -7206,6 +7209,11 @@ function _fmtScTs(ts) {
           <button class="settings-plan-btn manage" id="settingsManageBtn" onclick="openBillingPortal()" data-i18n="settings.manage">Manage Subscription</button>
           <div class="settings-msg" id="billingMsg"></div>
         </div>
+      </div>
+
+      <!-- Sign Out -->
+      <div class="settings-section" style="border-top:1px solid var(--border);padding-top:20px;margin-top:8px;">
+        <button onclick="closeSettings();doLogout();" style="width:100%;padding:10px;background:rgba(255,59,92,0.08);border:1px solid rgba(255,59,92,0.3);color:var(--high);font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .15s;" onmouseover="this.style.background='rgba(255,59,92,0.15)'" onmouseout="this.style.background='rgba(255,59,92,0.08)'" data-i18n="nav.signout">Sign Out</button>
       </div>
 
     </div>

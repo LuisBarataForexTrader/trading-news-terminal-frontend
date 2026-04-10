@@ -4840,17 +4840,16 @@ function renderNews() {
   if (countEl) countEl.textContent = total + ' ' + t('feed.items');
 
   // Delay banner — rendered in both news and calendar tabs (only for basic/free users)
+  const _isMob = window.innerWidth <= 768;
+  const _bannerInner = _isMob
+    ? `<span class="delay-banner-plan" style="color:#5B4BDD;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0;letter-spacing:.04em">${t('delay.plan')}</span>
+       <span style="color:#000;font-size:11px;flex-shrink:0">—</span>
+       <span style="font-size:14px;flex-shrink:0">⏱</span>
+       <span style="color:#000;font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;min-width:0">${t('delay.title')}</span>`
+    : `<span style="font-size:20px;flex-shrink:0">⏱</span>
+       <span class="delay-banner-text"><strong>${t('delay.title')}</strong> — ${t('delay.sub')}</span>`;
   const bannerHtml = !IS_PRO ? `<div class="delay-banner">
-      <div class="delay-banner-left">
-        <span class="delay-banner-desk">
-          <span class="delay-banner-icon">⏱</span>
-          <span class="delay-banner-text"><strong>${t('delay.title')}</strong> — ${t('delay.sub')}</span>
-        </span>
-        <span class="delay-banner-mob delay-banner-plan">${t('delay.plan')}</span>
-        <span class="delay-banner-mob delay-banner-sep" style="color:#000">—</span>
-        <span class="delay-banner-mob delay-banner-icon">⏱</span>
-        <span class="delay-banner-mob delay-banner-text" style="color:#000">${t('delay.title')}</span>
-      </div>
+      <div class="delay-banner-left">${_bannerInner}</div>
       <button class="delay-banner-btn" onclick="showUpgrade('Real-Time News Feed')">${t('delay.btn')}</button>
     </div>` : '';
   const bannerWrap = document.getElementById('delayBannerWrap');

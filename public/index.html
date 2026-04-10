@@ -6196,6 +6196,36 @@ const _COMM_TV = {
   'CT':   {symbol:'CAPITALCOM:USCOTTON',   label:'Cotton',            short:'COTTON'},
 };
 
+// ─── Indices: yfinance ticker → TradingView proName ────────────
+const _INDICES_TV = {
+  // Americas
+  '^GSPC':      {symbol:'SP:SPX',              label:'S&P 500'},
+  '^NDX':       {symbol:'NASDAQ:NDX',          label:'Nasdaq 100'},
+  '^IXIC':      {symbol:'NASDAQ:IXIC',         label:'Nasdaq Composite'},
+  '^DJI':       {symbol:'DJ:DJI',              label:'Dow Jones'},
+  '^RUT':       {symbol:'TVC:RUT',             label:'Russell 2000'},
+  '^BVSP':      {symbol:'BMFBOVESPA:IBOV',     label:'Bovespa'},
+  // Europe
+  '^GDAXI':     {symbol:'XETR:DAX',            label:'DAX 40'},
+  '^FTSE':      {symbol:'SPREADEX:UK100',       label:'FTSE 100'},
+  '^FCHI':      {symbol:'EURONEXT:PX1',        label:'CAC 40'},
+  '^STOXX50E':  {symbol:'TVC:SX5E',            label:'Euro Stoxx 50'},
+  '^IBEX':      {symbol:'BME:IBC',             label:'IBEX 35'},
+  '^AEX':       {symbol:'EURONEXT:AEX',        label:'AEX'},
+  '^SSMI':      {symbol:'INDEX:SMI',           label:'SMI'},
+  'FTSEMIB.MI': {symbol:'MIL:FTSEMIB',         label:'FTSE MIB'},
+  // Asia-Pacific
+  '^N225':      {symbol:'TVC:NI225',           label:'Nikkei 225'},
+  '^HSI':       {symbol:'TVC:HSI',             label:'Hang Seng'},
+  '^AXJO':      {symbol:'ASX:XJO',             label:'ASX 200'},
+  '^KS11':      {symbol:'KRX:KOSPI',           label:'KOSPI'},
+  '^TWII':      {symbol:'TWSE:TSE',            label:'TAIEX'},
+  '^NSEI':      {symbol:'NSE:NIFTY50',         label:'Nifty 50'},
+  '000001.SS':  {symbol:'SSE:000001',          label:'Shanghai Composite'},
+  // Volatility
+  '^VIX':       {symbol:'TVC:VIX',             label:'VIX · Volatility Index'},
+};
+
 // ─── Screener → Chart ──────────────────────────────────────────
 function _scOpenChart(type, sym, name) {
   sym  = sym  || '';
@@ -6208,6 +6238,14 @@ function _scOpenChart(type, sym, name) {
     const direct = CHART_MAP[sym.toUpperCase()];
     if (direct) { _openChartSymbol(direct.symbol, direct.label); return; }
     openChart(sym.toUpperCase() + 'USD');
+    return;
+  }
+  // indices tab
+  if (type === 'indices') {
+    const iEntry = _INDICES_TV[sym];
+    if (iEntry) { _openChartSymbol(iEntry.symbol, iEntry.label); return; }
+    // fallback — try sym as-is (strip leading ^)
+    _openChartSymbol(sym.replace('^',''), name);
     return;
   }
   // 'commodities' tab OR 'commodity' from multi-asset — both handled here

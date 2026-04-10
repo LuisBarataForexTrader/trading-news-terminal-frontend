@@ -218,7 +218,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .settings-title{font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);}
 .settings-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;}
 .settings-close:hover{color:var(--text);}
-.settings-body{padding:24px;overflow-y:auto;flex:1;}
+.settings-body{padding:24px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
 .settings-section{margin-bottom:28px;}
 .settings-section:last-child{margin-bottom:0;}
 .settings-section-label{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
@@ -398,7 +398,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .mnt-chip-custom .rm:hover{color:#ff6b6b;}
 
 /* Pack CTA */
-.pack-info{margin:14px 12px 0;background:linear-gradient(145deg,rgba(255,59,92,0.12) 0%,rgba(20,10,15,0.9) 60%);border:1px solid rgba(255,59,92,0.3);border-radius:6px;overflow:hidden;}
+.pack-info{display:none;}
 .pack-info-header{padding:14px 14px 10px;border-bottom:1px solid rgba(255,59,92,0.15);}
 .pack-badge{font-size:9px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:var(--high);display:flex;align-items:center;gap:6px;margin-bottom:4px;}
 .pack-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--high);animation:blink 1.5s ease-in-out infinite;flex-shrink:0;}
@@ -1051,6 +1051,9 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   /* TradingView widget containers — clip to screen */
   .tradingview-widget-container{overflow:hidden !important;max-width:100vw !important;}
   .tradingview-widget-container>div{overflow:hidden !important;}
+  /* Settings modal — full-screen scroll on mobile */
+  .settings-overlay{padding:0 !important;align-items:flex-end !important;}
+  .settings-modal{max-height:92vh !important;border-radius:12px 12px 0 0 !important;max-width:100% !important;width:100% !important;}
   /* Main and body — prevent horizontal scroll */
   body{overflow-x:hidden !important;max-width:100vw !important;}
   .main{overflow:hidden !important;}

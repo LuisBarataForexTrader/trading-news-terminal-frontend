@@ -796,7 +796,7 @@ th:hover .sort-arrow{color:var(--accent)}
             <div>
               <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px">
                 <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span>
-                Pro Only Sources
+                Pro Sources (All)
                 <input id="plans-search-pro" type="text" placeholder="Filter…" oninput="filterPlanSources()" style="margin-left:auto;padding:4px 8px;font-size:10px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:3px;width:100px;outline:none">
               </div>
               <div id="plans-pro-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;max-height:480px;overflow-y:auto"></div>
@@ -3083,14 +3083,15 @@ function renderPlanSources() {
   const qBasic = (document.getElementById('plans-search-basic').value || '').toLowerCase();
   const qPro   = (document.getElementById('plans-search-pro').value   || '').toLowerCase();
 
+  const allPro = [..._planSources.basic, ..._planSources.pro_only];
+
   const basicFiltered = _planSources.basic.filter(s => !qBasic || s.toLowerCase().includes(qBasic));
-  const proFiltered   = _planSources.pro_only.filter(s => !qPro || s.toLowerCase().includes(qPro));
+  const proFiltered   = allPro.filter(s => !qPro || s.toLowerCase().includes(qPro));
 
   document.getElementById('plans-basic-count').textContent = _planSources.basic.length;
-  document.getElementById('plans-pro-count').textContent   =
-    _planSources.basic.length + _planSources.pro_only.length;
+  document.getElementById('plans-pro-count').textContent   = allPro.length;
 
-  const rowStyle = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px';
+  const rowStyle  = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px';
   const nameStyle = 'font-weight:600;color:var(--text-dim);text-transform:capitalize';
   const btnStyle  = (col) => `padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.06em;background:transparent;border:1px solid ${col};color:${col};border-radius:3px;cursor:pointer`;
 
@@ -3098,17 +3099,22 @@ function renderPlanSources() {
     ? basicFiltered.sort().map(s => `
         <div style="${rowStyle}">
           <span style="${nameStyle}">${_esc(s)}</span>
-          <button onclick="movePlanSource('${_esc(s)}', false)" style="${btnStyle('#00d4ff')}" title="Move to Pro-only">→ Pro</button>
+          <button onclick="movePlanSource('${_esc(s)}', false)" style="${btnStyle('#00d4ff')}" title="Move to Pro-only">→ Pro only</button>
         </div>`).join('')
     : '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:11px">No sources</div>';
 
   document.getElementById('plans-pro-list').innerHTML = proFiltered.length
-    ? proFiltered.sort().map(s => `
-        <div style="${rowStyle}">
-          <button onclick="movePlanSource('${_esc(s)}', true)" style="${btnStyle('#a78bfa')}" title="Move to Basic">← Basic</button>
-          <span style="${nameStyle}">${_esc(s)}</span>
-        </div>`).join('')
-    : '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:11px">No pro-only sources</div>';
+    ? proFiltered.sort().map(s => {
+        const isBasic = _planSources.basic.map(x=>x.toLowerCase()).includes(s.toLowerCase());
+        const badge = isBasic
+          ? `<span style="font-size:9px;padding:2px 6px;border-radius:2px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#a78bfa;margin-right:6px">Basic</span>`
+          : `<span style="font-size:9px;padding:2px 6px;border-radius:2px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:var(--accent);margin-right:6px">Pro only</span>`;
+        const moveBtn = isBasic
+          ? `<button onclick="movePlanSource('${_esc(s)}', false)" style="${btnStyle('#607080')}" title="Remove from Basic">→ Pro only</button>`
+          : `<button onclick="movePlanSource('${_esc(s)}', true)"  style="${btnStyle('#a78bfa')}" title="Add to Basic">← Add to Basic</button>`;
+        return `<div style="${rowStyle}">${badge}<span style="${nameStyle};flex:1">${_esc(s)}</span>${moveBtn}</div>`;
+      }).join('')
+    : '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:11px">No sources</div>';
 
   // Enable/disable save button
   const btn = document.getElementById('plans-save-btn');

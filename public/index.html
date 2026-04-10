@@ -609,9 +609,10 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   padding:0 14px 0 14px;
 }
 .delay-banner-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow:hidden;}
-.delay-banner-icon{font-size:20px;flex-shrink:0;}
-.delay-banner-text{font-size:11px;color:#374151;line-height:1.3;overflow:hidden;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.delay-banner-plan{font-size:11px;font-weight:800;color:#5B4BDD;letter-spacing:0.04em;white-space:nowrap;flex-shrink:0;}
+.delay-banner-sep{font-size:11px;color:#9ca3af;flex-shrink:0;}
+.delay-banner-icon{font-size:14px;flex-shrink:0;}
+.delay-banner-text{font-size:11px;color:#374151;line-height:1.3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 .delay-banner-text strong{color:#5B4BDD;font-weight:700;}
 .delay-banner-btn{flex-shrink:0;padding:6px 11px;background:linear-gradient(135deg,#5B4BDD,#7C6BFF);color:#fff;font-family:var(--font);font-size:9px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s;border-radius:3px;white-space:nowrap;}
 .delay-banner-btn:hover{background:linear-gradient(135deg,#4A3ACC,#6B5BEF);}
@@ -643,7 +644,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .feed-ad-copy{flex:1;min-width:0;}
 .feed-ad-sub{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .feed-ad-headline{font-size:10px;font-weight:400;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.feed-ad-cta{flex-shrink:0;padding:7px 16px;background:#ffffff;color:#5B4BDD;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:.06em;border-radius:3px;border:none;cursor:pointer;text-transform:uppercase;transition:all .15s;white-space:nowrap;}
+.feed-ad-cta{flex-shrink:0;padding:5px 11px;background:#ffffff;color:#5B4BDD;font-family:var(--font);font-size:8.5px;font-weight:800;letter-spacing:.06em;border-radius:3px;border:none;cursor:pointer;text-transform:uppercase;transition:all .15s;white-space:nowrap;}
 .feed-ad-card:hover .feed-ad-cta{background:#f0f0ff;color:#4A3ACC;}
 .feed-ad-sponsored{display:none;}
 /* ── White cTrader ad ── */
@@ -2210,15 +2211,15 @@ const STRINGS = {
     'cal.impact_label':'Impact:','cal.asset_label':'Assets:',
     'cal.high':'● High','cal.medium':'● Medium','cal.low':'● Low',
     'cal.all_assets':'All','cal.loading':'Loading calendar...','cal.no_events':'No events',
-    'delay.notice':'Notice','delay.title':'2-min news delay',
+    'delay.notice':'Notice','delay.plan':'Basic Plan','delay.title':'2-min delay & fewer news sources',
     'delay.sub':"You're on the <strong>Basic Plan</strong>. Pro users receive every headline in real time with zero delay, no ads, and live squawk. Basic plan also uses substantially fewer news sources than Pro.",
     'delay.btn':'⚡ Upgrade to Pro',
     'status.status':'Status','status.connection':'Connection','status.updated':'Updated','status.items':'Items',
     'status.connecting':'Connecting...',
     'ad.sponsored':'Sponsored','ad.tagline':'The Master Key to<br>Profitable Trading','ad.brand_tag':'Trading Journal',
-    'ad.headline':'The Master Key to Profitable Trading','ad.sub':'Automated Journal · 1200+ Brokers · MT4/MT5 · Free Trial on cTrader',
-    'ad.cta':'Start Your Journey','ad.stat_brokers':'Brokers','ad.stat_sync':'Auto Sync','ad.stat_trial':'Free Trial','ad.footer':'Automated Trading Journal',
-    'ad2.pill':'14-day free trial','ad2.hl':'Got a <em>cTrader</em> account? Try Tracker FX free for 14 days.','ad2.sub':'Syncs your cTrader and MetaTrader accounts automatically','ad2.cta':'Start Free Trial →','ad2.sponsored':'Ad',
+    'ad.headline':'Automated Trading Journal · 1200+ Brokers','ad.sub':'Automated Trading Journal · 1200+ Brokers',
+    'ad.cta':'Try Free','ad.stat_brokers':'Brokers','ad.stat_sync':'Auto Sync','ad.stat_trial':'Free Trial','ad.footer':'Automated Trading Journal',
+    'ad2.pill':'14-day free trial','ad2.hl':'Got a <em>cTrader</em> account? Try it free!','ad2.sub':'Syncs your cTrader and MetaTrader accounts automatically','ad2.cta':'Try Free →','ad2.sponsored':'Ad',
     'empty.connecting':'Connecting','empty.connecting_sub':'Establishing real-time connection...',
     'empty.no_news':'No news found','empty.no_news_sub':'Change filters or wait for next update',
     'share.btn':'⇪ Share','toast.link_copied':'Link copied',
@@ -2388,15 +2389,15 @@ const STRINGS = {
     'cal.impact_label':'Impacto:','cal.asset_label':'Ativos:',
     'cal.high':'● Alto','cal.medium':'● Médio','cal.low':'● Baixo',
     'cal.all_assets':'Todos','cal.loading':'A carregar...','cal.no_events':'Sem eventos',
-    'delay.notice':'Aviso','delay.title':'Atraso de 2 min',
+    'delay.notice':'Aviso','delay.plan':'Plano Basic','delay.title':'Atraso de 2 minutos e menos notícias disponíveis',
     'delay.sub':"Estás no <strong>Plano Básico</strong>. Utilizadores Pro recebem todas as notícias em tempo real, sem atraso, sem anúncios e com squawk. O Plano Básico utiliza substancialmente menos fontes de notícias do que o Pro.",
     'delay.btn':'⚡ Upgrade para Pro',
     'status.status':'Estado','status.connection':'Ligação','status.updated':'Atualizado','status.items':'Itens',
     'status.connecting':'A conectar...',
     'ad.sponsored':'Patrocinado','ad.tagline':'A Chave Mestra para<br>Trading Lucrativo','ad.brand_tag':'Diário de Trading',
-    'ad.headline':'A Chave Mestra para Trading Lucrativo','ad.sub':'Diário Automático · +1200 Brokers · MT4/MT5 · Trial Grátis no cTrader',
-    'ad.cta':'Começa Agora','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diário de Trading Automático',
-    'ad2.pill':'14 dias grátis','ad2.hl':'Tens conta <em>cTrader</em>? Experimenta a Tracker FX grátis por 14 dias.','ad2.sub':'Sincroniza as tuas contas cTrader e MetaTrader automaticamente','ad2.cta':'Experimentar grátis →','ad2.sponsored':'Anúncio',
+    'ad.headline':'Diário Automático de Trading · +1200 Brokers','ad.sub':'Diário Automático de Trading · +1200 Brokers',
+    'ad.cta':'Experimenta Grátis','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diário de Trading Automático',
+    'ad2.pill':'14 dias grátis','ad2.hl':'Tens conta <em>cTrader</em>? Experimenta grátis!','ad2.sub':'Sincroniza as tuas contas cTrader e MetaTrader automaticamente','ad2.cta':'Experimentar →','ad2.sponsored':'Anúncio',
     'empty.connecting':'A conectar','empty.connecting_sub':'A estabelecer ligação em tempo real...',
     'empty.no_news':'Sem notícias','empty.no_news_sub':'Altera os filtros ou aguarda a próxima atualização',
     'share.btn':'⇪ Partilhar','toast.link_copied':'Ligação copiada',
@@ -2566,15 +2567,15 @@ const STRINGS = {
     'cal.impact_label':'Impacto:','cal.asset_label':'Activos:',
     'cal.high':'● Alto','cal.medium':'● Medio','cal.low':'● Bajo',
     'cal.all_assets':'Todos','cal.loading':'Cargando calendario...','cal.no_events':'Sin eventos',
-    'delay.notice':'Aviso','delay.title':'Retraso de 2 min',
+    'delay.notice':'Aviso','delay.plan':'Plan Basic','delay.title':'Retraso de 2 min y menos fuentes de noticias',
     'delay.sub':"Estás en el <strong>Plan Básico</strong>. Los usuarios Pro reciben cada titular en tiempo real, sin retraso, sin anuncios y con squawk en vivo. El plan Básico utiliza sustancialmente menos fuentes de noticias que el Pro.",
     'delay.btn':'⚡ Pásate a Pro',
     'status.status':'Estado','status.connection':'Conexión','status.updated':'Actualizado','status.items':'Ítems',
     'status.connecting':'Conectando...',
     'ad.sponsored':'Patrocinado','ad.tagline':'La Clave Maestra del<br>Trading Rentable','ad.brand_tag':'Diario de Trading',
-    'ad.headline':'La Clave Maestra del Trading Rentable','ad.sub':'Diario Automático · +1200 Brokers · MT4/MT5 · Trial Gratis en cTrader',
-    'ad.cta':'Empieza Ahora','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diario de Trading Automático',
-    'ad2.pill':'14 días gratis','ad2.hl':'¿Tienes cuenta <em>cTrader</em>? Prueba Tracker FX gratis 14 días.','ad2.sub':'Sincroniza tus cuentas de cTrader y MetaTrader automáticamente','ad2.cta':'Prueba gratis →','ad2.sponsored':'Anuncio',
+    'ad.headline':'Diario Automático de Trading · +1200 Brokers','ad.sub':'Diario Automático de Trading · +1200 Brokers',
+    'ad.cta':'Prueba Gratis','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diario de Trading Automático',
+    'ad2.pill':'14 días gratis','ad2.hl':'¿Tienes cuenta <em>cTrader</em>? ¡Prueba gratis!','ad2.sub':'Sincroniza tus cuentas de cTrader y MetaTrader automáticamente','ad2.cta':'Prueba gratis →','ad2.sponsored':'Anuncio',
     'empty.connecting':'Conectando','empty.connecting_sub':'Estableciendo conexión en tiempo real...',
     'empty.no_news':'Sin noticias','empty.no_news_sub':'Cambia los filtros o espera la próxima actualización',
     'share.btn':'⇪ Compartir','toast.link_copied':'Enlace copiado',
@@ -2744,15 +2745,15 @@ const STRINGS = {
     'cal.impact_label':'Impact :','cal.asset_label':'Actifs :',
     'cal.high':'● Élevé','cal.medium':'● Moyen','cal.low':'● Faible',
     'cal.all_assets':'Tous','cal.loading':'Chargement du calendrier...','cal.no_events':'Aucun événement',
-    'delay.notice':'Avis','delay.title':'Délai de 2 min',
+    'delay.notice':'Avis','delay.plan':'Plan Basic','delay.title':'Délai de 2 min et moins de sources d\'actualités',
     'delay.sub':"Vous êtes sur le <strong>Plan Basique</strong>. Les utilisateurs Pro reçoivent chaque titre en temps réel, sans délai, sans publicité et avec squawk en direct. Le plan Basique utilise beaucoup moins de sources d'actualités que le Pro.",
     'delay.btn':'⚡ Passer à Pro',
     'status.status':'Statut','status.connection':'Connexion','status.updated':'Mis à jour','status.items':'Éléments',
     'status.connecting':'Connexion...',
     'ad.sponsored':'Sponsorisé','ad.tagline':'La Clé Maîtresse du<br>Trading Profitable','ad.brand_tag':'Journal de Trading',
-    'ad.headline':'La Clé Maîtresse du Trading Profitable','ad.sub':'Journal Automatisé · +1200 Brokers · MT4/MT5 · Essai Gratuit sur cTrader',
-    'ad.cta':'Commencer','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Essai cTrader','ad.footer':'Journal de Trading Automatisé',
-    'ad2.pill':'14 jours gratuits','ad2.hl':'Compte <em>cTrader</em>&nbsp;? Essayez Tracker FX gratuitement 14 jours.','ad2.sub':'Synchronise vos comptes cTrader et MetaTrader automatiquement','ad2.cta':'Essai gratuit →','ad2.sponsored':'Pub',
+    'ad.headline':'Journal de Trading Automatisé · +1200 Brokers','ad.sub':'Journal de Trading Automatisé · +1200 Brokers',
+    'ad.cta':'Essai Gratuit','ad.stat_brokers':'Brokers','ad.stat_sync':'Sync Auto','ad.stat_trial':'Essai cTrader','ad.footer':'Journal de Trading Automatisé',
+    'ad2.pill':'14 jours gratuits','ad2.hl':'Compte <em>cTrader</em>&nbsp;? Essayez gratuitement&nbsp;!','ad2.sub':'Synchronise vos comptes cTrader et MetaTrader automatiquement','ad2.cta':'Essai gratuit →','ad2.sponsored':'Pub',
     'empty.connecting':'Connexion','empty.connecting_sub':'Établissement de la connexion en temps réel...',
     'empty.no_news':'Aucune actualité','empty.no_news_sub':'Modifiez les filtres ou attendez la prochaine mise à jour',
     'share.btn':'⇪ Partager','toast.link_copied':'Lien copié',
@@ -2922,15 +2923,15 @@ const STRINGS = {
     'cal.impact_label':'Impact:','cal.asset_label':'Werte:',
     'cal.high':'● Hoch','cal.medium':'● Mittel','cal.low':'● Niedrig',
     'cal.all_assets':'Alle','cal.loading':'Kalender lädt...','cal.no_events':'Keine Ereignisse',
-    'delay.notice':'Hinweis','delay.title':'2-Min Nachrichten-Verzögerung',
+    'delay.notice':'Hinweis','delay.plan':'Basic-Plan','delay.title':'2-Min Verzögerung & weniger Nachrichtenquellen',
     'delay.sub':"Du nutzt den <strong>Basis-Plan</strong>. Pro-Nutzer erhalten jede Schlagzeile in Echtzeit, ohne Verzögerung, ohne Werbung und mit Live-Squawk. Der Basis-Plan verwendet deutlich weniger Nachrichtenquellen als der Pro-Plan.",
     'delay.btn':'⚡ Auf Pro upgraden',
     'status.status':'Status','status.connection':'Verbindung','status.updated':'Aktualisiert','status.items':'Einträge',
     'status.connecting':'Verbinden...',
     'ad.sponsored':'Gesponsert','ad.tagline':'Der Schlüssel zum<br>profitablen Trading','ad.brand_tag':'Trading Journal',
-    'ad.headline':'Der Schlüssel zum profitablen Trading','ad.sub':'Automatisches Journal · +1200 Broker · MT4/MT5 · Kostenlose Testversion auf cTrader',
-    'ad.cta':'Jetzt starten','ad.stat_brokers':'Broker','ad.stat_sync':'Auto-Sync','ad.stat_trial':'Test cTrader','ad.footer':'Automatisches Trading Journal',
-    'ad2.pill':'14 Tage kostenlos','ad2.hl':'<em>cTrader</em>-Konto? Teste Tracker FX 14 Tage kostenlos.','ad2.sub':'Synchronisiert deine cTrader- und MetaTrader-Konten automatisch','ad2.cta':'Kostenlos testen →','ad2.sponsored':'Anzeige',
+    'ad.headline':'Automatisches Trading Journal · +1200 Broker','ad.sub':'Automatisches Trading Journal · +1200 Broker',
+    'ad.cta':'Kostenlos testen','ad.stat_brokers':'Broker','ad.stat_sync':'Auto-Sync','ad.stat_trial':'Test cTrader','ad.footer':'Automatisches Trading Journal',
+    'ad2.pill':'14 Tage kostenlos','ad2.hl':'<em>cTrader</em>-Konto? Jetzt kostenlos testen!','ad2.sub':'Synchronisiert deine cTrader- und MetaTrader-Konten automatisch','ad2.cta':'Kostenlos →','ad2.sponsored':'Anzeige',
     'empty.connecting':'Verbinden','empty.connecting_sub':'Echtzeit-Verbindung wird hergestellt...',
     'empty.no_news':'Keine Nachrichten','empty.no_news_sub':'Filter ändern oder auf nächstes Update warten',
     'share.btn':'⇪ Teilen','toast.link_copied':'Link kopiert',
@@ -3100,15 +3101,15 @@ const STRINGS = {
     'cal.impact_label':'Impatto:','cal.asset_label':'Asset:',
     'cal.high':'● Alto','cal.medium':'● Medio','cal.low':'● Basso',
     'cal.all_assets':'Tutti','cal.loading':'Caricamento calendario...','cal.no_events':'Nessun evento',
-    'delay.notice':'Avviso','delay.title':'Ritardo di 2 min',
+    'delay.notice':'Avviso','delay.plan':'Piano Basic','delay.title':'Ritardo di 2 min e meno fonti di notizie',
     'delay.sub':"Sei sul <strong>Piano Base</strong>. Gli utenti Pro ricevono ogni titolo in tempo reale, senza ritardi, senza pubblicità e con squawk live. Il piano Base utilizza sostanzialmente meno fonti di notizie rispetto al Pro.",
     'delay.btn':'⚡ Passa a Pro',
     'status.status':'Stato','status.connection':'Connessione','status.updated':'Aggiornato','status.items':'Elementi',
     'status.connecting':'Connessione...',
     'ad.sponsored':'Sponsorizzato','ad.tagline':'La Chiave Maestra del<br>Trading Redditizio','ad.brand_tag':'Diario di Trading',
-    'ad.headline':'La Chiave Maestra del Trading Redditizio','ad.sub':'Diario Automatico · +1200 Broker · MT4/MT5 · Prova Gratuita su cTrader',
-    'ad.cta':'Inizia ora','ad.stat_brokers':'Broker','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diario di Trading Automatico',
-    'ad2.pill':'14 giorni gratis','ad2.hl':'Hai un account <em>cTrader</em>? Prova Tracker FX gratis per 14 giorni.','ad2.sub':'Sincronizza automaticamente i tuoi account cTrader e MetaTrader','ad2.cta':'Prova gratis →','ad2.sponsored':'Annuncio',
+    'ad.headline':'Diario Automatico di Trading · +1200 Broker','ad.sub':'Diario Automatico di Trading · +1200 Broker',
+    'ad.cta':'Prova Gratis','ad.stat_brokers':'Broker','ad.stat_sync':'Sync Auto','ad.stat_trial':'Trial cTrader','ad.footer':'Diario di Trading Automatico',
+    'ad2.pill':'14 giorni gratis','ad2.hl':'Hai un account <em>cTrader</em>? Prova gratis!','ad2.sub':'Sincronizza automaticamente i tuoi account cTrader e MetaTrader','ad2.cta':'Prova gratis →','ad2.sponsored':'Annuncio',
     'empty.connecting':'Connessione','empty.connecting_sub':'Connessione in tempo reale in corso...',
     'empty.no_news':'Nessuna notizia','empty.no_news_sub':'Cambia i filtri o attendi il prossimo aggiornamento',
     'share.btn':'⇪ Condividi','toast.link_copied':'Link copiato',
@@ -4821,8 +4822,10 @@ function renderNews() {
   // Delay banner — rendered in both news and calendar tabs (only for basic/free users)
   const bannerHtml = !IS_PRO ? `<div class="delay-banner">
       <div class="delay-banner-left">
+        <span class="delay-banner-plan">${t('delay.plan')}</span>
+        <span class="delay-banner-sep">—</span>
         <span class="delay-banner-icon">⏱</span>
-        <span class="delay-banner-text"><strong>${t('delay.title')}</strong></span>
+        <span class="delay-banner-text">${t('delay.title')}</span>
       </div>
       <button class="delay-banner-btn" onclick="showUpgrade('Real-Time News Feed')">${t('delay.btn')}</button>
     </div>` : '';
@@ -4918,13 +4921,6 @@ function renderNews() {
             </div>
             <div class="feed-ad-white-copy">
               <div class="feed-ad-white-hl">${t('ad2.hl')}</div>
-              <div class="feed-ad-white-sub">${t('ad2.sub')}</div>
-            </div>
-            <div class="feed-ad-ctrader-block">
-              <svg class="feed-ad-ctrader-svg" viewBox="0 0 360 64" xmlns="http://www.w3.org/2000/svg">
-                <text x="0" y="52" font-size="60" font-weight="900" font-style="italic" font-family="'Arial Black','Impact',sans-serif" fill="#CC1A2A">c</text>
-                <text x="40" y="52" font-size="60" font-weight="900" font-style="italic" font-family="'Arial Black','Impact',sans-serif" fill="#111">TRADER</text>
-              </svg>
             </div>
             <div class="feed-ad-white-cta-wrap">
               <button class="feed-ad-white-cta" onclick="event.stopPropagation();window.open('https://www.trackerfx.com','_blank')">${t('ad2.cta')}</button>
@@ -4942,7 +4938,6 @@ function renderNews() {
              <div class="feed-ad-divider"></div>
              <div class="feed-ad-copy">
                <div class="feed-ad-sub">${t('ad.sub')}</div>
-               <div class="feed-ad-headline">${t('ad.headline')}</div>
              </div>
              <button class="feed-ad-cta" onclick="event.stopPropagation();window.open('https://www.trackerfx.com','_blank')">${t('ad.cta')}</button>
              <span class="feed-ad-sponsored">${t('ad.sponsored')}</span>

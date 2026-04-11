@@ -2365,18 +2365,21 @@ async function _loadBlockedIPs() {
 async function loadFunnel() {
   let _planBasic = 0; // shared between the two try blocks below
   try {
-    const [d, plans] = await Promise.all([
+    const [d, plans, trialSrc] = await Promise.all([
       api('/admin/stats/funnel'),
       api('/admin/stats/plans'),
+      api('/admin/stats/trial-sources'),
     ]);
     const reg  = d.total_registered || 0;
     const conf = d.email_verified   || 0;
     const planMap = {};
     (plans.data||[]).forEach(p => planMap[p.plan||'free'] = p.count);
-    const nFree  = planMap['free']  || 0;
-    const nBasic = planMap['basic'] || 0;
-    const nPro   = planMap['pro']   || 0;
-    const nTrial = planMap['trial'] || 0;
+    const nFree         = planMap['free']  || 0;
+    const nBasic        = planMap['basic'] || 0;
+    const nPro          = planMap['pro']   || 0;
+    const nTrial        = planMap['trial'] || 0;
+    const nTrialStripe  = trialSrc.stripe  || 0;
+    const nTrialAdmin   = trialSrc.admin   || 0;
     _planBasic = nFree + nBasic; // expose to trial section
 
     // drop-off between steps
@@ -2446,9 +2449,14 @@ async function loadFunnel() {
           <div class="fn-split-pct">${reg>0?Math.round((nFree+nBasic)/reg*100):0}%</div>
         </div>
         <div class="fn-split-item">
-          <div class="fn-split-label" style="color:var(--amber)">Trial</div>
-          <div class="fn-split-count" style="color:var(--amber)">${nTrial}</div>
-          <div class="fn-split-pct" style="color:var(--amber)">${reg>0?Math.round(nTrial/reg*100):0}%</div>
+          <div class="fn-split-label" style="color:#a5b4fc">Trial · Site</div>
+          <div class="fn-split-count" style="color:#a5b4fc">${nTrialStripe}</div>
+          <div class="fn-split-pct" style="color:#a5b4fc">${reg>0?Math.round(nTrialStripe/reg*100):0}%</div>
+        </div>
+        <div class="fn-split-item">
+          <div class="fn-split-label" style="color:var(--amber)">Trial · Admin</div>
+          <div class="fn-split-count" style="color:var(--amber)">${nTrialAdmin}</div>
+          <div class="fn-split-pct" style="color:var(--amber)">${reg>0?Math.round(nTrialAdmin/reg*100):0}%</div>
         </div>
         <div class="fn-split-item" style="background:rgba(0,212,255,.03)">
           <div class="fn-split-label" style="color:var(--accent)">Pro</div>
@@ -2492,14 +2500,20 @@ async function loadFunnel() {
     const rate      = tc.conversion_rate || 0;
     const basicOnly = Math.max(0, _planBasic - didNot); // basic users who never tried
 
+    const tStripe = tc.total_stripe || 0;
+    const tAdmin  = tc.total_admin  || 0;
     document.getElementById('trial-conv-kpis').innerHTML = `
       <div class="kpi-card">
         <div class="kpi-label">Só Basic</div>
         <div class="kpi-value" style="color:var(--text-muted)">${basicOnly}</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Tiveram Trial</div>
-        <div class="kpi-value" style="color:#a78bfa">${total}</div>
+        <div class="kpi-label">Trial · Site</div>
+        <div class="kpi-value" style="color:#a5b4fc">${tStripe}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Trial · Admin</div>
+        <div class="kpi-value" style="color:var(--amber)">${tAdmin}</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Ainda em Trial</div>
@@ -2524,7 +2538,7 @@ async function loadFunnel() {
 
     const tcTbody = document.getElementById('trial-conv-tbody');
     if (!tc.users || !tc.users.length) {
-      tcTbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhum utilizador com trial</td></tr>';
+      tcTbody.innerHTML = '<tr><td colspan="9" class="empty-state">Nenhum utilizador com trial</td></tr>';
     } else {
       tcTbody.innerHTML = tc.users.map(u => {
         const flagStr = u.country ? _flag(u.country) + ' ' + u.country : '<span style="color:var(--border2)">—</span>';
@@ -2532,6 +2546,9 @@ async function loadFunnel() {
         const durCell = durStr
           ? `<span class="trial-dur-badge" style="font-size:11px">${durStr}</span>`
           : '<span style="color:var(--border2)">—</span>';
+        const srcBadge = u.trial_source === 'stripe'
+          ? `<span style="font-size:9px;font-weight:700;letter-spacing:.04em;padding:1px 5px;border-radius:3px;background:rgba(99,102,241,.18);border:1px solid rgba(99,102,241,.4);color:#a5b4fc" title="Website trial · 7d · CC collected">SITE</span>`
+          : `<span style="font-size:9px;font-weight:700;letter-spacing:.04em;padding:1px 5px;border-radius:3px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#fbbf24" title="Manual trial · admin dashboard">ADMIN</span>`;
         let statusBadge;
         if (u.plan === 'pro') {
           statusBadge = `<span class="badge badge-pro" style="color:var(--accent)">✓ Converteu → Pro</span>`;
@@ -2545,6 +2562,7 @@ async function loadFunnel() {
           <td>${u.email}</td>
           <td style="color:var(--text-muted)">${u.name||'–'}</td>
           <td style="font-size:12px">${flagStr}</td>
+          <td style="text-align:center">${srcBadge}</td>
           <td style="text-align:center">${durCell}</td>
           <td>${statusBadge}</td>
           <td><span class="num">${(u.trial_started_at||'–').slice(0,10)}</span></td>
@@ -2644,13 +2662,16 @@ async function loadCustomers() {
 
     // Build maps: total count, pro count, basic count, trial count per country
     const countMap = {}, proMap = {}, basicMap = {}, trialMap = {};
+    const trialStripeMap = {}, trialAdminMap = {};
     stats.forEach(d => {
       if (d.country && d.country !== 'XX') {
         const k = d.country.toUpperCase();
-        countMap[k]  = d.count;
-        proMap[k]    = d.pro_count   || 0;
-        basicMap[k]  = d.basic_count || 0;
-        trialMap[k]  = d.trial_count || 0;
+        countMap[k]        = d.count;
+        proMap[k]          = d.pro_count          || 0;
+        basicMap[k]        = d.basic_count        || 0;
+        trialMap[k]        = d.trial_count        || 0;
+        trialStripeMap[k]  = d.trial_stripe_count || 0;
+        trialAdminMap[k]   = d.trial_admin_count  || 0;
       }
     });
 
@@ -2686,13 +2707,15 @@ async function loadCustomers() {
           const name = COUNTRY_NAMES[code] || code;
           const total = countMap[code] || 0;
           if (!total) return;
-          const pro   = proMap[code]   || 0;
-          const basic = basicMap[code] || 0;
-          const trial = trialMap[code] || 0;
+          const pro         = proMap[code]        || 0;
+          const basic       = basicMap[code]      || 0;
+          const trialStripe = trialStripeMap[code]|| 0;
+          const trialAdmin  = trialAdminMap[code] || 0;
           tooltip.text(`${_flag(code)}${name}: ${total} user${total!==1?'s':''}` +
-            (pro   > 0 ? ` · <span style="color:#00d4ff">${pro} Pro</span>`   : '') +
-            (trial > 0 ? ` · <span style="color:#f59e0b">${trial} Trial</span>` : '') +
-            (basic > 0 ? ` · <span style="color:#a78bfa">${basic} Basic</span>` : ''), true);
+            (pro         > 0 ? ` · <span style="color:#00d4ff">${pro} Pro</span>`   : '') +
+            (trialStripe > 0 ? ` · <span style="color:#a5b4fc">${trialStripe} Trial·Site</span>` : '') +
+            (trialAdmin  > 0 ? ` · <span style="color:#f59e0b">${trialAdmin} Trial·Admin</span>` : '') +
+            (basic       > 0 ? ` · <span style="color:#a78bfa">${basic} Basic</span>` : ''), true);
         }
       });
     }

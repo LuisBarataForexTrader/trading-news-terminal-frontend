@@ -5220,13 +5220,7 @@ function _checkKeywordAlerts(items) {
   }
 }
 function _showKwToast(keyword, headline) {
-  const existing = document.querySelector('.kw-alert-toast');
-  if (existing) existing.remove();
-  const toast = document.createElement('div');
-  toast.className = 'kw-alert-toast';
-  toast.innerHTML = `🔔 <strong>Keyword Alert: "${keyword}"</strong><br><span style="font-weight:400;font-size:11px;">${headline.slice(0,120)}${headline.length>120?'…':''}</span>`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 6000);
+  // Toast removed — keyword match triggers beep only
 }
 function _playKwBeep() {
   try {

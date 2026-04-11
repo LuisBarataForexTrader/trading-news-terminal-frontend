@@ -1,4 +1,7 @@
 // Trading News Terminal — Service Worker for Push Notifications
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+
 self.addEventListener('push', function(event) {
   const data = event.data ? event.data.json() : {};
   const title = data.title || '🔴 Trading Alert';
@@ -7,8 +10,8 @@ self.addEventListener('push', function(event) {
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      icon: '/assets/favicon/android-chrome-192x192.png',
-      badge:'/assets/favicon/favicon-32x32.png',
+      icon: '/favicon.ico',
+      badge:'/favicon.ico',
       data: { url },
       requireInteraction: true,
       vibrate: [200, 100, 200]

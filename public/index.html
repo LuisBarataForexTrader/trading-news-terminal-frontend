@@ -7985,26 +7985,25 @@ async function togglePushNotifications() {
     _showPushToast('❌ Could not reach server. Check your connection.', '#c0392b');
     return;
   }
-  // Check FCM reachability before attempting subscription
-  let fcmReachable = false;
+  // Register SW fresh
+  let reg;
   try {
-    await fetch('https://fcm.googleapis.com/', { mode: 'no-cors', cache: 'no-store' });
-    fcmReachable = true;
-  } catch(e) { fcmReachable = false; }
-  console.log('[Push] FCM reachable:', fcmReachable);
-
-  // Reset SW state first for a clean slate
-  console.log('[Push] Resetting SW...');
-  try { await _resetServiceWorker(); } catch(e) { console.warn('[Push] SW reset error:', e); }
+    reg = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+  } catch(e) {
+    console.error('[Push] SW register failed:', e);
+    _showPushToast('❌ Service worker failed to register: ' + (e.message || e), '#c0392b', 8000);
+    return;
+  }
 
   let sub = await _tryPushSubscribe(publicKey);
   if (!sub) {
-    const isBrave = !!(navigator.brave && navigator.brave.isBrave);
-    if (isBrave || !fcmReachable) {
-      _showPushToast('⚠️ Brave blocks push by default. Go to brave://settings/privacy → enable "Use Google services for push messaging", then try again.', '#e67e22', 10000);
-    } else {
-      _showPushToast('❌ Push failed. Update Chrome and try again, or check browser notification settings.', '#c0392b', 8000);
-    }
+    // One retry after full reset
+    try { await _resetServiceWorker(); } catch(e) {}
+    sub = await _tryPushSubscribe(publicKey);
+  }
+  if (!sub) {
+    _showPushToast('❌ Push registration failed. Open the console (F12) and share the [Push] error lines.', '#c0392b', 10000);
     return;
   }
   // Save subscription to backend

@@ -859,9 +859,10 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 .kw-input:focus{border-color:var(--accent);}
 .kw-add-btn{padding:7px 12px;background:var(--accent);border:none;border-radius:4px;color:#000;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
 /* ── Push bell header button ── */
-.push-bell-btn{background:none;border:1px solid transparent;border-radius:6px;padding:4px 7px;font-size:15px;cursor:pointer;transition:all .2s;color:var(--text-muted);line-height:1;}
+.push-bell-btn{background:none;border:1px solid transparent;border-radius:6px;padding:4px 7px;font-size:15px;cursor:pointer;transition:all .2s;color:var(--text-muted);line-height:1;position:relative;}
 .push-bell-btn:hover{background:rgba(255,255,255,0.08);border-color:var(--border);}
-.push-bell-btn.active{color:#ffd700;border-color:rgba(255,215,0,0.3);background:rgba(255,215,0,0.08);animation:push-ring .6s ease;}
+.push-bell-btn.active{border-color:rgba(255,215,0,0.6);background:rgba(255,215,0,0.15);animation:push-ring .6s ease;box-shadow:0 0 8px rgba(255,215,0,0.3);}
+.push-bell-btn.active::after{content:'';position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#ffd700;box-shadow:0 0 4px #ffd700;}
 @keyframes push-ring{0%,100%{transform:rotate(0deg)}20%{transform:rotate(-15deg)}40%{transform:rotate(15deg)}60%{transform:rotate(-10deg)}80%{transform:rotate(10deg)}}
 /* ── Push card in squawk dropdown ── */
 .push-card{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,215,0,0.15);background:rgba(255,215,0,0.04);margin-bottom:10px;cursor:pointer;transition:all .2s;gap:10px;}
@@ -7930,7 +7931,12 @@ async function _initPush() {
     await navigator.serviceWorker.register('/sw.js');
     const reg = await navigator.serviceWorker.ready;
     const sub = await reg.pushManager.getSubscription();
-    if (sub) { _pushEnabled = true; _updatePushBtn(); }
+    if (sub) {
+      _pushEnabled = true;
+      // Update immediately and once more after DOM is fully settled
+      _updatePushBtn();
+      setTimeout(_updatePushBtn, 500);
+    }
   } catch(e) { console.warn('[Push] init error:', e); }
 }
 
@@ -8043,16 +8049,22 @@ function _showPushToast(msg, bg, duration = 5000) {
   setTimeout(() => toast.remove(), duration);
 }
 function _updatePushBtn() {
-  // Bell button in header
+  // Bell button in header — emoji + active class
   const bell = document.getElementById('pushBellBtn');
-  if (bell) bell.classList.toggle('active', _pushEnabled);
+  if (bell) {
+    bell.classList.toggle('active', _pushEnabled);
+    bell.textContent = _pushEnabled ? '🔔' : '🔔';
+    bell.title = _pushEnabled ? 'Push alerts ON — click to disable' : 'Enable browser push alerts';
+  }
   // Toggle card in squawk dropdown
   const card   = document.getElementById('pushCard');
   const toggle = document.getElementById('pushToggle');
   const icon   = document.getElementById('pushCardIcon');
+  const sub    = document.querySelector('.push-card-sub');
   if (card)   card.classList.toggle('enabled', _pushEnabled);
   if (toggle) toggle.classList.toggle('on', _pushEnabled);
   if (icon)   icon.textContent = _pushEnabled ? '🔔' : '🔕';
+  if (sub)    sub.textContent  = _pushEnabled ? 'Active — HIGH impact alerts on' : 'Alerts even when tab is closed';
 }
 function _urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);

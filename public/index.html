@@ -80,6 +80,7 @@
   --ticker-inner-h:70px; /* extra 24px hides iframe scrollbar on Windows/Linux */
 }
 *{margin:0;padding:0;box-sizing:border-box;}
+button{cursor:pointer;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 .mob-sidebar-toggle{display:none;}
 .mob-sidebar-overlay{display:none;}
@@ -1426,7 +1427,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 
     <!-- ── Push Alerts (sidebar section) ── -->
     <div class="sidebar-push-section" id="sidebarPushSection">
-      <div class="sidebar-label" data-i18n="push.section_label">Push Alerts</div>
+      <div class="sidebar-label" data-i18n="push.sidebar_label">Push Notifications</div>
       <div class="sidebar-push-row" id="sidebarPushRow" onclick="IS_PRO ? _handlePushBellClick() : showUpgrade('Push Notifications')" title="Browser push alerts — get notified even when the tab is closed">
         <span class="sidebar-push-icon" id="sidebarPushIcon">🔕</span>
         <div class="sidebar-push-text">
@@ -2651,7 +2652,14 @@ const STRINGS = {
     'nav.central_banks':'Central Banks','nav.screener':'Screener','nav.signout':'Sign Out',
     'nav.correlations':'Correlations',
     'summary.title':'Today\'s Highlights','summary.tooltip':'View today\'s top stories',
-    'push.section':'Browser Push Alerts','push.desc':'Alerts even when tab is closed','push.enable':'Enable','push.disable':'Disable',
+    'push.section':'Browser Notifications','push.desc':'Alerts even when tab is closed','push.enable':'Enable','push.disable':'Disable',
+    'push.sidebar_label':'Push Notifications',
+    'push.explain_title':'Real-Time Market Alerts',
+    'push.explain_body':'Get instant browser notifications for <strong>HIGH impact news</strong> from Trading News Terminal — even when this tab is closed or minimised.',
+    'push.preview_app':'🔴 Trading News Terminal',
+    'push.preview_msg':'Fed raises rates by 50bps — surprise move...',
+    'push.explain_enable':'Enable Push Alerts',
+    'push.explain_note':'You can disable anytime from the Push Notifications section in the sidebar.',
     'mynews.title':'My News Feed','mynews.no_filters':'No filters active',
     'mynews.basic_hint':'Select major FX currencies below','mynews.config':'Configure Feed',
     'squawk.title':'⚙ Squawk Settings','squawk.voice':'Voice','squawk.voice_auto':'Auto — best available',
@@ -2840,7 +2848,14 @@ const STRINGS = {
     'nav.central_banks':'Bancos Centrais','nav.screener':'Screener','nav.signout':'Sair',
     'nav.correlations':'Correlações',
     'summary.title':'Destaques de Hoje','summary.tooltip':'Ver os destaques de hoje',
-    'push.section':'Alertas Push no Browser','push.desc':'Alertas mesmo com o tab fechado','push.enable':'Ativar','push.disable':'Desativar',
+    'push.section':'Notificações Browser','push.desc':'Alertas mesmo com o tab fechado','push.enable':'Ativar','push.disable':'Desativar',
+    'push.sidebar_label':'Notificações Push',
+    'push.explain_title':'Alertas em Tempo Real',
+    'push.explain_body':'Recebe notificações instantâneas no browser para <strong>notícias de alto impacto</strong> do Trading News Terminal — mesmo com este tab fechado ou minimizado.',
+    'push.preview_app':'🔴 Trading News Terminal',
+    'push.preview_msg':'Fed aumenta taxas em 50bps — movimento surpresa...',
+    'push.explain_enable':'Ativar Alertas Push',
+    'push.explain_note':'Podes desativar a qualquer momento na secção Notificações Push na barra lateral.',
     'mynews.title':'As Minhas Notícias','mynews.no_filters':'Sem filtros ativos',
     'mynews.basic_hint':'Seleciona moedas FX principais abaixo','mynews.config':'Configurar Feed',
     'squawk.title':'⚙ Definições do Squawk','squawk.voice':'Voz','squawk.voice_auto':'Auto — melhor disponível',
@@ -3029,7 +3044,14 @@ const STRINGS = {
     'nav.central_banks':'Bancos Centrales','nav.screener':'Screener','nav.signout':'Cerrar Sesión',
     'nav.correlations':'Correlaciones',
     'summary.title':'Destacados de Hoy','summary.tooltip':'Ver las noticias más importantes de hoy',
-    'push.section':'Alertas Push del Navegador','push.desc':'Alertas incluso con la pestaña cerrada','push.enable':'Activar','push.disable':'Desactivar',
+    'push.section':'Notificaciones del Navegador','push.desc':'Alertas incluso con la pestaña cerrada','push.enable':'Activar','push.disable':'Desactivar',
+    'push.sidebar_label':'Notificaciones Push',
+    'push.explain_title':'Alertas de Mercado en Tiempo Real',
+    'push.explain_body':'Recibe notificaciones instantáneas del navegador para <strong>noticias de alto impacto</strong> del Trading News Terminal — incluso con esta pestaña cerrada o minimizada.',
+    'push.preview_app':'🔴 Trading News Terminal',
+    'push.preview_msg':'Fed sube tipos 50bps — movimiento sorpresa...',
+    'push.explain_enable':'Activar Alertas Push',
+    'push.explain_note':'Puedes desactivar en cualquier momento desde la sección Notificaciones Push en la barra lateral.',
     'mynews.title':'Mis Noticias','mynews.no_filters':'Sin filtros activos',
     'mynews.basic_hint':'Selecciona divisas FX principales abajo','mynews.config':'Configurar Feed',
     'squawk.title':'⚙ Ajustes de Squawk','squawk.voice':'Voz','squawk.voice_auto':'Auto — mejor disponible',
@@ -3218,7 +3240,14 @@ const STRINGS = {
     'nav.central_banks':'Banques Centrales','nav.screener':'Screener','nav.signout':'Déconnexion',
     'nav.correlations':'Corrélations',
     'summary.title':'Points Forts du Jour','summary.tooltip':'Voir les actualités majeures du jour',
-    'push.section':'Alertes Push Navigateur','push.desc':'Alertes même onglet fermé','push.enable':'Activer','push.disable':'Désactiver',
+    'push.section':'Notifications Navigateur','push.desc':'Alertes même onglet fermé','push.enable':'Activer','push.disable':'Désactiver',
+    'push.sidebar_label':'Notifications Push',
+    'push.explain_title':'Alertes Marché en Temps Réel',
+    'push.explain_body':'Recevez des notifications instantanées pour les <strong>actualités à fort impact</strong> du Trading News Terminal — même quand cet onglet est fermé ou minimisé.',
+    'push.preview_app':'🔴 Trading News Terminal',
+    'push.preview_msg':'La Fed relève ses taux de 50bps — surprise...',
+    'push.explain_enable':'Activer les Alertes Push',
+    'push.explain_note':'Vous pouvez désactiver à tout moment depuis la section Notifications Push dans la barre latérale.',
     'mynews.title':'Mes Actualités','mynews.no_filters':'Aucun filtre actif',
     'mynews.basic_hint':'Sélectionnez les devises FX majeures ci-dessous','mynews.config':'Configurer le Flux',
     'squawk.title':'⚙ Paramètres Squawk','squawk.voice':'Voix','squawk.voice_auto':'Auto — meilleure disponible',
@@ -3407,7 +3436,14 @@ const STRINGS = {
     'nav.central_banks':'Zentralbanken','nav.screener':'Screener','nav.signout':'Abmelden',
     'nav.correlations':'Korrelationen',
     'summary.title':'Heutige Highlights','summary.tooltip':'Heutige Top-Meldungen anzeigen',
-    'push.section':'Browser-Push-Benachrichtigungen','push.desc':'Alarme auch bei geschlossenem Tab','push.enable':'Aktivieren','push.disable':'Deaktivieren',
+    'push.section':'Browser-Benachrichtigungen','push.desc':'Alarme auch bei geschlossenem Tab','push.enable':'Aktivieren','push.disable':'Deaktivieren',
+    'push.sidebar_label':'Push-Benachrichtigungen',
+    'push.explain_title':'Echtzeit-Marktwarnungen',
+    'push.explain_body':'Erhalten Sie sofortige Browser-Benachrichtigungen für <strong>HIGH-Impact-Nachrichten</strong> vom Trading News Terminal — auch wenn dieser Tab geschlossen oder minimiert ist.',
+    'push.preview_app':'🔴 Trading News Terminal',
+    'push.preview_msg':'Fed erhöht Zinsen um 50bps — überraschende Entscheidung...',
+    'push.explain_enable':'Push-Benachrichtigungen aktivieren',
+    'push.explain_note':'Sie können jederzeit im Abschnitt Push-Benachrichtigungen in der Seitenleiste deaktivieren.',
     'mynews.title':'Meine Nachrichten','mynews.no_filters':'Keine Filter aktiv',
     'mynews.basic_hint':'Wähle unten Haupt-FX-Währungen','mynews.config':'Feed konfigurieren',
     'squawk.title':'⚙ Squawk-Einstellungen','squawk.voice':'Stimme','squawk.voice_auto':'Auto — beste verfügbar',
@@ -3596,7 +3632,14 @@ const STRINGS = {
     'nav.central_banks':'Banche Centrali','nav.screener':'Screener','nav.signout':'Esci',
     'nav.correlations':'Correlazioni',
     'summary.title':'Highlights di Oggi','summary.tooltip':'Visualizza i principali eventi di oggi',
-    'push.section':'Avvisi Push Browser','push.desc':'Avvisi anche con la scheda chiusa','push.enable':'Attiva','push.disable':'Disattiva',
+    'push.section':'Notifiche Browser','push.desc':'Avvisi anche con la scheda chiusa','push.enable':'Attiva','push.disable':'Disattiva',
+    'push.sidebar_label':'Notifiche Push',
+    'push.explain_title':'Avvisi di Mercato in Tempo Reale',
+    'push.explain_body':'Ricevi notifiche istantanee del browser per <strong>notizie ad alto impatto</strong> dal Trading News Terminal — anche quando questa scheda è chiusa o minimizzata.',
+    'push.preview_app':'🔴 Trading News Terminal',
+    'push.preview_msg':'Fed alza i tassi di 50bps — mossa a sorpresa...',
+    'push.explain_enable':'Attiva Avvisi Push',
+    'push.explain_note':'Puoi disattivare in qualsiasi momento dalla sezione Notifiche Push nella barra laterale.',
     'mynews.title':'Le Mie Notizie','mynews.no_filters':'Nessun filtro attivo',
     'mynews.basic_hint':'Seleziona le valute FX principali sotto','mynews.config':'Configura Feed',
     'squawk.title':'⚙ Impostazioni Squawk','squawk.voice':'Voce','squawk.voice_auto':'Auto — migliore disponibile',
@@ -8820,17 +8863,17 @@ try { applyTranslations(); } catch(e) {}
 <div class="push-explain" id="pushExplain" style="display:none" role="dialog" aria-modal="true">
   <button class="push-explain-close" onclick="document.getElementById('pushExplain').style.display='none'" aria-label="Close">×</button>
   <div class="push-explain-icon">📡</div>
-  <p class="push-explain-title">Real-Time Market Alerts</p>
-  <p class="push-explain-body">Get instant browser notifications for <strong>HIGH impact news</strong> from Trading News Terminal — even when this tab is closed or minimised.</p>
+  <p class="push-explain-title" data-i18n="push.explain_title">Real-Time Market Alerts</p>
+  <p class="push-explain-body" data-i18n-html="push.explain_body">Get instant browser notifications for <strong>HIGH impact news</strong> from Trading News Terminal — even when this tab is closed or minimised.</p>
   <div class="push-explain-preview">
     <span class="push-preview-dot"></span>
     <div>
-      <span class="push-preview-app">🔴 Trading News Terminal</span>
-      <span class="push-preview-msg">Fed raises rates by 50bps — surprise move...</span>
+      <span class="push-preview-app" data-i18n="push.preview_app">🔴 Trading News Terminal</span>
+      <span class="push-preview-msg" data-i18n="push.preview_msg">Fed raises rates by 50bps — surprise move...</span>
     </div>
   </div>
-  <button class="push-explain-enable" onclick="document.getElementById('pushExplain').style.display='none'; togglePushNotifications()">Enable Push Alerts</button>
-  <p class="push-explain-note">You can disable anytime from the Push Alerts section in the sidebar.</p>
+  <button class="push-explain-enable" onclick="document.getElementById('pushExplain').style.display='none'; togglePushNotifications()" data-i18n="push.explain_enable">Enable Push Alerts</button>
+  <p class="push-explain-note" data-i18n="push.explain_note">You can disable anytime from the Push Notifications section in the sidebar.</p>
 </div>
 </body>
 </html>

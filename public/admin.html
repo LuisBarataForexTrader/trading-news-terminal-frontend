@@ -1313,6 +1313,13 @@ async function sec2faDisable() {
   } finally { btn.disabled = false; btn.textContent = 'Disable 2FA'; }
 }
 
+// ── Country flag helper (img-based — works on Windows/all browsers) ──────────
+function _flag(cc, w=16, h=12) {
+  if (!cc || cc === 'XX') return '';
+  const c = cc.toLowerCase();
+  return `<img src="https://flagcdn.com/${w}x${h}/${c}.png" width="${w}" height="${h}" style="border-radius:1px;vertical-align:middle;display:inline-block;margin-right:3px" alt="${cc.toUpperCase()}" onerror="this.style.display='none'">`;
+}
+
 // ── API ────────────────────────────────────────────────────────
 async function api(path, opts={}) {
   const r = await fetch(BACKEND + path, {
@@ -1862,7 +1869,8 @@ function renderKPIs(d) {
     { label:'Total Users',       value:d.total_users,                    cls:'c-accent' },
     { label:'Pro Subscribers',   value:d.pro_users,                      cls:'c-green'  },
     { label:'Basic (free)',       value:(d.basic_users||0)+(d.free_users||0), cls:''     },
-    { label:'Active Trials',     value:d.active_trials,                  cls:'c-amber'  },
+    { label:'Trials · Site',      value:d.active_trials_stripe||0,        cls:'c-amber'  },
+    { label:'Trials · Admin',     value:d.active_trials_admin||0,         cls:'c-amber'  },
     { label:'New Today',         value:d.new_today,                      cls:''         },
     { label:'New This Week',     value:d.new_this_week,                  cls:''         },
     { label:'New This Month',    value:d.new_this_month,                 cls:''         },
@@ -2033,9 +2041,8 @@ function userRow(u) {
     : '';
 
   // ── Country column ───────────────────────────────────────────────────────
-  const COUNTRY_FLAGS = {PT:'🇵🇹',BR:'🇧🇷',US:'🇺🇸',GB:'🇬🇧',DE:'🇩🇪',FR:'🇫🇷',ES:'🇪🇸',IT:'🇮🇹',NL:'🇳🇱',BE:'🇧🇪',CH:'🇨🇭',AT:'🇦🇹',PL:'🇵🇱',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',FI:'🇫🇮',IE:'🇮🇪',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',ZA:'🇿🇦',AE:'🇦🇪',SG:'🇸🇬',HK:'🇭🇰',JP:'🇯🇵',IN:'🇮🇳',MX:'🇲🇽',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴'};
   const countryHtml = u.country
-    ? `<div class="u-country"><span class="u-flag">${COUNTRY_FLAGS[u.country]||'🌍'}</span><span class="u-cc">${u.country}</span></div>`
+    ? `<div class="u-country">${_flag(u.country)}<span class="u-cc">${u.country}</span></div>`
     : `<span style="color:var(--border2);font-size:13px">—</span>`;
 
   // ── Plan Journey ─────────────────────────────────────────────────────────
@@ -2364,7 +2371,6 @@ async function loadFunnel() {
     ]);
     const reg  = d.total_registered || 0;
     const conf = d.email_verified   || 0;
-    const paid = d.upgraded         || 0;
     const planMap = {};
     (plans.data||[]).forEach(p => planMap[p.plan||'free'] = p.count);
     const nFree  = planMap['free']  || 0;
@@ -2375,21 +2381,17 @@ async function loadFunnel() {
 
     // drop-off between steps
     const dropConf = reg  > 0 ? Math.round((reg  - conf) / reg  * 100) : 0;
-    const dropPaid = conf > 0 ? Math.round((conf - paid) / conf * 100) : 0;
 
     // pct of total at each stage
-    const pReg  = 100;
     const pConf = reg  > 0 ? Math.round(conf / reg  * 100) : 0;
-    const pPaid = reg  > 0 ? Math.round(paid / reg  * 100) : 0;
 
     // max for abandoned bar
     const abPct = reg > 0 ? Math.round(d.abandoned_7d / reg * 100) : 0;
 
-    // Trapezoid widths — each step narrows proportionally
+    // Trapezoid widths — narrows from registered → confirmed
     const W  = 680;
     const w1 = W;
     const w2 = reg > 0 ? Math.max(220, Math.round(pConf / 100 * W)) : W;
-    const w3 = reg > 0 ? Math.max(160, Math.round(pPaid / 100 * W)) : W;
 
     document.getElementById('funnel-wrap').innerHTML = `
       <div class="fn-flow">
@@ -2425,27 +2427,6 @@ async function loadFunnel() {
             <div style="text-align:right">
               <div class="fn-count" style="color:#a78bfa;font-size:36px">${conf}</div>
               <div class="fn-pct"><strong style="color:#a78bfa;font-size:13px">${pConf}%</strong><span style="font-size:10px;opacity:.5"> do total</span></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Arrow 2→3 -->
-        <div class="fn-arrow">
-          <div class="fn-arrow-line"></div>
-          ${dropPaid > 0 ? `<div class="fn-arrow-drop">−${dropPaid}% ficaram em free</div>` : ''}
-          <div class="fn-arrow-caret">▼</div>
-        </div>
-
-        <!-- Step 3: Paid -->
-        <div class="fn-stage" style="max-width:${w3}px">
-          <div class="fn-block" style="color:#10b981;border:1px solid rgba(16,185,129,.2);background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.03))">
-            <div>
-              <div class="fn-label" style="color:#10b981">③ Pagante</div>
-              <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:4px;font-family:var(--font-mono)">Pro + Trial</div>
-            </div>
-            <div style="text-align:right">
-              <div class="fn-count" style="color:#10b981;font-size:36px">${paid}</div>
-              <div class="fn-pct"><strong style="color:#10b981;font-size:13px">${pPaid}%</strong><span style="font-size:10px;opacity:.5"> do total</span></div>
             </div>
           </div>
         </div>
@@ -2541,13 +2522,12 @@ async function loadFunnel() {
     // Render donut chart
     _renderTrialDonut({ basicOnly, stillTrial, converted, didNot, total, rate });
 
-    const COUNTRY_FLAGS2 = {PT:'🇵🇹',BR:'🇧🇷',US:'🇺🇸',GB:'🇬🇧',DE:'🇩🇪',FR:'🇫🇷',ES:'🇪🇸',IT:'🇮🇹',NL:'🇳🇱',BE:'🇧🇪',CH:'🇨🇭',AT:'🇦🇹',PL:'🇵🇱',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',FI:'🇫🇮',IE:'🇮🇪',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',ZA:'🇿🇦',AE:'🇦🇪',SG:'🇸🇬',HK:'🇭🇰',JP:'🇯🇵',IN:'🇮🇳',MX:'🇲🇽',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴'};
     const tcTbody = document.getElementById('trial-conv-tbody');
     if (!tc.users || !tc.users.length) {
       tcTbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhum utilizador com trial</td></tr>';
     } else {
       tcTbody.innerHTML = tc.users.map(u => {
-        const flagStr = u.country ? (COUNTRY_FLAGS2[u.country]||'🌍') + ' ' + u.country : '<span style="color:var(--border2)">—</span>';
+        const flagStr = u.country ? _flag(u.country) + ' ' + u.country : '<span style="color:var(--border2)">—</span>';
         const durStr = _fmtTrialDur(u.trial_hours);
         const durCell = durStr
           ? `<span class="trial-dur-badge" style="font-size:11px">${durStr}</span>`
@@ -2709,7 +2689,7 @@ async function loadCustomers() {
           const pro   = proMap[code]   || 0;
           const basic = basicMap[code] || 0;
           const trial = trialMap[code] || 0;
-          tooltip.text(`${FLAG_MAP[code]||''} ${name}: ${total} user${total!==1?'s':''}` +
+          tooltip.text(`${_flag(code)}${name}: ${total} user${total!==1?'s':''}` +
             (pro   > 0 ? ` · <span style="color:#00d4ff">${pro} Pro</span>`   : '') +
             (trial > 0 ? ` · <span style="color:#f59e0b">${trial} Trial</span>` : '') +
             (basic > 0 ? ` · <span style="color:#a78bfa">${basic} Basic</span>` : ''), true);

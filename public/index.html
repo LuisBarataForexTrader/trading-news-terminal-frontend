@@ -1726,26 +1726,41 @@ function doLogout() {
 }
 
 // ─── Trial Promo Popup ────────────────────────────────────────────
-// Shows once to Basic/Free users who have never had any trial (neither Stripe nor admin)
+// Shows once per day to Basic/Free users who have never had any trial,
+// only during peak trading hours (Mon–Fri 08:00–18:00 local time).
+// Closes for the day when user clicks ✕; permanently gone once had_trial=1.
 function _maybeShowTrialPromo(hadTrial) {
   const plan = window._tntPlan || 'free';
   if (plan === 'pro' || plan === 'trial') return; // already paying or in trial
-  if (hadTrial) return;                            // already used a trial
-  if (localStorage.getItem('tnt_trial_promo_dismissed')) return; // dismissed
+  if (hadTrial) return;                            // already used any kind of trial
+
+  // Daily gate: only show once per calendar day
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  if (localStorage.getItem('tnt_trial_promo_date') === today) return;
+
+  // Peak hours gate: Mon–Fri, 08:00–18:00 local time
+  const now = new Date();
+  const dow  = now.getDay(); // 0=Sun, 6=Sat
+  const hour = now.getHours();
+  if (dow === 0 || dow === 6) return;    // weekend — no popup
+  if (hour < 8 || hour >= 18) return;   // outside trading hours
+
   const popup = document.getElementById('trialPromoPopup');
   if (!popup) return;
-  // Show after 8s delay — gives page time to settle
+
+  // Show after 10s delay — page has fully settled
   setTimeout(() => {
     popup.classList.add('show');
-    // Re-apply translations so data-i18n attributes are filled
     if (typeof applyTranslations === 'function') applyTranslations();
-  }, 8000);
+  }, 10000);
 }
 
 function dismissTrialPromo() {
   const popup = document.getElementById('trialPromoPopup');
   if (popup) popup.classList.remove('show');
-  localStorage.setItem('tnt_trial_promo_dismissed', '1');
+  // Remember dismissed for today only — will reappear tomorrow during peak hours
+  const today = new Date().toISOString().slice(0, 10);
+  localStorage.setItem('tnt_trial_promo_date', today);
 }
 
 // ─── Plan change monitor ─────────────────────────────────────────
@@ -7379,11 +7394,11 @@ function _fmtScTs(ts) {
 
 <!-- ── Trial Promo Popup (Basic users, never had trial) ── -->
 <div class="trial-promo" id="trialPromoPopup">
-  <button class="trial-promo-close" onclick="dismissTrialPromo()" aria-label="Close">✕</button>
+  <button class="trial-promo-close" onclick="dismissTrialPromo()" aria-label="Close for today" title="Close — see again tomorrow">✕</button>
   <div class="trial-promo-badge" data-i18n="promo.badge">🎁 Free Trial</div>
   <div class="trial-promo-title" data-i18n="promo.trial_title">Try Pro Free for 7 Days</div>
   <div class="trial-promo-body" data-i18n="promo.trial_body">Full Pro access, no charge during trial. Cancel anytime.</div>
-  <a class="trial-promo-cta" id="trialPromoCtaLink" href="https://tradingnewsterminal.com/login?plan=trial" data-i18n="promo.trial_cta">Start Free Trial →</a>
+  <a class="trial-promo-cta" href="https://tradingnewsterminal.com/login?plan=trial" data-i18n="promo.trial_cta">Start Free Trial →</a>
   <div class="trial-promo-note" data-i18n="promo.trial_note">Then €40/month + VAT</div>
 </div>
 

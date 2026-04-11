@@ -129,16 +129,20 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .lang-opt.active{background:rgba(0,212,170,0.18);color:var(--accent);}
 .lang-opt-flag{font-size:16px;line-height:1;}
 .sound-btn{padding:6px 12px;font-family:var(--font);font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer;transition:all .15s;border-radius:3px;}
+.sound-btn:hover{background:rgba(255,255,255,0.07);border-color:var(--border2);}
 .sound-btn.active{border-color:var(--low);color:var(--low);}
-.sound-wrap{display:flex;align-items:center;gap:3px;position:relative;}
+.sound-btn.active:hover{background:rgba(16,185,129,0.12);border-color:var(--low);}
+.sound-wrap{display:flex;align-items:center;gap:3px;position:relative;z-index:1;}
 .sound-cfg-btn{padding:6px 9px;font-size:12px;border:1px solid var(--border2);background:rgba(255,255,255,0.06);color:#c0d0e0;cursor:pointer;transition:all .15s;border-radius:3px;line-height:1;}
 .sound-cfg-btn:hover,.sound-cfg-btn.open{color:var(--low);border-color:var(--low);background:rgba(16,185,129,0.08);}
 .sound-dd{display:none;position:fixed;background:#0d1118;border:1px solid var(--border2);border-radius:6px;padding:16px 18px;width:280px;z-index:5000;box-shadow:0 20px 50px rgba(0,0,0,0.7);}
 .sound-dd::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--low),transparent);border-radius:6px 6px 0 0;}
 .sound-dd.open{display:block;}
-.squawk-wrap{display:flex;align-items:center;gap:3px;position:relative;}
+.squawk-wrap{display:flex;align-items:center;gap:3px;position:relative;z-index:1;}
 .squawk-btn{padding:6px 12px;font-family:var(--font);font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer;transition:all .15s;border-radius:3px;}
+.squawk-btn:hover{background:rgba(255,255,255,0.07);border-color:var(--border2);}
 .squawk-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,0.06);}
+.squawk-btn.active:hover{background:rgba(0,212,255,0.13);border-color:var(--accent);}
 .squawk-btn.speaking{border-color:var(--low);color:var(--low);animation:blink 1s ease-in-out infinite;}
 .squawk-cfg-btn{padding:6px 9px;font-size:12px;border:1px solid var(--border2);background:rgba(255,255,255,0.06);color:#c0d0e0;cursor:pointer;transition:all .15s;border-radius:3px;line-height:1;}
 .squawk-cfg-btn:hover,.squawk-cfg-btn.open{color:var(--accent);border-color:var(--accent);background:rgba(0,212,255,0.08);}
@@ -1425,9 +1429,12 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       <button class="tab-btn" id="tab-screener-btn" onclick="IS_PRO ? switchTab('screener') : showUpgrade('Market Screener')"><span class="nav-icon">⊞</span><span data-i18n="nav.screener">Screener</span><span class="tab-pro-lock">PRO</span></button>
     </nav>
 
-    <!-- ── Push Alerts (sidebar section) ── -->
+    <!-- ── Push Alerts (sidebar section, PRO only) ── -->
     <div class="sidebar-push-section" id="sidebarPushSection">
-      <div class="sidebar-label" data-i18n="push.sidebar_label">Push Notifications</div>
+      <div class="sidebar-label" style="display:flex;align-items:center;justify-content:space-between;">
+        <span data-i18n="push.sidebar_label">Push Notifications</span>
+        <span class="tab-pro-lock" id="pushProBadge">PRO</span>
+      </div>
       <div class="sidebar-push-row" id="sidebarPushRow" onclick="IS_PRO ? _handlePushBellClick() : showUpgrade('Push Notifications')" title="Browser push alerts — get notified even when the tab is closed">
         <span class="sidebar-push-icon" id="sidebarPushIcon">🔕</span>
         <div class="sidebar-push-text">

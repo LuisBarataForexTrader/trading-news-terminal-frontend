@@ -4510,10 +4510,6 @@ function drainSquawkQueue() {
   _setSquawkTabBlink(true);
   updateSquawkBtn();
   const item = squawkQueue.shift();
-  // Add to history (keep last 8)
-  squawkHistory.unshift({ text: item.text, url: item.url, time: Date.now() });
-  if (squawkHistory.length > 8) squawkHistory.pop();
-  _renderSquawkHistory();
   // "Attention:" prefix — gives the user a clear audio cue before each headline
   const spokenText = 'Attention. ' + _prepareSquawkText(item.text);
   if (currentTab !== 'news') switchTab('news');
@@ -4523,6 +4519,10 @@ function drainSquawkQueue() {
   if (_ttsAudio) { try { _ttsAudio.pause(); _ttsAudio.src = ''; } catch(e) {} }
   setTimeout(async () => {
     if (!squawkEnabled) return; // user may have toggled off while waiting
+    // Add to history only when squawk actually starts reading
+    squawkHistory.unshift({ text: item.text, url: item.url, time: Date.now() });
+    if (squawkHistory.length > 8) squawkHistory.pop();
+    _renderSquawkHistory();
     await _playTTS(spokenText);
     drainSquawkQueue();
   }, 150);
@@ -4902,9 +4902,7 @@ function handleNewsData(data, isInit) {
         // Other items: strict 90s ingestion window, publication must be ≤1h old.
         if (!isInit) {
           const squawkCutoff = (n.impact === 'HIGH') ? squawkHighAge : squawkMaxAge;
-          const pubMaxAge = (n.impact === 'HIGH') ? now - 2*60*60*1000 : now - 60*60*1000;
-          const pubNotStale = itemTime >= pubMaxAge;
-          if (ingestedTime >= squawkCutoff && pubNotStale) squawkItems.push(n);
+          if (ingestedTime >= squawkCutoff) squawkItems.push(n);
         }
         setTimeout(() => recentNewUrls.delete(n.url), 10*60*1000);
       }

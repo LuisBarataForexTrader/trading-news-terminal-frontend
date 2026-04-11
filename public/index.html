@@ -4847,12 +4847,15 @@ function handleNewsData(data, isInit) {
         hasRecentNew = true;
         soundNewItems.push(n);  // collect for sound filter check
         // Only queue for squawk if this is a live update AND the news is truly fresh.
-        // Use ingestedTime so articles published >2 min ago but just ingested still get read.
-        // HIGH impact: allow up to 2 min since ingestion.
-        // Other items: strict 90s window to avoid stale squawks.
+        // Check BOTH ingested_at (when we received it) AND timestamp (when it was published).
+        // Some RSS feeds (Yahoo Finance) deliver articles hours after publication — don't squawk those.
+        // HIGH impact: allow up to 2 min since ingestion, but publication must be ≤2h old.
+        // Other items: strict 90s ingestion window, publication must be ≤1h old.
         if (!isInit) {
           const squawkCutoff = (n.impact === 'HIGH') ? squawkHighAge : squawkMaxAge;
-          if (ingestedTime >= squawkCutoff) squawkItems.push(n);
+          const pubMaxAge = (n.impact === 'HIGH') ? now - 2*60*60*1000 : now - 60*60*1000;
+          const pubNotStale = itemTime >= pubMaxAge;
+          if (ingestedTime >= squawkCutoff && pubNotStale) squawkItems.push(n);
         }
         setTimeout(() => recentNewUrls.delete(n.url), 10*60*1000);
       }

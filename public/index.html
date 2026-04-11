@@ -1580,8 +1580,8 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
         <div class="feed-title" id="feedTitle">All News <span class="feed-title-badge" data-i18n="feed.live">LIVE</span></div>
         <div class="feed-count" id="feedCount">Connecting...</div>
         <div style="position:relative;margin-left:auto;display:flex;gap:6px;align-items:center;">
-          <button class="feed-export-btn" id="squawkHistBtn" onclick="IS_PRO ? toggleSquawkHist(event) : showUpgrade('Squawk History')" title="Squawk History">
-            🕐 <span class="feed-btn-label">Squawk History</span><span id="squawkHistCount" style="display:none;background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;margin-left:2px;"></span>
+          <button class="feed-export-btn" id="squawkHistBtn" onclick="IS_PRO ? toggleSquawkHist(event) : showUpgrade('Squawk History')" data-i18n-title="squawk.history_title">
+            🕐 <span class="feed-btn-label" data-i18n="squawk.history_btn">Squawk History</span><span id="squawkHistCount" style="display:none;background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;margin-left:2px;"></span>
           </button>
           <div id="squawkHistDd" style="display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:4000;background:#0d1118;border:1px solid var(--border2);border-radius:6px;padding:14px 16px;width:320px;box-shadow:0 20px 50px rgba(0,0,0,.7);">
             <div style="font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px;">🕐 Recently read by squawk</div>
@@ -2706,6 +2706,7 @@ const STRINGS = {
     'push.explain_note':'You can disable anytime from the Push Notifications section in the sidebar.',
     'mynews.title':'My News Feed','mynews.no_filters':'No filters active',
     'mynews.basic_hint':'Select major FX currencies below','mynews.config':'Configure Feed',
+    'squawk.history_btn':'Squawk History','squawk.history_title':'Recently read by squawk',
     'squawk.title':'⚙ Squawk Settings','squawk.voice':'Voice','squawk.voice_auto':'Auto — best available',
     'squawk.speed':'Speed','squawk.read_news':'Read news',
     'squawk.chip_all':'All','squawk.chip_high':'🔴 High Impact','squawk.chip_medium':'🟡 Medium Impact',
@@ -2904,6 +2905,7 @@ const STRINGS = {
     'push.explain_note':'Podes desativar a qualquer momento na secção Notificações Push na barra lateral.',
     'mynews.title':'As Minhas Notícias','mynews.no_filters':'Sem filtros ativos',
     'mynews.basic_hint':'Seleciona moedas FX principais abaixo','mynews.config':'Configurar Feed',
+    'squawk.history_btn':'Histórico do Squawk','squawk.history_title':'Lido recentemente pelo squawk',
     'squawk.title':'⚙ Definições do Squawk','squawk.voice':'Voz','squawk.voice_auto':'Auto — melhor disponível',
     'squawk.speed':'Velocidade','squawk.read_news':'Ler notícias',
     'squawk.chip_all':'Todas','squawk.chip_high':'🔴 Alto Impacto','squawk.chip_medium':'🟡 Médio Impacto',
@@ -3102,6 +3104,7 @@ const STRINGS = {
     'push.explain_note':'Puedes desactivar en cualquier momento desde la sección Notificaciones Push en la barra lateral.',
     'mynews.title':'Mis Noticias','mynews.no_filters':'Sin filtros activos',
     'mynews.basic_hint':'Selecciona divisas FX principales abajo','mynews.config':'Configurar Feed',
+    'squawk.history_btn':'Historial del Squawk','squawk.history_title':'Leído recientemente por squawk',
     'squawk.title':'⚙ Ajustes de Squawk','squawk.voice':'Voz','squawk.voice_auto':'Auto — mejor disponible',
     'squawk.speed':'Velocidad','squawk.read_news':'Leer noticias',
     'squawk.chip_all':'Todas','squawk.chip_high':'🔴 Alto Impacto','squawk.chip_medium':'🟡 Medio Impacto',
@@ -3300,6 +3303,7 @@ const STRINGS = {
     'push.explain_note':'Vous pouvez désactiver à tout moment depuis la section Notifications Push dans la barre latérale.',
     'mynews.title':'Mes Actualités','mynews.no_filters':'Aucun filtre actif',
     'mynews.basic_hint':'Sélectionnez les devises FX majeures ci-dessous','mynews.config':'Configurer le Flux',
+    'squawk.history_btn':'Historique Squawk','squawk.history_title':'Lu récemment par squawk',
     'squawk.title':'⚙ Paramètres Squawk','squawk.voice':'Voix','squawk.voice_auto':'Auto — meilleure disponible',
     'squawk.speed':'Vitesse','squawk.read_news':'Lire les actus',
     'squawk.chip_all':'Toutes','squawk.chip_high':'🔴 Impact Élevé','squawk.chip_medium':'🟡 Impact Moyen',
@@ -3498,6 +3502,7 @@ const STRINGS = {
     'push.explain_note':'Sie können jederzeit im Abschnitt Push-Benachrichtigungen in der Seitenleiste deaktivieren.',
     'mynews.title':'Meine Nachrichten','mynews.no_filters':'Keine Filter aktiv',
     'mynews.basic_hint':'Wähle unten Haupt-FX-Währungen','mynews.config':'Feed konfigurieren',
+    'squawk.history_btn':'Squawk-Verlauf','squawk.history_title':'Zuletzt vom Squawk gelesen',
     'squawk.title':'⚙ Squawk-Einstellungen','squawk.voice':'Stimme','squawk.voice_auto':'Auto — beste verfügbar',
     'squawk.speed':'Geschwindigkeit','squawk.read_news':'Nachrichten vorlesen',
     'squawk.chip_all':'Alle','squawk.chip_high':'🔴 Hoher Impact','squawk.chip_medium':'🟡 Mittlerer Impact',
@@ -3696,6 +3701,7 @@ const STRINGS = {
     'push.explain_note':'Puoi disattivare in qualsiasi momento dalla sezione Notifiche Push nella barra laterale.',
     'mynews.title':'Le Mie Notizie','mynews.no_filters':'Nessun filtro attivo',
     'mynews.basic_hint':'Seleziona le valute FX principali sotto','mynews.config':'Configura Feed',
+    'squawk.history_btn':'Cronologia Squawk','squawk.history_title':'Letto di recente dallo squawk',
     'squawk.title':'⚙ Impostazioni Squawk','squawk.voice':'Voce','squawk.voice_auto':'Auto — migliore disponibile',
     'squawk.speed':'Velocità','squawk.read_news':'Leggi notizie',
     'squawk.chip_all':'Tutte','squawk.chip_high':'🔴 Alto Impatto','squawk.chip_medium':'🟡 Medio Impatto',

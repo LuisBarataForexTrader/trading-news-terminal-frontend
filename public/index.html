@@ -1738,11 +1738,9 @@ function _maybeShowTrialPromo(hadTrial) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   if (localStorage.getItem('tnt_trial_promo_date') === today) return;
 
-  // Peak hours gate: Mon–Fri, 08:00–18:00 local time
+  // Peak hours gate: 08:00–18:00 local time (all days)
   const now = new Date();
-  const dow  = now.getDay(); // 0=Sun, 6=Sat
   const hour = now.getHours();
-  if (dow === 0 || dow === 6) return;    // weekend — no popup
   if (hour < 8 || hour >= 18) return;   // outside trading hours
 
   const popup = document.getElementById('trialPromoPopup');
@@ -7394,7 +7392,7 @@ function _fmtScTs(ts) {
 
 <!-- ── Trial Promo Popup (Basic users, never had trial) ── -->
 <div class="trial-promo" id="trialPromoPopup">
-  <button class="trial-promo-close" onclick="dismissTrialPromo()" aria-label="Close for today" title="Close — see again tomorrow">✕</button>
+  <button class="trial-promo-close" onclick="dismissTrialPromo()" aria-label="Close">✕</button>
   <div class="trial-promo-badge" data-i18n="promo.badge">🎁 Free Trial</div>
   <div class="trial-promo-title" data-i18n="promo.trial_title">Try Pro Free for 7 Days</div>
   <div class="trial-promo-body" data-i18n="promo.trial_body">Full Pro access, no charge during trial. Cancel anytime.</div>

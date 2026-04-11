@@ -422,6 +422,14 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 /* Two ticker bars */
 .ticker-bar{background:var(--bg3);border-bottom:1px solid var(--border);height:46px;overflow:hidden;flex-shrink:0;}
 .ticker-bar-2{background:rgba(8,12,18,0.8);border-bottom:1px solid var(--border);height:42px;overflow:hidden;flex-shrink:0;}
+/* Windows scrollbar fix: make inner widget taller so the iframe's horizontal
+   scrollbar (17px on Windows) is pushed below the overflow:hidden clip area */
+.ticker-bar .tradingview-widget-container,
+.ticker-bar-2 .tradingview-widget-container{overflow:hidden !important;}
+.ticker-bar .tradingview-widget-container__widget,
+.ticker-bar-2 .tradingview-widget-container__widget{overflow:hidden !important;}
+.ticker-bar .tradingview-widget-container__widget iframe,
+.ticker-bar-2 .tradingview-widget-container__widget iframe{height:70px !important;display:block;}
 
 /* ── Live Streams Bar ── */
 .live-streams-bar{display:flex;align-items:center;gap:12px;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -1067,8 +1075,9 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
   .ticker-bar-2{display:none !important;}
   /* Ticker bar — 68px shows symbol + price + % change (3 rows) */
   .ticker-bar{height:68px !important;overflow:hidden !important;}
-  .ticker-bar .tradingview-widget-container{height:68px !important;}
-  .ticker-bar .tradingview-widget-container__widget{height:68px !important;}
+  .ticker-bar .tradingview-widget-container{height:90px !important;}
+  .ticker-bar .tradingview-widget-container__widget{height:90px !important;}
+  .ticker-bar .tradingview-widget-container__widget iframe{height:90px !important;}
   /* TV — force-hide sidebar so player takes full width */
   .tv-sidebar{display:none !important;}
   .tv-body{display:flex !important;flex-direction:column !important;overflow:visible !important;}
@@ -1332,15 +1341,15 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
 
     <!-- Ticker 1: Forex + DXY + Indices -->
     <div class="ticker-bar" id="ticker1">
-      <div class="tradingview-widget-container" style="height:46px;overflow:hidden;">
-        <div class="tradingview-widget-container__widget" id="tv-ticker1"></div>
+      <div class="tradingview-widget-container" style="height:70px;overflow:hidden;">
+        <div class="tradingview-widget-container__widget" id="tv-ticker1" style="height:70px;overflow:hidden;"></div>
       </div>
     </div>
 
     <!-- Ticker 2: Crypto + Stocks + Commodities + Bonds -->
     <div class="ticker-bar ticker-bar-2" id="ticker2">
-      <div class="tradingview-widget-container" style="height:42px;overflow:hidden;">
-        <div class="tradingview-widget-container__widget" id="tv-ticker2"></div>
+      <div class="tradingview-widget-container" style="height:70px;overflow:hidden;">
+        <div class="tradingview-widget-container__widget" id="tv-ticker2" style="height:70px;overflow:hidden;"></div>
       </div>
     </div>
 

@@ -1351,20 +1351,6 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
             <button class="squawk-chip" data-sf="CAL_MEDIUM" onclick="setSquawkFilter('CAL_MEDIUM',this)" data-i18n="squawk.chip_cal_medium">🟡 Medium</button>
             <button class="squawk-chip" data-sf="CAL_LOW"    onclick="setSquawkFilter('CAL_LOW',this)"    data-i18n="squawk.chip_cal_low">🟢 Low</button>
           </div>
-          <div class="squawk-chips-sublabel" data-i18n="squawk.assets_label">📌 Assets / Pairs</div>
-          <div class="squawk-chips">
-            <button class="squawk-chip squawk-asset-chip sel" data-sa="ALL" onclick="setSquawkAsset('ALL',this)" data-i18n="squawk.chip_all">All</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="USD" onclick="setSquawkAsset('USD',this)">USD</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="EUR" onclick="setSquawkAsset('EUR',this)">EUR</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="GBP" onclick="setSquawkAsset('GBP',this)">GBP</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="JPY" onclick="setSquawkAsset('JPY',this)">JPY</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="CHF" onclick="setSquawkAsset('CHF',this)">CHF</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="AUD" onclick="setSquawkAsset('AUD',this)">AUD</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="CAD" onclick="setSquawkAsset('CAD',this)">CAD</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="GOLD" onclick="setSquawkAsset('GOLD',this)">GOLD</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="OIL" onclick="setSquawkAsset('OIL',this)">OIL</button>
-            <button class="squawk-chip squawk-asset-chip" data-sa="BTC" onclick="setSquawkAsset('BTC',this)">BTC</button>
-          </div>
         </div>
         <button class="squawk-test-btn" onclick="testSquawkVoice()" data-i18n="squawk.test">▶ Test Voice</button>
         <div class="squawk-dd-note" data-i18n-html="squawk.note_html">Voices always read in English for clarity.<br>Neural/Google voices sound best.</div>
@@ -2512,7 +2498,6 @@ let squawkSpeaking   = false;
 let squawkHistory    = []; // last 8 items read
 let squawkRate       = parseFloat(localStorage.getItem('squawkRate') || '1.0');
 let squawkFilters    = _migrateFilters(JSON.parse(localStorage.getItem('squawkFilters') || '["ALL"]'), 'squawkFilters');
-let squawkAssets     = new Set(['ALL']); // 'ALL' or specific asset codes like 'USD','EUR','GOLD'
 let squawkVoiceName  = localStorage.getItem('squawkVoiceName') || '';
 let recentNewUrls    = new Set(); // URLs arrived in last 3 min → show NEW badge
 let newItemsCount    = 0;         // count for notification badge
@@ -2535,7 +2520,6 @@ function _savePreferences() {
     keywordAlerts,
     squawkEnabled, squawkRate,
     squawkFilters: [...squawkFilters],
-    squawkAssets: [...squawkAssets],
     squawkVoiceName,
     soundEnabled,
     soundFilters: [...soundFilters],
@@ -2570,7 +2554,6 @@ async function _loadPreferences() {
     if (typeof p.squawkEnabled === 'boolean') { squawkEnabled = p.squawkEnabled; localStorage.setItem('squawkEnabled', squawkEnabled); }
     if (typeof p.squawkRate    === 'number')  { squawkRate    = p.squawkRate;    localStorage.setItem('squawkRate', squawkRate.toString()); }
     if (Array.isArray(p.squawkFilters))  { squawkFilters = new Set(p.squawkFilters); localStorage.setItem('squawkFilters', JSON.stringify([...squawkFilters])); }
-    if (Array.isArray(p.squawkAssets) && p.squawkAssets.length) { squawkAssets = new Set(p.squawkAssets); localStorage.setItem('squawkAssets', JSON.stringify([...squawkAssets])); document.querySelectorAll('#squawkDd .squawk-asset-chip').forEach(c => c.classList.toggle('sel', squawkAssets.has(c.dataset.sa))); }
     if (typeof p.squawkVoiceName=== 'string') { squawkVoiceName = p.squawkVoiceName; localStorage.setItem('squawkVoiceName', squawkVoiceName); }
     if (typeof p.soundEnabled  === 'boolean') { soundEnabled = p.soundEnabled;   localStorage.setItem('soundEnabled', soundEnabled); }
     if (Array.isArray(p.soundFilters))   { soundFilters = new Set(p.soundFilters);   localStorage.setItem('soundFilters', JSON.stringify([...soundFilters])); }
@@ -2712,7 +2695,6 @@ const STRINGS = {
     'squawk.chip_all':'All','squawk.chip_high':'🔴 High Impact','squawk.chip_medium':'🟡 Medium Impact',
     'squawk.chip_mynews':'★ My News','squawk.chip_calendar':'📅 Calendar','squawk.chip_low':'🟢 Low Impact',
     'squawk.ce_events':'📅 CE Events','squawk.chip_cal_high':'🔴 High','squawk.chip_cal_medium':'🟡 Medium','squawk.chip_cal_low':'🟢 Low',
-    'squawk.assets_label':'Assets / Pairs',
     'squawk.test':'▶ Test Voice',
     'squawk.note_html':'Voices always read in English for clarity.<br>Neural/Google voices sound best.',
     'sound.title':'🔔 Alert Settings','sound.alert_for':'Alert for','sound.volume':'Volume','sound.test':'▶ Test Sound',
@@ -2911,7 +2893,6 @@ const STRINGS = {
     'squawk.chip_all':'Todas','squawk.chip_high':'🔴 Alto Impacto','squawk.chip_medium':'🟡 Médio Impacto',
     'squawk.chip_mynews':'★ As Minhas','squawk.chip_calendar':'📅 Calendário','squawk.chip_low':'🟢 Baixo Impacto',
     'squawk.ce_events':'📅 Eventos CE','squawk.chip_cal_high':'🔴 Alto','squawk.chip_cal_medium':'🟡 Médio','squawk.chip_cal_low':'🟢 Baixo',
-    'squawk.assets_label':'Ativos / Pares',
     'squawk.test':'▶ Testar Voz',
     'squawk.note_html':'As vozes lêem sempre em inglês para clareza.<br>As vozes Neural/Google soam melhor.',
     'sound.title':'🔔 Definições de Alertas','sound.alert_for':'Alertar para','sound.volume':'Volume','sound.test':'▶ Testar Som',
@@ -3110,7 +3091,6 @@ const STRINGS = {
     'squawk.chip_all':'Todas','squawk.chip_high':'🔴 Alto Impacto','squawk.chip_medium':'🟡 Medio Impacto',
     'squawk.chip_mynews':'★ Mis Noticias','squawk.chip_calendar':'📅 Calendario','squawk.chip_low':'🟢 Bajo Impacto',
     'squawk.ce_events':'📅 Eventos CE','squawk.chip_cal_high':'🔴 Alto','squawk.chip_cal_medium':'🟡 Medio','squawk.chip_cal_low':'🟢 Bajo',
-    'squawk.assets_label':'Activos / Pares',
     'squawk.test':'▶ Probar Voz',
     'squawk.note_html':'Las voces siempre leen en inglés para mayor claridad.<br>Las voces Neural/Google suenan mejor.',
     'sound.title':'🔔 Ajustes de Alertas','sound.alert_for':'Alertar por','sound.volume':'Volumen','sound.test':'▶ Probar Sonido',
@@ -3309,7 +3289,6 @@ const STRINGS = {
     'squawk.chip_all':'Toutes','squawk.chip_high':'🔴 Impact Élevé','squawk.chip_medium':'🟡 Impact Moyen',
     'squawk.chip_mynews':'★ Mes Actus','squawk.chip_calendar':'📅 Calendrier','squawk.chip_low':'🟢 Faible Impact',
     'squawk.ce_events':'📅 Événements CE','squawk.chip_cal_high':'🔴 Élevé','squawk.chip_cal_medium':'🟡 Moyen','squawk.chip_cal_low':'🟢 Faible',
-    'squawk.assets_label':'Actifs / Paires',
     'squawk.test':'▶ Tester la Voix',
     'squawk.note_html':'Les voix lisent toujours en anglais pour la clarté.<br>Les voix Neural/Google sonnent le mieux.',
     'sound.title':'🔔 Paramètres des Alertes','sound.alert_for':'Alerter pour','sound.volume':'Volume','sound.test':'▶ Tester le Son',
@@ -3508,7 +3487,6 @@ const STRINGS = {
     'squawk.chip_all':'Alle','squawk.chip_high':'🔴 Hoher Impact','squawk.chip_medium':'🟡 Mittlerer Impact',
     'squawk.chip_mynews':'★ Meine','squawk.chip_calendar':'📅 Kalender','squawk.chip_low':'🟢 Geringer Impact',
     'squawk.ce_events':'📅 CE Ereignisse','squawk.chip_cal_high':'🔴 Hoch','squawk.chip_cal_medium':'🟡 Mittel','squawk.chip_cal_low':'🟢 Niedrig',
-    'squawk.assets_label':'Assets / Paare',
     'squawk.test':'▶ Stimme testen',
     'squawk.note_html':'Stimmen lesen immer auf Englisch zur Klarheit.<br>Neural/Google-Stimmen klingen am besten.',
     'sound.title':'🔔 Alarm-Einstellungen','sound.alert_for':'Alarm für','sound.volume':'Lautstärke','sound.test':'▶ Sound testen',
@@ -3707,7 +3685,6 @@ const STRINGS = {
     'squawk.chip_all':'Tutte','squawk.chip_high':'🔴 Alto Impatto','squawk.chip_medium':'🟡 Medio Impatto',
     'squawk.chip_mynews':'★ Le Mie','squawk.chip_calendar':'📅 Calendario','squawk.chip_low':'🟢 Basso Impatto',
     'squawk.ce_events':'📅 Eventi CE','squawk.chip_cal_high':'🔴 Alto','squawk.chip_cal_medium':'🟡 Medio','squawk.chip_cal_low':'🟢 Basso',
-    'squawk.assets_label':'Asset / Coppie',
     'squawk.test':'▶ Prova Voce',
     'squawk.note_html':'Le voci leggono sempre in inglese per chiarezza.<br>Le voci Neural/Google suonano meglio.',
     'sound.title':'🔔 Impostazioni Avvisi','sound.alert_for':'Avviso per','sound.volume':'Volume','sound.test':'▶ Prova Suono',
@@ -4429,13 +4406,6 @@ function squawkSpeak(text, url, newsItem) {
     const myNewsOk = squawkFilters.has('MY_NEWS') && newsMatchesCategory(newsItem, 'MY_NEWS');
     if (!impactOk && !myNewsOk) return;
   }
-  // Asset filter for squawk
-  if (!squawkAssets.has('ALL') && newsItem && !newsItem._calRelease) {
-    const itemAssets = (newsItem.assets || '').split(',').map(x => x.trim().toUpperCase());
-    const headline = (newsItem.headline_en || newsItem.headline || '').toUpperCase();
-    const assetOk = [...squawkAssets].some(a => itemAssets.includes(a) || headline.includes(a));
-    if (!assetOk) return;
-  }
   const clean = text.replace(/<[^>]*>/g,'').replace(/[🟢🔴🟡▲▼●★◈▶]/gu,'').replace(/\s+/g,' ').trim();
   if (!clean) return;
   // Dedup: don't queue the same item twice (prevents looping on repeated API data)
@@ -4617,7 +4587,6 @@ function _openSquawkDd(anchorEl, alignRight) {
   const ri = document.getElementById('squawkRateInput');
   if (ri) { ri.value = squawkRate; document.getElementById('squawkRateVal').textContent = squawkRate.toFixed(1) + '×'; }
   document.querySelectorAll('#squawkDd .squawk-chip').forEach(c => c.classList.toggle('sel', squawkFilters.has(c.dataset.sf)));
-  document.querySelectorAll('#squawkDd .squawk-asset-chip').forEach(c => c.classList.toggle('sel', squawkAssets.has(c.dataset.sa)));
 }
 function _closeSquawkDd() {
   document.getElementById('squawkDd')?.classList.remove('open');
@@ -4673,47 +4642,6 @@ function setSquawkFilter(f) {
   localStorage.setItem('squawkFilters', JSON.stringify([...squawkFilters]));
   document.querySelectorAll('#squawkDd .squawk-chip').forEach(c => c.classList.toggle('sel', squawkFilters.has(c.dataset.sf)));
   _savePreferences();
-}
-function setSquawkAsset(a, btn) {
-  if (a === 'ALL') {
-    squawkAssets = new Set(['ALL']);
-  } else {
-    squawkAssets.delete('ALL');
-    if (squawkAssets.has(a)) {
-      squawkAssets.delete(a);
-      if (squawkAssets.size === 0) squawkAssets.add('ALL');
-    } else {
-      squawkAssets.add(a);
-    }
-  }
-  localStorage.setItem('squawkAssets', JSON.stringify([...squawkAssets]));
-  document.querySelectorAll('#squawkDd .squawk-asset-chip').forEach(c => c.classList.toggle('sel', squawkAssets.has(c.dataset.sa)));
-  _savePreferences();
-  // Save squawkAssets immediately (no debounce) so it survives quick page reloads
-  _saveSquawkAssetsNow();
-}
-function _saveSquawkAssetsNow() {
-  // Bypass the debounce: save full prefs immediately so squawkAssets
-  // is persisted even if the user reloads within the 1s debounce window.
-  const tok = localStorage.getItem('tnt_token');
-  if (!tok) return;
-  const prefs = {
-    myWatchlist, myCatWatch, myCalCountries,
-    myNewsImpact: [...myNewsImpact],
-    keywordAlerts,
-    squawkEnabled, squawkRate,
-    squawkFilters: [...squawkFilters],
-    squawkAssets: [...squawkAssets],
-    squawkVoiceName,
-    soundEnabled,
-    soundFilters: [...soundFilters],
-    soundVolume,
-  };
-  fetch(BACKEND_URL + '/auth/me/preferences', {
-    method: 'PUT',
-    headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ preferences: prefs })
-  }).catch(() => {});
 }
 function testSquawkVoice() {
   if (_ttsAudio) { try { _ttsAudio.pause(); _ttsAudio.src = ''; } catch(e){} }
@@ -6805,11 +6733,6 @@ updateSquawkBtn();
   if (vi) vi.value = soundVolume;
   if (vl) vl.textContent = Math.round(soundVolume * 100) + '%';
   document.querySelectorAll('.sound-chip').forEach(c => c.classList.toggle('sel', soundFilters.has(c.dataset.sf)));
-  const _sa = JSON.parse(localStorage.getItem('squawkAssets') || '["ALL"]');
-  if (Array.isArray(_sa) && _sa.length) {
-    squawkAssets = new Set(_sa);
-    document.querySelectorAll('#squawkDd .squawk-asset-chip').forEach(c => c.classList.toggle('sel', squawkAssets.has(c.dataset.sa)));
-  }
 })();
 applyTranslations();
 // Parse flag emojis in the language picker through Twemoji so they render on Windows

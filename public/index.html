@@ -7999,10 +7999,11 @@ async function togglePushNotifications() {
 
   let sub = await _tryPushSubscribe(publicKey);
   if (!sub) {
-    if (!fcmReachable) {
-      _showPushToast('❌ Google\'s push service is unreachable from your network. Try disabling VPN or browser extensions.', '#c0392b', 8000);
+    const isBrave = !!(navigator.brave && navigator.brave.isBrave);
+    if (isBrave || !fcmReachable) {
+      _showPushToast('⚠️ Brave blocks push by default. Go to brave://settings/privacy → enable "Use Google services for push messaging", then try again.', '#e67e22', 10000);
     } else {
-      _showPushToast('❌ Push failed. Please update Chrome (click the "Update" button in top-right) and try again.', '#c0392b', 8000);
+      _showPushToast('❌ Push failed. Update Chrome and try again, or check browser notification settings.', '#c0392b', 8000);
     }
     return;
   }

@@ -5437,14 +5437,17 @@ function updateCounts(news) {
 
 // ─── Helpers ─────────────────────────────────────────────────────
 function getSource(url,src) {
-  const sm={'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch','yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet','tradingview':'TradingView','wsj':'WSJ','dow jones':'Dow Jones','zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider','reuters':'Reuters','bloomberg':'Bloomberg','cointelegraph':'Cointelegraph','ft':'FT','tass':'TASS','the telegraph':'The Telegraph','benzinga':'Benzinga','axios':'Axios','the atlantic':'The Atlantic','aei':'AEI','ny post':'NY Post'};
-  if (src&&src!=='undefined') return sm[src.toLowerCase()]||src.toUpperCase();
+  const sm={'investing':'Investing','cnbc':'CNBC','marketwatch':'MarketWatch','yahoo finance':'Yahoo Finance','forexlive':'ForexLive','fxstreet':'FXStreet','tradingview':'TradingView','wsj':'WSJ','dow jones':'Dow Jones','zerohedge':'ZeroHedge','oilprice':'OilPrice','business insider':'Business Insider','reuters':'Reuters','bloomberg':'Bloomberg','cointelegraph':'Cointelegraph','ft':'FT','tass':'TASS','the telegraph':'The Telegraph','benzinga':'Benzinga','axios':'Axios','the atlantic':'The Atlantic','aei':'AEI','ny post':'NY Post','finnhub':'Finnhub','gdelt':'GDELT','telegram':'Telegram'};
+  // Prefer URL-based detection (more accurate — some RSS feeds report wrong source)
   try {
     const h=new URL(url).hostname.replace('www.','');
-    const dm={'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg','investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive','fxstreet.com':'FXStreet','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView','wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice','businessinsider.com':'Business Insider','nypost.com':'NY Post','aawsat.com':'Asharq Al-Awsat','tass.com':'TASS','telegraph.co.uk':'The Telegraph','benzinga.com':'Benzinga','axios.com':'Axios','theatlantic.com':'The Atlantic',};
+    const dm={'reuters.com':'Reuters','cnbc.com':'CNBC','bloomberg.com':'Bloomberg','investing.com':'Investing','marketwatch.com':'MarketWatch','forexlive.com':'ForexLive','fxstreet.com':'FXStreet','finance.yahoo.com':'Yahoo Finance','yahoo.com':'Yahoo Finance','tradingview.com':'TradingView','wsj.com':'WSJ','dj.com':'WSJ','zerohedge.com':'ZeroHedge','oilprice.com':'OilPrice','businessinsider.com':'Business Insider','nypost.com':'NY Post','aawsat.com':'Asharq Al-Awsat','tass.com':'TASS','telegraph.co.uk':'The Telegraph','benzinga.com':'Benzinga','axios.com':'Axios','theatlantic.com':'The Atlantic','ft.com':'FT','financialtimes.com':'FT','seekingalpha.com':'Seeking Alpha','barrons.com':'Barron\'s','economist.com':'The Economist','guardian.com':'The Guardian','nytimes.com':'NY Times','bbc.com':'BBC','bbc.co.uk':'BBC','apnews.com':'AP News','coindesk.com':'CoinDesk','decrypt.co':'Decrypt','cointelegraph.com':'Cointelegraph','newsquawk.com':'Newsquawk','fxempire.com':'FX Empire'};
     for(const[k,v]of Object.entries(dm)) if(h.includes(k))return v;
-    return h.split('.')[0].toUpperCase();
-  } catch{return 'Unknown';}
+  } catch{}
+  // Fallback to stored source field
+  if (src&&src!=='undefined'&&src!=='finnhub'&&src!=='gdelt') return sm[src.toLowerCase()]||src.toUpperCase();
+  if (src&&src!=='undefined') return sm[src.toLowerCase()]||src.toUpperCase();
+  try { const h=new URL(url).hostname.replace('www.',''); return h.split('.')[0].toUpperCase(); } catch{return 'Unknown';}
 }
 // Parse backend timestamps as UTC (they come without Z suffix)
 function parseUTC(ts) {

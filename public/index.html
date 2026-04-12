@@ -3884,7 +3884,7 @@ function translatePT(text) {
 // calCountries: which calendar countries are shown in this category (null = all, [] = none)
 const CATEGORY_KEYWORDS = {
   FOREX: {
-    assets:['USD','EUR','GBP','JPY','AUD','CAD','CHF','NZD','CNY'],
+    assets:['USD','EUR','GBP','JPY','AUD','CAD','CHF','NZD','CNY','SEK','NOK','MXN','BRL','ZAR','TRY','INR','PLN'],
     keywords:[
       // Generic FX
       'forex','fx market','currency pair','foreign exchange','currency market',
@@ -3893,7 +3893,7 @@ const CATEGORY_KEYWORDS = {
       // EUR
       'euro','eur/usd','eurusd','euro zone','eurozone currency',
       // GBP
-      'pound sterling','gbp/usd','gbpusd','sterling rally','sterling drops',
+      'pound sterling','gbp/usd','gbpusd','sterling','sterling rally','sterling drops',
       // JPY
       'yen','jpy','usd/jpy','usdjpy','dollar/yen','yen weakens','yen strengthens',
       // Other majors
@@ -3901,19 +3901,22 @@ const CATEGORY_KEYWORDS = {
       'new zealand dollar','nzd/usd','kiwi dollar','aussie dollar','loonie',
       // CNY
       'yuan','renminbi','cny','offshore yuan',
+      // Minor currencies
+      'swedish krona','norwegian krone','mexican peso','usd/mxn','brazilian real','usd/brl',
+      'south african rand','usd/zar','turkish lira','usd/try','indian rupee','usd/inr','polish zloty',
       // FX dynamics
       'currency intervention','safe haven currency','carry trade','dollar strength','dollar weakness',
     ],
     calCountries:['US','EU','GB','JP','AU','CA','CH','NZ','CN','DE','FR'],
   },
   CRYPTO: {
-    assets:['BTC'],
+    assets:['BTC','ETH','XRP','SOL','BNB','DOGE','ADA','DOT','AVAX','CRYPTO'],
     keywords:[
       'bitcoin','btc','crypto','cryptocurrency','ethereum','eth','blockchain','defi',
       'altcoin','digital asset','coinbase','binance','kraken','bybit','token',
       'stablecoin','usdt','usdc','nft','web3','solana','sol','xrp','ripple',
       'dogecoin','doge','cardano','ada','polkadot','dot','avalanche','avax',
-      'chainlink','link','litecoin','ltc','bnb','shiba','pepe','meme coin',
+      'chainlink','litecoin','ltc','bnb','shiba','pepe','meme coin',
       'crypto regulation','sec crypto','crypto etf','spot bitcoin etf',
       'crypto market','digital currency','virtual currency','crypto crash','crypto rally',
       'mining','hash rate','halving','layer 2','defi protocol','yield farming',
@@ -3950,7 +3953,7 @@ const CATEGORY_KEYWORDS = {
     calCountries:null,
   },
   BONDS: {
-    assets:[],
+    assets:['US10Y','US2Y','US30Y','BUND','GILT'],
     keywords:[
       // Rates & yields
       'bond','yield','treasury','10-year','2-year','30-year','5-year','yield curve',
@@ -3967,7 +3970,7 @@ const CATEGORY_KEYWORDS = {
     calCountries:['US','EU','GB','JP','AU','CA','CH','DE','FR'],
   },
   EQUITIES: {
-    assets:['SP500'],
+    assets:['SP500','AAPL','NVDA','MSFT','AMZN','META','TSLA','GOOGL','GOOG','JPM','BAC','GS','XOM','AVGO','BRK','MS','V','MA','WMT','UNH','CVX','NFLX','AMD','INTC','COIN','PLTR','ARM','MSTR','UBER','CRM','ADBE','ORCL'],
     keywords:[
       // Earnings & results
       'earnings','quarterly results','annual results','q1 earnings','q2 earnings',
@@ -3988,7 +3991,7 @@ const CATEGORY_KEYWORDS = {
     calCountries:['US'],
   },
   INDEXES: {
-    assets:['SP500'],
+    assets:['SP500','NDX','DOW','DAX','FTSE','NIKKEI','CAC','HSI','VIX'],
     keywords:[
       // US indices
       's&p 500','s&p500','sp500','dow jones','nasdaq composite','nasdaq 100',
@@ -4005,7 +4008,7 @@ const CATEGORY_KEYWORDS = {
     calCountries:['US','DE','GB','JP'],
   },
   COMMODITIES: {
-    assets:['GOLD','SILVER','COPPER','OIL','NATGAS'],
+    assets:['GOLD','SILVER','COPPER','OIL','BRENT','NATGAS','WHEAT','CORN','SOYBEAN','COFFEE','COCOA','PLATINUM','PALLADIUM'],
     keywords:[
       // Metals
       'gold','xau','bullion','gold price','spot gold','gold rally','gold drops',
@@ -4124,7 +4127,8 @@ function newsMatchesCategory(n, cat) {
   if (cat === 'FOREX') {
     const hasFxAsset = def.assets && def.assets.some(a => assets.includes(a));
     const _EQ_IDX = new Set(['SP500','NDX','DOW','DAX','FTSE','NIKKEI','CAC','HSI','VIX',
-      'AAPL','NVDA','MSFT','AMZN','META','TSLA','GOOGL','GOOG','JPM','BAC','XOM','AVGO','BRK']);
+      'AAPL','NVDA','MSFT','AMZN','META','TSLA','GOOGL','GOOG','JPM','BAC','GS','XOM','AVGO','BRK',
+      'MS','V','MA','WMT','UNH','CVX','NFLX','AMD','INTC','COIN','PLTR','ARM','MSTR','UBER','CRM','ADBE','ORCL']);
     if (!hasFxAsset && assets.some(a => _EQ_IDX.has(a))) return false;
     if (hasFxAsset) return true;
     if (def.keywords && def.keywords.some(kw => _kwMatches(headline, kw))) return true;

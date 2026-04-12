@@ -1506,53 +1506,55 @@ async function loadFeeds() {
 async function runHealthCheck() {
   if (_healthRunning) return;
   _healthRunning = true;
-  const btn = document.getElementById('health-btn');
-  btn.textContent = '⏳ Checking…';
-  btn.disabled = true;
-
-  // Show progress bar
+  const btn  = document.getElementById('health-btn');
   const wrap = document.getElementById('health-progress-wrap');
   const bar  = document.getElementById('health-progress-bar');
   const lbl  = document.getElementById('health-progress-label');
+  btn.textContent = '⏳ Checking…';
+  btn.disabled = true;
   wrap.style.display = 'block';
-  bar.style.width = '0%';
-  lbl.textContent = 'Sending request to server…';
-
-  // Animate progress bar while waiting (indeterminate)
-  let fakePct = 0;
-  const fakeTimer = setInterval(()=>{
-    fakePct = Math.min(fakePct + (Math.random()*1.5), 90);
-    bar.style.width = fakePct + '%';
-    lbl.textContent = `Checking feeds… ~${Math.round(fakePct)}% estimated`;
-  }, 600);
+  bar.style.background = 'linear-gradient(90deg,var(--accent),#7dd3fc)';
+  bar.style.width = '2%';
+  lbl.textContent = 'Starting health check…';
 
   try {
-    const data = await fetch(BACKEND + '/admin/feeds/health', {
+    // POST starts check in background — returns 202 immediately
+    await fetch(BACKEND + '/admin/feeds/health', {
       method: 'POST',
       headers: { 'x-admin-token': _token, 'Content-Type': 'application/json' }
-    }).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); });
+    }).then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
 
-    clearInterval(fakeTimer);
-    bar.style.width = '100%';
-    lbl.textContent = `Done — ${data.ok} OK, ${data.empty} empty, ${data.errors} errors`;
+    // Poll GET every 2s until running=false
+    const total = _allFeeds.length || 267;
+    let done = false;
+    while (!done) {
+      await new Promise(r => setTimeout(r, 2000));
+      const poll = await fetch(BACKEND + '/admin/feeds/health', {
+        headers: { 'x-admin-token': _token }
+      }).then(r => r.json());
 
-    // Merge health data into _allFeeds
-    const byUrl = {};
-    (data.results||[]).forEach(r => { byUrl[r.url] = r; });
-    _allFeeds = _allFeeds.map(f => ({...f, ...(byUrl[f.url]||{})}));
+      const checked = poll.checked || 0;
+      const pct = total > 0 ? Math.min(98, Math.round((checked / total) * 100)) : 50;
+      bar.style.width = pct + '%';
+      lbl.textContent = `Checking feeds… ${checked}/${total} (${poll.ok||0} OK, ${poll.empty||0} empty, ${poll.errors||0} errors)`;
 
-    // If list was empty (first run), populate from results
-    if (_allFeeds.length === 0) _allFeeds = data.results || [];
+      if (!poll.running) {
+        done = true;
+        bar.style.width = '100%';
+        lbl.textContent = `Done — ${poll.ok} OK · ${poll.empty} empty · ${poll.errors} errors · ${checked} total`;
 
-    _updateFeedsKPIs(_allFeeds, null);
-    renderFeeds(_allFeeds);
-
-    const ts = new Date().toUTCString();
-    document.getElementById('health-last-run').textContent = `Last check: ${ts}`;
-
-    setTimeout(()=>{ wrap.style.display='none'; }, 4000);
+        // Merge results into feed list
+        const byUrl = {};
+        (poll.results||[]).forEach(r => { byUrl[r.url] = r; });
+        _allFeeds = _allFeeds.map(f => ({...f, ...(byUrl[f.url]||{})}));
+        if (_allFeeds.length === 0) _allFeeds = poll.results || [];
+        _updateFeedsKPIs(_allFeeds, null);
+        renderFeeds(_allFeeds);
+        document.getElementById('health-last-run').textContent = `Last check: ${new Date().toUTCString()}`;
+        setTimeout(() => { wrap.style.display = 'none'; }, 5000);
+      }
+    }
   } catch(e) {
-    clearInterval(fakeTimer);
     bar.style.width = '100%';
     bar.style.background = '#f87171';
     lbl.textContent = 'Health check failed — ' + e.message;

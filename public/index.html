@@ -152,7 +152,6 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .squawk-dd-title{font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#fff;margin-bottom:14px;}
 .squawk-dd-row{margin-bottom:13px;}
 .squawk-dd-lbl{font-size:10px;font-weight:600;color:#fff;margin-bottom:5px;display:block;}
-.squawk-voice-sel{width:100%;background:#0a0c0f;border:1px solid var(--border2);color:#e0e8f0;font-family:var(--font);font-size:11px;padding:5px 8px;border-radius:3px;cursor:pointer;outline:none;}
 .squawk-speed-row{display:flex;align-items:center;gap:8px;}
 .squawk-speed-row input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer;}
 .squawk-speed-val{font-size:11px;font-weight:700;color:#fff;min-width:30px;text-align:right;}
@@ -1299,12 +1298,6 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
       <div class="squawk-dd" id="squawkDd">
         <div class="squawk-dd-title" data-i18n="squawk.title">⚙ Squawk Settings</div>
         <div class="squawk-dd-row">
-          <span class="squawk-dd-lbl" data-i18n="squawk.voice">Voice</span>
-          <select class="squawk-voice-sel" id="squawkVoiceSel" onchange="setSquawkVoice(this.value)">
-            <option value="" data-i18n="squawk.voice_auto">Auto — best available</option>
-          </select>
-        </div>
-        <div class="squawk-dd-row">
           <span class="squawk-dd-lbl" data-i18n="squawk.speed">Speed</span>
           <div class="squawk-speed-row">
             <input type="range" id="squawkRateInput" min="0.6" max="1.6" step="0.1" value="1.0" oninput="setSquawkRate(this.value)">
@@ -1327,7 +1320,7 @@ img.emoji{width:16px;height:16px;vertical-align:middle;display:inline;margin:0 1
           </div>
         </div>
         <button class="squawk-test-btn" onclick="testSquawkVoice()" data-i18n="squawk.test">▶ Test Voice</button>
-        <div class="squawk-dd-note" data-i18n-html="squawk.note_html">Voices always read in English for clarity.<br>Neural/Google voices sound best.</div>
+        <div class="squawk-dd-note" data-i18n-html="squawk.note_html">Voice: Eric (Microsoft Neural) · Always reads in English.</div>
       </div>
     </div>
     <div class="sound-wrap" id="soundWrap">
@@ -1892,7 +1885,7 @@ const LOGIN_URL = 'https://www.tradingnewsterminal.com/login.html';
 function _clearUserPrefs() {
   ['tnt_token','tnt_user','tnt_login_at',
    'myWatchlist','myCatWatch','myCalCountries',
-   'squawkEnabled','squawkRate','squawkFilters','squawkVoiceName',
+   'squawkEnabled','squawkRate','squawkFilters',
    'soundEnabled','soundFilters','soundVolume',
    'tnt_v1_prefs','tnt_trial_promo_date'
   ].forEach(k => localStorage.removeItem(k));
@@ -2461,7 +2454,7 @@ let squawkQueue      = [];
 let squawkSpeaking   = false;
 let squawkRate       = parseFloat(localStorage.getItem('squawkRate') || '1.0');
 let squawkFilters    = _migrateFilters(JSON.parse(localStorage.getItem('squawkFilters') || '["HIGH","CAL_HIGH","CAL_MEDIUM"]'), 'squawkFilters');
-let squawkVoiceName  = localStorage.getItem('squawkVoiceName') || '';
+const squawkVoiceName = 'en-US-EricNeural'; // fixed — Eric only
 let recentNewUrls    = new Set(); // URLs arrived in last 3 min → show NEW badge
 let newItemsCount    = 0;         // count for notification badge
 let lastSoundTime    = 0;         // throttle: 1 sound per 60s max
@@ -2482,7 +2475,6 @@ function _savePreferences() {
     myNewsImpact: [...myNewsImpact],
     squawkEnabled, squawkRate,
     squawkFilters: [...squawkFilters],
-    squawkVoiceName,
     soundEnabled,
     soundFilters: [...soundFilters],
     soundVolume,
@@ -2515,7 +2507,6 @@ async function _loadPreferences() {
     if (typeof p.squawkEnabled === 'boolean') { squawkEnabled = p.squawkEnabled; localStorage.setItem('squawkEnabled', squawkEnabled); }
     if (typeof p.squawkRate    === 'number')  { squawkRate    = p.squawkRate;    localStorage.setItem('squawkRate', squawkRate.toString()); }
     if (Array.isArray(p.squawkFilters))  { squawkFilters = new Set(p.squawkFilters); localStorage.setItem('squawkFilters', JSON.stringify([...squawkFilters])); }
-    if (typeof p.squawkVoiceName=== 'string') { squawkVoiceName = p.squawkVoiceName; localStorage.setItem('squawkVoiceName', squawkVoiceName); }
     if (typeof p.soundEnabled  === 'boolean') { soundEnabled = p.soundEnabled;   localStorage.setItem('soundEnabled', soundEnabled); }
     if (Array.isArray(p.soundFilters))   { soundFilters = new Set(p.soundFilters);   localStorage.setItem('soundFilters', JSON.stringify([...soundFilters])); }
     if (typeof p.soundVolume   === 'number')  { soundVolume  = p.soundVolume;    localStorage.setItem('soundVolume', soundVolume); }
@@ -4255,27 +4246,12 @@ function clearMyNewsFeed() {
 _syncModalSelections();
 _updateMyNewsCount();
 
-// ─── Squawk (Edge TTS via backend API — guaranteed neural voices) ─
-let _ttsVoices = [];       // [{id, name, gender, accent}] from backend
+// ─── Squawk (Edge TTS via backend API — Eric Neural voice) ─
 let _ttsAudio  = null;     // current Audio element
-let _ttsDefaultVoice = 'en-US-EricNeural';
+const _SQUAWK_VOICE = 'en-US-EricNeural';
 
-async function _loadTTSVoices() {
-  try {
-    const r = await fetch(BACKEND_URL + '/api/tts/voices');
-    const d = await r.json();
-    _ttsVoices = d.voices || [];
-    _ttsDefaultVoice = d.default || 'en-US-BrianNeural';
-    populateSquawkVoices();
-  } catch(e) { console.warn('[TTS] Failed to load voices:', e); }
-}
-_loadTTSVoices();
-
-// Get the selected voice ID for the backend TTS API
-function _getSquawkVoiceId() {
-  if (squawkVoiceName && _ttsVoices.some(v => v.id === squawkVoiceName)) return squawkVoiceName;
-  return _ttsDefaultVoice;
-}
+// Get the voice ID — always Eric
+function _getSquawkVoiceId() { return _SQUAWK_VOICE; }
 
 // Convert squawkRate (0.5–2.0) to Edge TTS rate string (e.g. "+20%", "-30%")
 function _rateToEdge(r) {
@@ -4484,23 +4460,6 @@ function openSquawkFromSidebar(btn) {
   const dd = document.getElementById('squawkDd');
   if (dd.classList.contains('open')) { _closeSquawkDd(); return; }
   _openSquawkDd(btn, false);
-}
-function populateSquawkVoices() {
-  const sel = document.getElementById('squawkVoiceSel');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">Auto — Eric (Default)</option>';
-  _ttsVoices.forEach(v => {
-    const opt = document.createElement('option');
-    opt.value = v.id;
-    opt.textContent = v.name + ' — ' + v.gender + ' (' + v.accent + ')';
-    if (v.id === squawkVoiceName) opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-function setSquawkVoice(name) {
-  squawkVoiceName = name;
-  localStorage.setItem('squawkVoiceName', name);
-  _savePreferences();
 }
 function setSquawkRate(val) {
   squawkRate = parseFloat(val);

@@ -5248,11 +5248,7 @@ function formatTime(ts) {
 }
 function getAssetTags(a) {
   if(!a) return [];
-  return a.split(',').map(x=>x.trim()).filter(Boolean).map(tag=>{
-    const flag = ASSET_FLAG[tag] || '';
-    const name = ASSET_NAME[tag] || tag;
-    return flag ? `<span class="flag">${flag}</span>${name}` : name;
-  });
+  return a.split(',').map(x=>x.trim()).filter(Boolean).map(tag => ASSET_NAME[tag] || tag);
 }
 function getMarketMoves(h) {
   if (!h) return [];

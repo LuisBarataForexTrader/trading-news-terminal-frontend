@@ -4119,8 +4119,17 @@ function newsMatchesCategory(n, cat) {
   if (['FOREX','CRYPTO','BONDS','EQUITIES','INDEXES'].includes(cat) && isAgriCommodity(headline)) return false;
   const assets = (n.assets||'').split(',').map(x=>x.trim());
   if (def.assets && def.assets.some(a => assets.includes(a))) return true;
-  if (def.keywords && def.keywords.some(kw => headline.includes(kw))) return true;
+  if (def.keywords && def.keywords.some(kw => _kwMatches(headline, kw))) return true;
   return false;
+}
+// Word-boundary aware keyword matching — prevents 'euro' matching 'european', 'yen' matching 'yenching' etc.
+// Multi-word phrases use simple includes (word boundaries implicit). Single words use lookahead/lookbehind.
+function _kwMatches(headline, kw) {
+  if (kw.includes(' ')) return headline.includes(kw);
+  try {
+    const re = new RegExp('(?<![a-z0-9])' + kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(?![a-z0-9])');
+    return re.test(headline);
+  } catch(e) { return headline.includes(kw); }
 }
 function newsMatchesSelected(n) {
   if (selectedCategories.size === 0) return true; // ALL — no category filter

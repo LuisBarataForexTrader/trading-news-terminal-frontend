@@ -4690,8 +4690,11 @@ function mergeNewsArrays(existing, incoming) {
 function handleNewsData(data, isInit) {
   const now = Date.now();
   const fiveMinAgo   = now - 5*60*1000;   // visual "new" window
-  const squawkMaxAge = now - 90*1000;     // squawk only for items <=90s old
-  const squawkHighAge = now - 2*60*1000; // HIGH impact: allow up to 2 min (was 5 min — caused 5-min lag)
+  const squawkMaxAge  = now - 90*1000;      // squawk only for items ingested <=90s ago
+  const squawkHighAge = now - 2*60*1000;   // HIGH impact: allow up to 2 min since ingestion
+  // Publication timestamp gates — prevents squawking articles GDELT/Marketaux indexed late
+  const squawkPubMax  = now - 20*60*1000;  // regular news: must have been published <=20 min ago
+  const squawkPubHigh = now - 60*60*1000;  // HIGH impact:  must have been published <=60 min ago
   let hasRecentNew = false;
   let genuineNewCount = 0;
 
@@ -4716,8 +4719,11 @@ function handleNewsData(data, isInit) {
         // HIGH impact: allow up to 2 min since ingestion, but publication must be ≤2h old.
         // Other items: strict 90s ingestion window, publication must be ≤1h old.
         if (!isInit) {
-          const squawkCutoff = (n.impact === 'HIGH') ? squawkHighAge : squawkMaxAge;
-          if (ingestedTime >= squawkCutoff) squawkItems.push(n);
+          const squawkCutoff    = (n.impact === 'HIGH') ? squawkHighAge : squawkMaxAge;
+          const squawkPubCutoff = (n.impact === 'HIGH') ? squawkPubHigh : squawkPubMax;
+          // Must be recently ingested AND recently published — prevents squawking GDELT/Marketaux
+          // articles that were published hours ago but only indexed now
+          if (ingestedTime >= squawkCutoff && itemTime >= squawkPubCutoff) squawkItems.push(n);
         }
         setTimeout(() => recentNewUrls.delete(n.url), 10*60*1000);
       }

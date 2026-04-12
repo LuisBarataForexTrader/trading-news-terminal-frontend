@@ -4198,6 +4198,28 @@ function newsMatchesCategory(n, cat) {
     if (def.keywords && def.keywords.some(kw => _kwMatches(headline, kw))) return true;
     return false;
   }
+  // EQUITIES: articles tagged only with geopolitical/macro/commodity assets (no equity/index)
+  // should not appear via keyword match alone. E.g. "war may hit dividend target" has WAR tag but
+  // no equity asset → block even though 'dividend' keyword matches.
+  if (cat === 'EQUITIES') {
+    const hasEquityAsset = def.assets && def.assets.some(a => assets.includes(a));
+    if (hasEquityAsset) return true; // direct equity asset → always include
+    const _GEO_MACRO = new Set([
+      'WAR','IRAN','RUSSIA','CHINA','UKRAINE','ISRAEL','MIDEAST','NATO',
+      'TRUMP','BIDEN','TARIFF','SANCTIONS','OPEC','INDIA','TAIWAN','NORTH_KOREA',
+      'AI','EV','MUSK','ZELENSKY','MODI',
+      'FOMC','ECB','BOE','CPI','GDP','NFP','PCE','PPI','PMI','ISM','JOLTS','RETAIL',
+      'EUROPE','GOLD','SILVER','OIL','BRENT','NATGAS','COPPER','WHEAT','CORN','SOYBEAN','COFFEE','COCOA','PLATINUM','PALLADIUM',
+      'USD','EUR','GBP','JPY','AUD','CAD','CHF','NZD','CNY','SEK','NOK','MXN','BRL','ZAR','TRY','INR','PLN',
+      'BTC','ETH','XRP','SOL','BNB','DOGE','ADA','DOT','AVAX','CRYPTO',
+      'US10Y','US2Y','US30Y','BUND','GILT'
+    ]);
+    // If ALL present assets are geo/macro/non-equity, block keyword-only match
+    if (assets.some(a => a) && assets.every(a => !a || _GEO_MACRO.has(a))) return false;
+    // No specific assets or mixed → allow keyword match (e.g. "stocks surge on earnings optimism")
+    if (def.keywords && def.keywords.some(kw => _kwMatches(headline, kw))) return true;
+    return false;
+  }
   if (def.assets && def.assets.some(a => assets.includes(a))) return true;
   if (def.keywords && def.keywords.some(kw => _kwMatches(headline, kw))) return true;
   return false;

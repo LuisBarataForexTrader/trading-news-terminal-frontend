@@ -3969,16 +3969,19 @@ const CATEGORY_KEYWORDS = {
     assets:['US10Y','US2Y','US30Y','BUND','GILT'],
     keywords:[
       // Rates & yields
-      'bond','yield','treasury','10-year','2-year','30-year','5-year','yield curve',
+      'bond yield','bond yields','treasury yield','treasury yields','us treasury',
+      '10-year yield','2-year yield','30-year yield','5-year yield','yield curve',
       'yield inversion','inverted yield','spread','credit spread','oas',
       // Bond types
-      'gilt','bund','jgb','oat','btp','bonos','treasury note','t-note','t-bond','t-bill',
-      'sovereign bond','government bond','corporate bond','high yield','junk bond',
-      'investment grade','ig bond','hy bond','municipal bond','muni',
+      'gilt yield','bund yield','jgb yield','oat yield','btp yield','bonos yield',
+      'treasury note','treasury bond','t-note','t-bond','t-bill',
+      'sovereign bond','government bond','corporate bond','high yield bond','junk bond',
+      'investment grade bond','ig bond','hy bond','municipal bond','muni bond',
       // Fixed income dynamics
-      'fixed income','debt market','bond market','rate sensitive','duration',
-      'coupon','auction','issuance','redemption','maturity','default',
-      'credit rating','moody','fitch','s&p rating','downgrade rating',
+      'fixed income','bond market','rate sensitive','duration risk',
+      'bond auction','debt auction','bond issuance','debt issuance',
+      'credit rating','moody\'s rating','fitch rating','s&p rating','credit downgrade',
+      'basis points','bps yield',
     ],
     calCountries:['US','EU','GB','JP','AU','CA','CH','DE','FR'],
   },
@@ -4156,6 +4159,32 @@ function newsMatchesCategory(n, cat) {
       'SAP','NOVO','LVMH','BP','SHEL','RIO','BHP','BNTX','TTE']);
     if (!hasFxAsset && assets.some(a => _EQ_IDX.has(a))) return false;
     if (hasFxAsset) return true;
+    if (def.keywords && def.keywords.some(kw => _kwMatches(headline, kw))) return true;
+    return false;
+  }
+  // BONDS: articles tagged only with equity or crypto assets (but no bond asset) should not
+  // appear in BONDS even if keywords match. E.g. "Alphabet vs Oracle: What the Debt Market says"
+  // has GOOGL+ORCL but no US10Y/BUND/GILT → excluded. "ETH Treasury deal" has ETH but no bond → excluded.
+  if (cat === 'BONDS') {
+    const hasBondAsset = def.assets && def.assets.some(a => assets.includes(a));
+    if (hasBondAsset) return true; // direct bond asset → always include
+    const _NON_BOND = new Set([
+      'SP500','NDX','DOW','DAX','FTSE','NIKKEI','CAC','HSI','VIX',
+      'SENSEX','KOSPI','ASX200','SSE','STOXX','IBEX','MIB','RUSSELL','TSX','BOVESPA',
+      'AAPL','NVDA','MSFT','AMZN','META','TSLA','GOOGL','GOOG','JPM','BAC','GS','XOM','AVGO','BRK',
+      'MS','V','MA','WMT','UNH','CVX','NFLX','AMD','INTC','COIN','PLTR','ARM','MSTR','UBER','CRM','ADBE','ORCL',
+      'TSM','BABA','DIS','BA','PYPL','SHOP','WFC','C','HSBC','ASML','BIDU','SNAP','ABNB','RIVN','NIO','SPOT','RBLX','SQ',
+      'LLY','JNJ','PFE','MRNA','ABBV','AMGN','PG','KO','PEP','MCD','SBUX','NKE','HD','GE','LMT','RTX','F','GM','T','VZ',
+      'QCOM','MU','SMCI','DELL','NET','SNOW','CRWD','PANW','CAT','DE',
+      'SAP','NOVO','LVMH','BP','SHEL','RIO','BHP','BNTX','TTE',
+      'BTC','ETH','XRP','SOL','BNB','DOGE','ADA','DOT','AVAX','CRYPTO',
+      'SHIB','TON','ARB','MATIC','PEPE','LTC','LINK','UNI','ATOM','NEAR','AAVE',
+      'TRX','XLM','HBAR','APT','OP','INJ','FIL','ICP','ETC','ALGO','STX','RENDER','WIF','BONK','JUP','SUI','WLD',
+      'GOLD','SILVER','OIL','BRENT','NATGAS','COPPER','WHEAT','CORN','SOYBEAN','COFFEE','COCOA','PLATINUM','PALLADIUM'
+    ]);
+    // If article has only non-bond assets (equities/crypto/commodities), block it
+    if (assets.some(a => a) && assets.every(a => !a || _NON_BOND.has(a))) return false;
+    // No specific assets, or has mixed/macro assets → allow keyword match
     if (def.keywords && def.keywords.some(kw => _kwMatches(headline, kw))) return true;
     return false;
   }

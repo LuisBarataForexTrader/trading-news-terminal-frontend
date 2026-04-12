@@ -2060,6 +2060,7 @@ function closeSettings() {
 function _saveTranslatePref(val) {
   _savePrefs({ translateArticles: val });
   _renderTranslateToggle(val);
+  _savePreferences(); // sync to backend so it survives hard refresh / cache clear
 }
 function _renderTranslateToggle(val) {
   const wrap = document.getElementById('translateToggleWrap');
@@ -2479,6 +2480,7 @@ function _savePreferences() {
     soundEnabled,
     soundFilters: [...soundFilters],
     soundVolume,
+    translateArticles: !!_loadPrefs().translateArticles,
   };
   // Debounce: wait 1s after last change before saving
   clearTimeout(_prefSaveTimer);
@@ -2511,6 +2513,7 @@ async function _loadPreferences() {
     if (typeof p.soundEnabled  === 'boolean') { soundEnabled = p.soundEnabled;   localStorage.setItem('soundEnabled', soundEnabled); }
     if (Array.isArray(p.soundFilters))   { soundFilters = new Set(p.soundFilters);   localStorage.setItem('soundFilters', JSON.stringify([...soundFilters])); }
     if (typeof p.soundVolume   === 'number')  { soundVolume  = p.soundVolume;    localStorage.setItem('soundVolume', soundVolume); }
+    if (typeof p.translateArticles === 'boolean') { _savePrefs({ translateArticles: p.translateArticles }); }
     // Refresh UI to reflect loaded preferences
     updateSquawkBtn();
   } catch(e) {}

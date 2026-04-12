@@ -5267,20 +5267,26 @@ function showToast(msg) {
 }
 // ─── AI Explain News ───────────────────────────────────────────────
 const _aiNewsMap = {};
+// Cache of completed AI results, keyed by URL (or headline fallback)
+// Survives renderNews() re-renders so panels stay open while reading
+const _aiResultStore = {};
+
 async function aiExplainNews(idx) {
   const d       = _aiNewsMap[idx] || {};
   const headline = d.headline || '';
   const summary  = d.summary  || '';
   const source   = d.source   || '';
+  const storeKey = d.url || d.headline || idx;
   const btn    = document.getElementById('ai-btn-' + idx);
   const panel  = document.getElementById('ai-result-' + idx);
   if (!btn || !panel) return;
 
-  // Toggle off if already showing
+  // Toggle off if already showing — also clear from store
   if (panel.classList.contains('show')) {
     panel.classList.remove('show');
     btn.classList.remove('done');
     btn.textContent = '✦ AI';
+    delete _aiResultStore[storeKey];
     return;
   }
 
@@ -5310,6 +5316,7 @@ async function aiExplainNews(idx) {
       },
       body: JSON.stringify({ headline, summary: summary || '', source: source || '', url: d.url || '', lang }),
     });
+    if (res.status === 429) { const e = await res.json().catch(()=>{}); throw new Error('429 ' + (e?.detail||'')); }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
 
@@ -5332,14 +5339,21 @@ async function aiExplainNews(idx) {
       ${keyLevel}
     </div>`;
 
-    panel.innerHTML = expHtml + assetsHtml + footerHtml;
+    const finalHtml = expHtml + assetsHtml + footerHtml;
+    panel.innerHTML = finalHtml;
     panel.classList.add('show');
     btn.classList.remove('loading');
     btn.classList.add('done');
     btn.textContent = '✦ AI ✓';
+    // Persist in store so re-renders don't close the panel
+    _aiResultStore[storeKey] = { html: finalHtml, done: true };
   } catch (err) {
     console.warn('[AI]', err);
-    panel.innerHTML = `<div style="color:#ff3b5c;font-size:11px;">⚠ AI temporarily unavailable. Try again.</div>`;
+    const is429 = err.message && err.message.includes('429');
+    const errMsg = is429
+      ? `<div style="color:#f59e0b;font-size:11px;">⏱ ${t('ai.rate_limit') || 'AI limit reached (20/hour). Try again in a few minutes.'}</div>`
+      : `<div style="color:#ff3b5c;font-size:11px;">⚠ AI temporarily unavailable. Try again.</div>`;
+    panel.innerHTML = errMsg;
     panel.classList.add('show');
     btn.classList.remove('loading');
     btn.textContent = '✦ AI';
@@ -5647,6 +5661,20 @@ function renderNews() {
 
   const feedEl = document.getElementById('newsFeed');
   feedEl.innerHTML = html + loadMoreHtml;
+
+  // Restore any AI panels that were open before this re-render
+  if (Object.keys(_aiResultStore).length) {
+    Object.entries(_aiNewsMap).forEach(([idx, d]) => {
+      const key = d.url || d.headline || idx;
+      const stored = _aiResultStore[key];
+      if (!stored) return;
+      const panel = document.getElementById('ai-result-' + idx);
+      const btn   = document.getElementById('ai-btn-'    + idx);
+      if (panel) { panel.innerHTML = stored.html; panel.classList.add('show'); }
+      if (btn)   { btn.classList.add('done'); btn.classList.remove('loading'); btn.textContent = '✦ AI ✓'; }
+    });
+  }
+
   // Force black text on white ad elements — override any inherited body color or iOS webkit fill
   feedEl.querySelectorAll('.feed-ad-white-hl,.feed-ad-white-sub,.feed-ad-white-sponsored').forEach(el => {
     el.style.setProperty('color','#000','important');

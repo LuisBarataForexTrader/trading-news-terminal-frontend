@@ -745,6 +745,7 @@ th:hover .sort-arrow{color:var(--accent)}
                 <th>#</th>
                 <th>Status</th>
                 <th>Source</th>
+                <th>Lang</th>
                 <th>URL</th>
                 <th>Tier</th>
                 <th>Plan</th>
@@ -754,7 +755,7 @@ th:hover .sort-arrow{color:var(--accent)}
                 <th style="text-align:right">In DB</th>
               </tr></thead>
               <tbody id="feeds-tbody">
-                <tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px">Click <strong style="color:var(--accent)">↻ List</strong> to load sources, or <strong style="color:var(--accent)">⚡ Run Health Check</strong> to test all feeds.</td></tr>
+                <tr><td colspan="11" style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px">Click <strong style="color:var(--accent)">↻ List</strong> to load sources, or <strong style="color:var(--accent)">⚡ Run Health Check</strong> to test all feeds.</td></tr>
               </tbody>
             </table>
           </div>
@@ -1491,7 +1492,7 @@ function _updateFeedsKPIs(feeds, realTotal) {
 
 async function loadFeeds() {
   _allFeeds = [];
-  document.getElementById('feeds-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px"><span class="spinner"></span></td></tr>';
+  document.getElementById('feeds-tbody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:30px"><span class="spinner"></span></td></tr>';
   document.getElementById('feeds-kpis').innerHTML = '';
   try {
     const data = await api('/admin/feeds');
@@ -1499,7 +1500,7 @@ async function loadFeeds() {
     _updateFeedsKPIs(_allFeeds, data.real_total_articles);
     renderFeeds(_allFeeds);
   } catch(e) {
-    document.getElementById('feeds-tbody').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:#f87171">Error loading feeds</td></tr>`;
+    document.getElementById('feeds-tbody').innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:#f87171">Error loading feeds</td></tr>`;
   }
 }
 
@@ -1594,9 +1595,11 @@ function renderFeeds(feeds) {
         <td style="color:#607080;font-size:10px">${i+1}</td>
         <td>${_statusBadge(status)}</td>
         <td style="font-weight:600;color:#a78bfa;white-space:nowrap">${f.source}</td>
+        <td style="color:#607080;font-size:10px">—</td>
         <td style="font-size:11px;color:var(--text-dim)">${f.url.replace('crawler://','⚙ ')}${extra}</td>
         <td>${_tierBadge(f.tier)}</td>
         <td><span style="font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:3px;background:${planClr}18;color:${planClr};border:1px solid ${planClr}33">Crawler</span></td>
+        <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:#607080">—</td>
         <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:#607080">${lastRun}</td>
         <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">—</td>
         <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:${f.total_added>0?'var(--accent)':'#607080'}">${added}</td>
@@ -1612,10 +1615,17 @@ function renderFeeds(feeds) {
     const latColor = f.latency_ms == null ? '#607080' : f.latency_ms < 1000 ? '#4ade80' : f.latency_ms < 3000 ? '#f59e0b' : '#f87171';
     const entries  = f.entries != null ? f.entries : '—';
     const dbCount  = f.db_count != null ? f.db_count.toLocaleString() : '—';
+    const lang     = f.lang || 'en';
+    const LANG_FLAGS = {en:'🇬🇧',pt:'🇵🇹',it:'🇮🇹',fr:'🇫🇷',de:'🇩🇪',es:'🇪🇸'};
+    const langFlag = LANG_FLAGS[lang] || lang.toUpperCase();
+    const langBadge = lang === 'en'
+      ? `<span style="font-size:10px;color:#607080">${langFlag} EN</span>`
+      : `<span style="font-size:10px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);padding:1px 6px;border-radius:3px">${langFlag} ${lang.toUpperCase()}</span>`;
     return `<tr${errTip}>
       <td style="color:#607080;font-size:10px">${i+1}</td>
       <td>${_statusBadge(status)}</td>
       <td style="font-weight:600;color:var(--accent);white-space:nowrap">${f.source||host}</td>
+      <td style="white-space:nowrap">${langBadge}</td>
       <td style="font-size:11px;color:var(--text-dim);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${f.url}"><span style="color:#607080">${host}</span>${path}</td>
       <td>${_tierBadge(f.tier)}</td>
       <td><span style="font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:3px;background:${catColor}18;color:${catColor};border:1px solid ${catColor}33">${cat}</span></td>
@@ -1623,7 +1633,7 @@ function renderFeeds(feeds) {
       <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">${entries}</td>
       <td style="text-align:right;font-family:var(--font-mono);font-size:11px;color:${f.db_count>0?'var(--accent)':'#607080'}">${dbCount}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-muted)">No results</td></tr>';
+  }).join('') || '<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--text-muted)">No results</td></tr>';
 }
 
 function filterFeeds() {

@@ -2452,6 +2452,7 @@ function saveCalIds() {
 let squawkEnabled    = IS_PRO && localStorage.getItem('squawkEnabled') === 'true';
 let squawkQueue      = [];
 let squawkSpeaking   = false;
+const squawkSpokenKeys = new Set(); // all dedup keys ever queued/spoken — prevents re-reads
 let squawkRate       = parseFloat(localStorage.getItem('squawkRate') || '1.0');
 let squawkFilters    = _migrateFilters(JSON.parse(localStorage.getItem('squawkFilters') || '["HIGH","CAL_HIGH","CAL_MEDIUM"]'), 'squawkFilters');
 const squawkVoiceName = 'en-US-EricNeural'; // fixed — Eric only
@@ -4371,9 +4372,14 @@ function squawkSpeak(text, url, newsItem) {
   }
   const clean = text.replace(/<[^>]*>/g,'').replace(/[🟢🔴🟡▲▼●★◈▶]/gu,'').replace(/\s+/g,' ').trim();
   if (!clean) return;
-  // Dedup: don't queue the same item twice (prevents looping on repeated API data)
+  // Dedup: use BOTH the spoken-keys set (covers currently-playing + already-played items)
+  // and the queue (covers items waiting to be played).
+  // Using only the queue caused duplicates: once an item is shift()ed out to play,
+  // the same headline from a second source could pass the check and get queued again.
   const dedupeKey = (url || clean).slice(0, 80);
+  if (squawkSpokenKeys.has(dedupeKey)) return;
   if (squawkQueue.some(q => (q.url || q.text).slice(0, 80) === dedupeKey)) return;
+  squawkSpokenKeys.add(dedupeKey); // mark immediately — before any async/queue operation
   // Max queue depth: if already 2+ items pending, drop the oldest to stay current
   // Keeps squawk ≤1 item behind real-time at any point
   if (squawkQueue.length >= 2) squawkQueue.shift();
@@ -4435,6 +4441,7 @@ function toggleSquawk() {
   if (!squawkEnabled) {
     if (_ttsAudio) { try { _ttsAudio.pause(); _ttsAudio.src = ''; } catch(e){} }
     squawkQueue = []; squawkSpeaking = false;
+    squawkSpokenKeys.clear(); // reset dedup so re-enabling works fresh
     _setSquawkTabBlink(false);
   } else {
     squawkSpeak('Squawk enabled. Listening for new headlines.', '', null);
@@ -4844,13 +4851,15 @@ function onSearchInput(val) {
   searchQuery = val.trim().toLowerCase();
   document.getElementById('searchClear').style.display = searchQuery ? 'block' : 'none';
   displayLimit = PAGE_SIZE;
-  updateFeedTitle(); renderNews();
+  try { updateFeedTitle(); } catch(e) {}
+  renderNews();
 }
 function clearSearch() {
   searchQuery = '';
   document.getElementById('searchInput').value = '';
   document.getElementById('searchClear').style.display = 'none';
-  updateFeedTitle(); renderNews();
+  try { updateFeedTitle(); } catch(e) {}
+  renderNews();
 }
 
 // ─── Tabs ────────────────────────────────────────────────────────
@@ -5015,7 +5024,12 @@ function getFeedTitle() {
 function updateFeedTitle() {
   const node = document.getElementById('feedTitle');
   if (!node) return;
-  node.childNodes[0].textContent = getFeedTitle() + ' ';
+  const textNode = node.childNodes[0];
+  if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+    textNode.textContent = getFeedTitle() + ' ';
+  } else {
+    node.textContent = getFeedTitle() + ' ';
+  }
 }
 const LANG_META = {
   en:{flag:'🇬🇧',code:'EN',name:'English',  locale:'en-GB'},

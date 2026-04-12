@@ -4372,14 +4372,19 @@ function squawkSpeak(text, url, newsItem) {
   }
   const clean = text.replace(/<[^>]*>/g,'').replace(/[🟢🔴🟡▲▼●★◈▶]/gu,'').replace(/\s+/g,' ').trim();
   if (!clean) return;
-  // Dedup: use BOTH the spoken-keys set (covers currently-playing + already-played items)
-  // and the queue (covers items waiting to be played).
-  // Using only the queue caused duplicates: once an item is shift()ed out to play,
-  // the same headline from a second source could pass the check and get queued again.
-  const dedupeKey = (url || clean).slice(0, 80);
-  if (squawkSpokenKeys.has(dedupeKey)) return;
-  if (squawkQueue.some(q => (q.url || q.text).slice(0, 80) === dedupeKey)) return;
-  squawkSpokenKeys.add(dedupeKey); // mark immediately — before any async/queue operation
+  // Dedup by BOTH url AND text content.
+  // URL-only dedup fails when the same headline arrives from two different sources
+  // (different URLs) — both would pass the url check and get spoken simultaneously.
+  // Text-based dedup (first 70 chars) catches same headline from different sources.
+  const urlKey  = url  ? url.slice(0, 80)   : null;
+  const textKey = clean.slice(0, 70);
+  if (urlKey  && squawkSpokenKeys.has(urlKey))  return;
+  if (squawkSpokenKeys.has(textKey)) return;
+  if (urlKey  && squawkQueue.some(q => q.url  && q.url.slice(0, 80) === urlKey))  return;
+  if (squawkQueue.some(q => q.text && q.text.slice(0, 70) === textKey)) return;
+  // Mark both keys immediately — before any async/queue operation
+  if (urlKey) squawkSpokenKeys.add(urlKey);
+  squawkSpokenKeys.add(textKey);
   // Max queue depth: if already 2+ items pending, drop the oldest to stay current
   // Keeps squawk ≤1 item behind real-time at any point
   if (squawkQueue.length >= 2) squawkQueue.shift();

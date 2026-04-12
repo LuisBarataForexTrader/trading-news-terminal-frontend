@@ -2455,7 +2455,7 @@ function saveCalIds() {
       .forEach(k => localStorage.removeItem(k));
   } catch(e) {}
 }
-let squawkEnabled    = localStorage.getItem('squawkEnabled') === 'true';
+let squawkEnabled    = IS_PRO && localStorage.getItem('squawkEnabled') === 'true';
 let squawkQueue      = [];
 let squawkSpeaking   = false;
 let squawkRate       = parseFloat(localStorage.getItem('squawkRate') || '1.0');
@@ -4473,6 +4473,7 @@ function _closeSquawkDd() {
 }
 function toggleSquawkCfg(e) {
   e.stopPropagation();
+  if (!IS_PRO) { showUpgrade('Live Squawk'); return; }
   const dd = document.getElementById('squawkDd');
   if (dd.classList.contains('open')) { _closeSquawkDd(); return; }
   _openSquawkDd(document.getElementById('squawkCfgBtn'), true);
